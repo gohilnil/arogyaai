@@ -1,6 +1,6 @@
 """
 ╔══════════════════════════════════════════════════════════════╗
-║  ArogyaAI — Production Backend  v5.0.0                      ║
+║  ArogyaAI — Production Backend  v6.0.0                      ║
 ║  Stack : FastAPI · Groq (llama-3.3-70b) · OpenFDA · Wiki    ║
 ╚══════════════════════════════════════════════════════════════╝
 """
@@ -49,7 +49,7 @@ class Config:
     OPENFDA_BASE:        str   = "https://api.fda.gov/drug"
     WIKI_API:            str   = "https://en.wikipedia.org/api/rest_v1/page/summary"
     APP_NAME:            str   = "ArogyaAI"
-    APP_VERSION:         str   = "5.0.0"
+    APP_VERSION:         str   = "6.0.0"
 
 
 # ══════════════════════════════════════════════
@@ -252,7 +252,7 @@ class MedicalAPIService:
             term = condition.strip().replace(" ", "_").title()
             resp = await self.client.get(
                 f"{Config.WIKI_API}/{term}",
-                headers={"User-Agent": "ArogyaAI/5.0 (health assistant)"},
+                headers={"User-Agent": "ArogyaAI/6.0 (health assistant)"},
             )
             if resp.status_code == 200:
                 data = resp.json()
