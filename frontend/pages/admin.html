@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel — ArogyaAI</title>
+  <meta name="robots" content="noindex, nofollow"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; }
+
+    /* Auth Gate */
+    #authGate {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .auth-card {
+      background: #1a1d24;
+      border: 1px solid #2d3748;
+      border-radius: 20px;
+      padding: 40px;
+      width: 100%;
+      max-width: 360px;
+      text-align: center;
+    }
+    .auth-card h1 { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 800; margin-bottom: 8px; color: #fff; }
+    .auth-card p { color: #718096; font-size: 14px; margin-bottom: 28px; }
+    .auth-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: #2d3748;
+      border: 1px solid #4a5568;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+      margin-bottom: 16px;
+    }
+    .auth-input:focus { border-color: #1A7A4C; }
+    .auth-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #1A7A4C, #22c55e);
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Admin Layout */
+    #adminPanel { display: none; }
+    .admin-sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: 240px;
+      height: 100vh;
+      background: #1a1d24;
+      border-right: 1px solid #2d3748;
+      padding: 24px 16px;
+      overflow-y: auto;
+    }
+    .admin-logo {
+      font-family: 'Outfit', sans-serif;
+      font-size: 20px;
+      font-weight: 900;
+      color: #22c55e;
+      padding: 0 8px 24px;
+      border-bottom: 1px solid #2d3748;
+      margin-bottom: 16px;
+    }
+    .admin-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: #718096;
+      transition: all 0.15s;
+      margin-bottom: 4px;
+    }
+    .admin-nav-item:hover, .admin-nav-item.active {
+      background: rgba(34,197,94,0.1);
+      color: #22c55e;
+    }
+    .admin-nav-item .icon { font-size: 18px; width: 22px; text-align: center; }
+
+    .admin-main {
+      margin-left: 240px;
+      padding: 32px;
+      min-height: 100vh;
+    }
+    .admin-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+    }
+    .admin-title { font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 800; color: #fff; }
+    .admin-subtitle { color: #718096; font-size: 14px; }
+
+    /* Stat Cards */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+    .stat-card {
+      background: #1a1d24;
+      border: 1px solid #2d3748;
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .stat-label { font-size: 12px; font-weight: 600; color: #718096; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .stat-value { font-family: 'Outfit', sans-serif; font-size: 32px; font-weight: 900; color: #fff; }
+    .stat-delta { font-size: 12px; color: #22c55e; margin-top: 4px; }
+    .stat-card.green-accent { border-top: 3px solid #22c55e; }
+    .stat-card.amber-accent { border-top: 3px solid #f59e0b; }
+    .stat-card.blue-accent { border-top: 3px solid #3b82f6; }
+    .stat-card.red-accent { border-top: 3px solid #ef4444; }
+
+    /* Performance bar */
+    .perf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+    .perf-card {
+      background: #1a1d24;
+      border: 1px solid #2d3748;
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .perf-card h3 { font-size: 14px; font-weight: 600; color: #718096; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    /* Tables */
+    .admin-table-card {
+      background: #1a1d24;
+      border: 1px solid #2d3748;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .admin-table-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid #2d3748;
+    }
+    .admin-table-header h3 { font-size: 16px; font-weight: 700; color: #fff; }
+    .refresh-btn {
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.2);
+      color: #22c55e;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    thead th { padding: 12px 24px; text-align: left; font-size: 12px; font-weight: 600; color: #718096; text-transform: uppercase; letter-spacing: 0.5px; background: #151820; }
+    tbody td { padding: 14px 24px; font-size: 14px; border-top: 1px solid #2d3748; }
+    .badge { display: inline-flex; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .badge-green { background: rgba(34,197,94,0.15); color: #22c55e; }
+    .badge-gray { background: rgba(113,128,150,0.2); color: #a0aec0; }
+    .badge-amber { background: rgba(245,158,11,0.2); color: #f59e0b; }
+    .badge-red { background: rgba(239,68,68,0.2); color: #ef4444; }
+
+    .admin-section { display: none; }
+    .admin-section.active { display: block; }
+
+    .loading { color: #718096; font-size: 14px; padding: 32px; text-align: center; }
+    .error-item {
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+    .error-item .ts { color: #718096; font-size: 12px; }
+    .error-item .path { color: #ef4444; font-weight: 600; }
+    .error-msg { color: #e2e8f0; margin-top: 4px; }
+  </style>
+</head>
+<body>
+
+<!-- Auth Gate -->
+<div id="authGate">
+  <div class="auth-card">
+    <div style="font-size:40px; margin-bottom: 16px;">🔐</div>
+    <h1>Admin Panel</h1>
+    <p>Enter your admin secret key to access the ArogyaAI admin panel.</p>
+    <input type="password" class="auth-input" id="adminSecretInput" placeholder="Admin secret key" onkeydown="if(event.key==='Enter') adminLogin()"/>
+    <button class="auth-btn" onclick="adminLogin()">Unlock Admin →</button>
+    <p id="authError" style="color:#ef4444; font-size:13px; margin-top:12px;"></p>
+  </div>
+</div>
+
+<!-- Admin Panel -->
+<div id="adminPanel">
+  <!-- Sidebar -->
+  <nav class="admin-sidebar">
+    <div class="admin-logo">🌿 ArogyaAI Admin</div>
+    <div class="admin-nav-item active" onclick="showSection('overview')" id="nav-overview">
+      <span class="icon">📊</span> Overview
+    </div>
+    <div class="admin-nav-item" onclick="showSection('users')" id="nav-users">
+      <span class="icon">👥</span> Users
+    </div>
+    <div class="admin-nav-item" onclick="showSection('errors')" id="nav-errors">
+      <span class="icon">🔴</span> Error Log
+    </div>
+    <div class="admin-nav-item" onclick="showSection('analytics')" id="nav-analytics">
+      <span class="icon">📈</span> Analytics
+    </div>
+    <div style="position:absolute; bottom:24px; left:16px; right:16px;">
+      <div class="admin-nav-item" onclick="adminLogout()" style="color:#ef4444;">
+        <span class="icon">🚪</span> Logout
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="admin-main">
+
+    <!-- Overview Section -->
+    <div class="admin-section active" id="section-overview">
+      <div class="admin-header">
+        <div>
+          <div class="admin-title">Dashboard</div>
+          <div class="admin-subtitle" id="lastRefreshed">Loading...</div>
+        </div>
+        <button class="refresh-btn" onclick="loadStats()">↻ Refresh</button>
+      </div>
+
+      <div class="stats-grid" id="statsGrid">
+        <div class="loading">Loading stats...</div>
+      </div>
+
+      <div class="perf-grid">
+        <div class="perf-card" id="perfCard">
+          <h3>Server Performance</h3>
+          <div class="loading">Loading...</div>
+        </div>
+        <div class="perf-card" id="servicesCard">
+          <h3>Services Status</h3>
+          <div class="loading">Loading...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Users Section -->
+    <div class="admin-section" id="section-users">
+      <div class="admin-header">
+        <div>
+          <div class="admin-title">User Management</div>
+          <div class="admin-subtitle">All registered accounts</div>
+        </div>
+        <button class="refresh-btn" onclick="loadUsers()">↻ Refresh</button>
+      </div>
+      <div class="admin-table-card">
+        <div class="admin-table-header">
+          <h3>Users</h3>
+          <span id="userCount" style="color:#718096; font-size:14px;"></span>
+        </div>
+        <div id="usersTable"><div class="loading">Loading users...</div></div>
+      </div>
+    </div>
+
+    <!-- Errors Section -->
+    <div class="admin-section" id="section-errors">
+      <div class="admin-header">
+        <div>
+          <div class="admin-title">Error Log</div>
+          <div class="admin-subtitle">Last 100 backend errors (ring buffer)</div>
+        </div>
+        <button class="refresh-btn" onclick="loadErrors()">↻ Refresh</button>
+      </div>
+      <div id="errorsContainer"><div class="loading">Loading errors...</div></div>
+    </div>
+
+    <!-- Analytics Section -->
+    <div class="admin-section" id="section-analytics">
+      <div class="admin-header">
+        <div>
+          <div class="admin-title">Funnel Analytics</div>
+          <div class="admin-subtitle">Signup → Chat → Upgrade conversion</div>
+        </div>
+        <button class="refresh-btn" onclick="loadAnalytics()">↻ Refresh</button>
+      </div>
+      <div class="stats-grid" id="funnelGrid">
+        <div class="loading">Loading analytics...</div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  let _adminSecret = '';
+
+  async function adminLogin() {
+    const secret = document.getElementById('adminSecretInput').value.trim();
+    if (!secret) return;
+
+    try {
+      const resp = await fetch('/api/admin/stats', {
+        headers: { 'X-Admin-Secret': secret },
+      });
+      if (resp.status === 403) {
+        document.getElementById('authError').textContent = '❌ Invalid admin secret.';
+        return;
+      }
+      _adminSecret = secret;
+      sessionStorage.setItem('admin_secret', secret);
+      document.getElementById('authGate').style.display = 'none';
+      document.getElementById('adminPanel').style.display = 'block';
+      loadStats();
+    } catch(e) {
+      document.getElementById('authError').textContent = '❌ Connection error. Is the server running?';
+    }
+  }
+
+  function adminLogout() {
+    sessionStorage.removeItem('admin_secret');
+    window.location.reload();
+  }
+
+  async function apiAdmin(path) {
+    const resp = await fetch(path, { headers: { 'X-Admin-Secret': _adminSecret } });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    return resp.json();
+  }
+
+  function formatUptime(seconds) {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    return h > 0 ? `${h}h ${m}m` : `${m}m`;
+  }
+
+  async function loadStats() {
+    try {
+      const [stats, health] = await Promise.all([
+        apiAdmin('/api/admin/stats'),
+        fetch('/health').then(r => r.json()),
+      ]);
+
+      document.getElementById('lastRefreshed').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+
+      // Stat cards
+      document.getElementById('statsGrid').innerHTML = `
+        <div class="stat-card green-accent">
+          <div class="stat-label">Total Users</div>
+          <div class="stat-value">${(stats.users || 0).toLocaleString()}</div>
+          <div class="stat-delta">↑ Growing</div>
+        </div>
+        <div class="stat-card amber-accent">
+          <div class="stat-label">Premium Users</div>
+          <div class="stat-value">${(stats.premium_users || 0).toLocaleString()}</div>
+          <div class="stat-delta">${stats.users > 0 ? Math.round(stats.premium_users / stats.users * 100) : 0}% conversion</div>
+        </div>
+        <div class="stat-card blue-accent">
+          <div class="stat-label">Queries Today</div>
+          <div class="stat-value">${(stats.queries_today || 0).toLocaleString()}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Conversations</div>
+          <div class="stat-value">${(stats.total_conversations || 0).toLocaleString()}</div>
+        </div>
+      `;
+
+      // Performance
+      const perf = stats.performance || {};
+      document.getElementById('perfCard').innerHTML = `
+        <h3>Server Performance</h3>
+        <div style="display:grid; gap:12px; margin-top:4px;">
+          <div style="display:flex;justify-content:space-between;"><span style="color:#718096; font-size:13px;">Uptime</span><strong style="color:#fff">${formatUptime(perf.uptime_seconds||0)}</strong></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:#718096; font-size:13px;">Avg Response</span><strong style="color:${(perf.avg_response_ms||0)<200?'#22c55e':'#f59e0b'}">${perf.avg_response_ms||0}ms</strong></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:#718096; font-size:13px;">Total Requests</span><strong style="color:#fff">${(perf.total_requests||0).toLocaleString()}</strong></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:#718096; font-size:13px;">Error Rate</span><strong style="color:${(perf.error_rate_pct||0)<1?'#22c55e':'#ef4444'}">${perf.error_rate_pct||0}%</strong></div>
+        </div>
+      `;
+
+      // Services
+      const services = health.services || {};
+      document.getElementById('servicesCard').innerHTML = `
+        <h3>Services Status</h3>
+        <div style="display:grid; gap:12px; margin-top:4px;">
+          ${Object.entries(services).map(([k, v]) =>
+            `<div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="color:#718096; font-size:13px; text-transform:capitalize;">${k.replace(/_/g,' ')}</span>
+              <span class="badge ${v === 'connected' ? 'badge-green' : v === 'dev_mode' ? 'badge-amber' : 'badge-gray'}">${v}</span>
+            </div>`
+          ).join('')}
+        </div>
+      `;
+
+      // Recent errors
+      if (stats.recent_errors?.length) {
+        const errHtml = stats.recent_errors.slice(0,3).map(e => `
+          <div class="error-item">
+            <div class="ts">${e.timestamp} <span class="path">${e.method} ${e.path}</span></div>
+            <div class="error-msg">${(e.error||'').substring(0,200)}</div>
+          </div>`).join('');
+        // Could append to a mini-errors section if desired
+      }
+    } catch(e) {
+      document.getElementById('statsGrid').innerHTML = `<div class="loading" style="color:#ef4444;">Error loading stats: ${e.message}</div>`;
+    }
+  }
+
+  async function loadUsers() {
+    try {
+      const data = await apiAdmin('/api/admin/users?limit=100');
+      const users = data.users || [];
+      document.getElementById('userCount').textContent = `${users.length} users`;
+      document.getElementById('usersTable').innerHTML = `
+        <table>
+          <thead><tr><th>Email</th><th>Name</th><th>Plan</th><th>Joined</th></tr></thead>
+          <tbody>
+            ${users.map(u => `
+              <tr>
+                <td style="color:#e2e8f0;">${u.email || '-'}</td>
+                <td>${u.name || '-'}</td>
+                <td><span class="badge ${u.plan === 'free' ? 'badge-gray' : u.plan === 'pro' ? 'badge-amber' : 'badge-green'}">${u.plan || 'free'}</span></td>
+                <td style="color:#718096;">${u.created_at ? new Date(u.created_at).toLocaleDateString('en-IN') : '-'}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    } catch(e) {
+      document.getElementById('usersTable').innerHTML = `<div class="loading" style="color:#ef4444;">Error: ${e.message}</div>`;
+    }
+  }
+
+  async function loadErrors() {
+    try {
+      const data = await apiAdmin('/api/admin/errors');
+      const errors = data.errors || [];
+      if (!errors.length) {
+        document.getElementById('errorsContainer').innerHTML = '<div class="loading" style="color:#22c55e;">✅ No errors in the ring buffer. All systems healthy!</div>';
+        return;
+      }
+      document.getElementById('errorsContainer').innerHTML = errors.map(e => `
+        <div class="error-item">
+          <div class="ts">${e.timestamp} — <span class="path">${e.method} ${e.path}</span> HTTP ${e.status}</div>
+          <div class="error-msg">${(e.error||'').substring(0, 300)}</div>
+        </div>
+      `).join('');
+    } catch(err) {
+      document.getElementById('errorsContainer').innerHTML = `<div class="loading" style="color:#ef4444;">Error: ${err.message}</div>`;
+    }
+  }
+
+  async function loadAnalytics() {
+    try {
+      const data = await apiAdmin('/api/admin/analytics/funnels');
+      const funnel = data.funnel || {};
+      const signups = funnel.signups || 0;
+      const chats = funnel.first_chat || 0;
+      const upgrades = funnel.upgraded || 0;
+      document.getElementById('funnelGrid').innerHTML = `
+        <div class="stat-card blue-accent">
+          <div class="stat-label">Total Signups</div>
+          <div class="stat-value">${signups}</div>
+        </div>
+        <div class="stat-card green-accent">
+          <div class="stat-label">First Chat</div>
+          <div class="stat-value">${chats}</div>
+          <div class="stat-delta">${signups > 0 ? Math.round(chats/signups*100) : 0}% activation rate</div>
+        </div>
+        <div class="stat-card amber-accent">
+          <div class="stat-label">Upgraded</div>
+          <div class="stat-value">${upgrades}</div>
+          <div class="stat-delta">${signups > 0 ? Math.round(upgrades/signups*100) : 0}% conversion</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Revenue Potential</div>
+          <div class="stat-value">₹${(upgrades * 99).toLocaleString()}</div>
+          <div class="stat-delta">at ₹99/mo avg</div>
+        </div>
+      `;
+    } catch(e) {
+      document.getElementById('funnelGrid').innerHTML = `<div class="loading" style="color:#ef4444;">Error: ${e.message}</div>`;
+    }
+  }
+
+  function showSection(name) {
+    document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.admin-nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById(`section-${name}`).classList.add('active');
+    document.getElementById(`nav-${name}`).classList.add('active');
+    if (name === 'users') loadUsers();
+    else if (name === 'errors') loadErrors();
+    else if (name === 'analytics') loadAnalytics();
+  }
+
+  // Auto-restore session
+  const restoredSecret = sessionStorage.getItem('admin_secret');
+  if (restoredSecret) {
+    _adminSecret = restoredSecret;
+    document.getElementById('authGate').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    loadStats();
+  }
+</script>
+</body>
+</html>

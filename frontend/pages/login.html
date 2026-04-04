@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2E8B57">
+  <meta name="description" content="Login to ArogyaAI — Your AI Health Companion">
+  <!-- BFCACHE OPTOUT -->
+  <meta http-equiv="Cache-Control" content="no-store">
+  <title>Login — ArogyaAI</title>
+  <link rel="stylesheet" href="/css/design-system.css">
+  <style>
+    :root { --auth-accent: var(--color-primary); }
+
+    body {
+      background: var(--n-100);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Split layout on desktop ────────────────────────────── */
+    .auth-page {
+      flex: 1;
+      display: flex;
+      align-items: stretch;
+    }
+
+    /* Left panel — branding (desktop only) */
+    .auth-panel-left {
+      display: none;
+    }
+    @media (min-width: 1024px) {
+      .auth-panel-left {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        flex: 1;
+        background: linear-gradient(145deg, var(--color-primary-dark), var(--color-primary), #27ae60);
+        background-size: 200% 200%;
+        animation: gradientShift 8s ease infinite;
+        padding: 64px 72px;
+        position: relative;
+        overflow: hidden;
+      }
+      @keyframes gradientShift {
+        0%,100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+      }
+      .auth-panel-left::before {
+        content: '';
+        position: absolute; inset: 0;
+        background-image:
+          radial-gradient(circle at 20% 20%, rgba(255,255,255,.08) 0%, transparent 60%),
+          radial-gradient(circle at 80% 80%, rgba(0,0,0,.12) 0%, transparent 60%);
+      }
+      .auth-panel-right {
+        width: 480px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 48px 56px;
+        background: white;
+        overflow-y: auto;
+      }
+    }
+
+    .auth-panel-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: var(--sp-6) var(--sp-5) var(--sp-9);
+      max-width: 480px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ── Left panel content ─────────────────────────────────── */
+    .lp-brand {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 48px; position: relative; z-index: 1;
+    }
+    .lp-brand-icon {
+      width: 48px; height: 48px;
+      background: rgba(255,255,255,.2);
+      border: 2px solid rgba(255,255,255,.3);
+      border-radius: var(--r-lg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+    }
+    .lp-brand-name {
+      font-family: var(--font-nums);
+      font-size: 1.6rem; font-weight: 800; color: white;
+    }
+    .lp-headline {
+      font-size: 2.8rem; font-weight: 800;
+      color: white; line-height: 1.2;
+      margin-bottom: 20px; position: relative; z-index: 1;
+    }
+    .lp-sub { font-size: 1.05rem; color: rgba(255,255,255,.8); margin-bottom: 48px; position: relative; z-index: 1; line-height: 1.6; }
+    .lp-features { display: flex; flex-direction: column; gap: 16px; position: relative; z-index: 1; }
+    .lp-feature {
+      display: flex; align-items: center; gap: 14px;
+      color: rgba(255,255,255,.9); font-size: 0.95rem;
+    }
+    .lp-feature-icon {
+      width: 36px; height: 36px; border-radius: var(--r-sm);
+      background: rgba(255,255,255,.15);
+      display: flex; align-items: center; justify-content: center; font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    /* ── Auth form area ─────────────────────────────────────── */
+    .auth-logo-sm {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: var(--sp-7);
+    }
+    @media (min-width: 1024px) { .auth-logo-sm { display: none; } }
+    .auth-logo-sm-icon {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+      border-radius: var(--r-md);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+    }
+    .auth-logo-sm-name {
+      font-family: var(--font-nums);
+      font-size: 1.2rem; font-weight: 800; color: var(--n-900);
+    }
+    .auth-logo-sm-name span { color: var(--color-primary); }
+
+    .auth-heading {
+      font-size: 1.9rem; font-weight: 800;
+      color: var(--n-900); margin-bottom: 6px;
+    }
+    .auth-sub { font-size: 0.95rem; color: var(--n-500); margin-bottom: var(--sp-7); }
+
+    /* Language tabs */
+    .lang-tabs {
+      display: flex; background: var(--n-100);
+      border-radius: var(--r-md); padding: 4px; gap: 4px; margin-bottom: var(--sp-5);
+    }
+    .lang-tab {
+      flex: 1; padding: 9px 6px; text-align: center;
+      font-size: 0.82rem; font-weight: 700;
+      color: var(--n-400);
+      border-radius: var(--r-sm); cursor: pointer;
+      transition: all var(--dur-fast); border: none; background: none;
+    }
+    .lang-tab.active {
+      background: white; color: var(--color-primary);
+      box-shadow: var(--sh-sm);
+    }
+
+    /* Form */
+    .auth-form { display: flex; flex-direction: column; gap: var(--sp-5); }
+
+    .input-wrap { position: relative; }
+    .field-icon {
+      position: absolute; left: 16px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--n-400); pointer-events: none;
+      width: 18px; height: 18px;
+    }
+    .input-wrap .input-field { padding-left: 46px; }
+    .input-eye {
+      position: absolute; right: 14px; top: 50%;
+      transform: translateY(-50%);
+      background: none; border: none;
+      cursor: pointer; color: var(--n-400); font-size: 1.05rem; padding: 4px;
+    }
+
+    .input-field {
+      width: 100%; padding: 14px 16px;
+      border: 1.5px solid var(--n-200);
+      border-radius: var(--r-lg);
+      font-size: 1rem; color: var(--n-900);
+      background: var(--n-50);
+      transition: all var(--dur-base) var(--ease-out);
+    }
+    .input-field:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      background: white;
+      box-shadow: var(--sh-focus);
+      transform: translateY(-1px);
+    }
+    .input-field.error { border-color: var(--color-danger); }
+
+    .input-label {
+      font-size: 0.85rem; font-weight: 700;
+      color: var(--n-700); margin-bottom: 6px; display: block;
+    }
+    .input-group { display: flex; flex-direction: column; }
+    .input-error-msg { font-size: 0.78rem; color: var(--color-danger); margin-top: 5px; }
+    .hidden { display: none; }
+
+    .forgot-link {
+      text-align: right; font-size: 0.83rem;
+      margin-top: 6px;
+    }
+    .forgot-link a { color: var(--color-primary); font-weight: 600; }
+
+    .btn-primary-auth {
+      width: 100%; padding: 16px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+      color: white; border: none; border-radius: var(--r-xl);
+      font-size: 1.02rem; font-weight: 800;
+      cursor: pointer;
+      transition: all var(--dur-base) var(--ease-spring);
+      box-shadow: var(--sh-green);
+      letter-spacing: 0.01em;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-primary-auth::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.15), transparent);
+      opacity: 0;
+      transition: opacity var(--dur-fast);
+    }
+    .btn-primary-auth:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(46,139,87,.38); }
+    .btn-primary-auth:hover::before { opacity: 1; }
+    .btn-primary-auth:active { transform: scale(0.97); }
+
+    .auth-divider {
+      text-align: center; font-size: 0.82rem; color: var(--n-400);
+      margin: var(--sp-4) 0; position: relative;
+    }
+    .auth-divider::before, .auth-divider::after {
+      content: ''; position: absolute; top: 50%;
+      width: 42%; height: 1px; background: var(--n-200);
+    }
+    .auth-divider::before { left: 0; }
+    .auth-divider::after  { right: 0; }
+
+    .guest-btn {
+      width: 100%; padding: 13px;
+      background: white; color: var(--n-700);
+      border: 1.5px solid var(--n-200);
+      border-radius: var(--r-xl);
+      font-size: 0.92rem; font-weight: 700;
+      cursor: pointer; transition: all var(--dur-fast);
+    }
+    .guest-btn:hover { border-color: var(--color-primary); color: var(--color-primary); background: var(--color-primary-pale); }
+
+    .auth-footer {
+      text-align: center; margin-top: var(--sp-6);
+      font-size: 0.9rem; color: var(--n-500);
+    }
+    .auth-link { color: var(--color-primary); font-weight: 700; cursor: pointer; }
+    .auth-link:hover { text-decoration: underline; }
+
+    /* Trust badges */
+    .trust-row {
+      display: flex; justify-content: center; gap: var(--sp-5);
+      margin-top: var(--sp-7);
+      flex-wrap: wrap;
+    }
+    .trust-item { display: flex; align-items: center; gap: 5px; font-size: 0.75rem; color: var(--n-400); font-weight: 600; }
+  </style>
+</head>
+<body>
+<div class="auth-page">
+
+  <!-- Left panel (desktop) -->
+  <div class="auth-panel-left">
+    <div class="lp-brand">
+      <div class="lp-brand-icon">🌿</div>
+      <div class="lp-brand-name">ArogyaAI</div>
+    </div>
+    <div class="lp-headline">Your Personal<br>AI Doctor</div>
+    <div class="lp-sub">Get doctor-quality health guidance in Hindi, Gujarati, or English. Free, instant, always available.</div>
+    <div class="lp-features">
+      <div class="lp-feature"><div class="lp-feature-icon">🤖</div> AI Doctor Chat in 8+ Indian languages</div>
+      <div class="lp-feature"><div class="lp-feature-icon">🎤</div> Just speak — no typing needed</div>
+      <div class="lp-feature"><div class="lp-feature-icon">👨‍👩‍👧</div> Track health for your whole family</div>
+      <div class="lp-feature"><div class="lp-feature-icon">📄</div> Medical report analysis in plain language</div>
+      <div class="lp-feature"><div class="lp-feature-icon">🔒</div> Private, secure, and always free</div>
+    </div>
+  </div>
+
+  <!-- Right panel (form) -->
+  <div class="auth-panel-right page-enter">
+
+    <!-- Mobile logo -->
+    <div class="auth-logo-sm">
+      <div class="auth-logo-sm-icon">🌿</div>
+      <div class="auth-logo-sm-name">Arogya<span>AI</span></div>
+    </div>
+
+    <div class="auth-heading">Welcome back 👋</div>
+    <div class="auth-sub">Login to your ArogyaAI account</div>
+
+    <!-- Language tabs -->
+    <div class="lang-tabs" id="langTabs">
+      <button class="lang-tab active" data-lang="en">English</button>
+      <button class="lang-tab" data-lang="hi">हिंदी</button>
+      <button class="lang-tab" data-lang="gu">ગુજ</button>
+    </div>
+
+    <!-- Form -->
+    <form class="auth-form" id="loginForm" novalidate>
+      <div class="input-group">
+        <label class="input-label" id="emailLabel">Email Address</label>
+        <div class="input-wrap">
+          <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          <input type="email" class="input-field" id="emailInput"
+            placeholder="you@example.com" autocomplete="email" required>
+        </div>
+        <span class="input-error-msg hidden" id="emailError"></span>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label" id="passLabel">Password</label>
+        <div class="input-wrap">
+          <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <input type="password" class="input-field" id="passInput"
+            placeholder="Your password" autocomplete="current-password" required>
+          <button type="button" class="input-eye" id="togglePass">👁️</button>
+        </div>
+        <div class="forgot-link"><a href="#">Forgot password?</a></div>
+        <span class="input-error-msg hidden" id="passError"></span>
+      </div>
+
+      <button type="submit" class="btn-primary-auth" id="loginBtn">Login to ArogyaAI</button>
+    </form>
+
+    <div class="auth-divider">or</div>
+
+    <button class="guest-btn" onclick="window.location.href='/chat'">
+      💬 Continue as Guest — 5 free questions/day
+    </button>
+
+    <div class="auth-footer">
+      <span id="noAccountText">Don't have an account?</span>
+      <a class="auth-link" onclick="window.location.href='/signup'" id="signupLink"> Sign up free</a>
+    </div>
+
+    <div class="trust-row">
+      <div class="trust-item">🔒 Secure</div>
+      <div class="trust-item">🇮🇳 Made for Bharat</div>
+      <div class="trust-item">✅ 100% Free</div>
+    </div>
+
+  </div>
+</div>
+
+<script src="/js/app.js"></script>
+<script>
+  // BFCACHE FIX
+  window.addEventListener("pageshow", function(e) { if (e.persisted) window.location.reload(); });
+
+  Auth.redirectIfLoggedIn();
+
+  const TRANSLATIONS = {
+    en: { emailLabel:'Email Address', passLabel:'Password', noAccount:"Don't have an account?", signupLink:' Sign up free', loginBtn:'Login to ArogyaAI' },
+    hi: { emailLabel:'ईमेल पता', passLabel:'पासवर्ड', noAccount:'खाता नहीं है?', signupLink:' मुफ़्त में जुड़ें', loginBtn:'लॉग इन करें' },
+    gu: { emailLabel:'ઈ-મેઈલ સરનામું', passLabel:'પાસવર્ડ', noAccount:'ખાતું નથી?', signupLink:' મફત જોડાઓ', loginBtn:'પ્રવેશ કરો' },
+  };
+
+  function applyLang(lang) {
+    const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+    document.getElementById('emailLabel').textContent = t.emailLabel;
+    document.getElementById('passLabel').textContent  = t.passLabel;
+    document.getElementById('noAccountText').textContent = t.noAccount;
+    document.getElementById('signupLink').textContent = t.signupLink;
+    document.getElementById('loginBtn').textContent   = t.loginBtn;
+    Lang.set(lang);
+  }
+
+  document.getElementById('langTabs').addEventListener('click', e => {
+    const tab = e.target.closest('.lang-tab');
+    if (!tab) return;
+    document.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    applyLang(tab.dataset.lang);
+  });
+
+  document.getElementById('togglePass').addEventListener('click', () => {
+    const input = document.getElementById('passInput');
+    const btn   = document.getElementById('togglePass');
+    if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
+    else { input.type = 'password'; btn.textContent = '👁️'; }
+  });
+
+  document.getElementById('loginForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const email = document.getElementById('emailInput').value.trim();
+    const pass  = document.getElementById('passInput').value;
+
+    document.getElementById('emailError').classList.add('hidden');
+    document.getElementById('passError').classList.add('hidden');
+
+    let valid = true;
+    if (!email || !email.includes('@')) {
+      document.getElementById('emailError').textContent = 'Please enter a valid email.';
+      document.getElementById('emailError').classList.remove('hidden');
+      document.getElementById('emailInput').classList.add('error');
+      valid = false;
+    }
+    if (!pass) {
+      document.getElementById('passError').textContent = 'Please enter your password.';
+      document.getElementById('passError').classList.remove('hidden');
+      document.getElementById('passInput').classList.add('error');
+      valid = false;
+    }
+    if (!valid) return;
+
+    const btn = document.getElementById('loginBtn');
+    setLoading(btn, true);
+
+    try {
+      const data = await API.post('/api/auth/login', { email, password: pass });
+      Auth.saveTokens(data.access_token, data.refresh_token, data.user);
+      Toast.success('Welcome back! 🌿');
+      setTimeout(() => window.location.href = '/dashboard', 600);
+    } catch (err) {
+      Toast.error(err.message || 'Login failed. Please try again.');
+    } finally {
+      setLoading(btn, false);
+    }
+  });
+
+  applyLang(Lang.get());
+</script>
+</body>
+</html>

@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Get Started — ArogyaAI</title>
+  <meta name="description" content="Set up your personal health profile and meet Dr. Arogya, your AI doctor."/>
+  <link rel="manifest" href="/manifest.json"/>
+  <meta name="theme-color" content="#1A7A4C"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/css/design-system.css"/>
+  <style>
+    /* ── Onboarding Shell ───────────────────────────────── */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-body);
+      min-height: 100dvh;
+      background: var(--bg-primary);
+      overflow-x: hidden;
+    }
+
+    .ob-shell {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Progress Bar ──────────────────────────────────── */
+    .ob-progress-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: rgba(26,122,76,0.12);
+      z-index: 100;
+    }
+    .ob-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #1A7A4C, #22c55e);
+      border-radius: 0 2px 2px 0;
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ── Steps ─────────────────────────────────────────── */
+    .ob-step {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 24px 120px;
+      animation: ob-fadein 0.4s ease;
+    }
+    .ob-step.active { display: flex; }
+    @keyframes ob-fadein {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Step 1 — Welcome ─────────────────────────────── */
+    .ob-step-1 {
+      background: linear-gradient(160deg, #0d4a2a 0%, #1A7A4C 55%, #22c55e 100%);
+      min-height: 100dvh;
+    }
+    .ob-logo-mark {
+      font-size: 64px;
+      margin-bottom: 24px;
+      animation: ob-bounce 2s ease-in-out infinite;
+    }
+    @keyframes ob-bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .ob-brand {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+    .ob-tagline {
+      font-size: 15px;
+      color: rgba(255,255,255,0.75);
+      text-align: center;
+      max-width: 280px;
+      line-height: 1.6;
+      margin-bottom: 40px;
+    }
+    .ob-features-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      max-width: 320px;
+      margin-bottom: 48px;
+    }
+    .ob-feature-chip {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .ob-feature-chip span { font-size: 20px; }
+
+    /* ── CTA Buttons ─────────────────────────────────── */
+    .ob-cta-primary {
+      display: block;
+      width: 100%;
+      max-width: 320px;
+      background: linear-gradient(135deg, #F4A300 0%, #f59e0b 100%);
+      color: #fff;
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 800;
+      padding: 16px 24px;
+      border-radius: 16px;
+      border: none;
+      cursor: pointer;
+      text-align: center;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 8px 24px rgba(244,163,0,0.4);
+    }
+    .ob-cta-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(244,163,0,0.5); }
+    .ob-cta-primary:active { transform: translateY(0); }
+    .ob-skip {
+      margin-top: 16px;
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.6);
+      font-size: 14px;
+      cursor: pointer;
+      padding: 8px;
+    }
+    .ob-step-2 .ob-skip, .ob-step-3 .ob-skip {
+      color: var(--text-secondary);
+    }
+
+    /* ── Steps 2 & 3 — Form Steps ───────────────────── */
+    .ob-card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 28px 24px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+    .ob-step-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-primary);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .ob-title {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .ob-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+
+    .ob-form-group { margin-bottom: 16px; }
+    .ob-form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+    .ob-input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border-light);
+      border-radius: 12px;
+      font-size: 15px;
+      font-family: var(--font-body);
+      color: var(--text-primary);
+      background: var(--bg-primary);
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    .ob-input:focus { border-color: var(--color-primary); }
+
+    .ob-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* Gender buttons */
+    .ob-btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+    .ob-btn-option {
+      padding: 10px 18px;
+      border: 1.5px solid var(--border-light);
+      border-radius: 10px;
+      background: var(--bg-primary);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      color: var(--text-secondary);
+    }
+    .ob-btn-option.selected {
+      border-color: var(--color-primary);
+      background: rgba(26,122,76,0.08);
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    /* Condition chips */
+    .ob-chip-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .ob-chip {
+      padding: 8px 14px;
+      border: 1.5px solid var(--border-light);
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      color: var(--text-secondary);
+      background: var(--bg-primary);
+    }
+    .ob-chip.selected {
+      border-color: var(--color-primary);
+      background: rgba(26,122,76,0.1);
+      color: var(--color-primary);
+    }
+
+    /* Language pills */
+    .ob-lang-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .ob-lang-pill {
+      padding: 10px 8px;
+      border: 1.5px solid var(--border-light);
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+      color: var(--text-secondary);
+    }
+    .ob-lang-pill.selected {
+      border-color: var(--color-primary);
+      background: rgba(26,122,76,0.1);
+      color: var(--color-primary);
+    }
+
+    /* Green CTA for form steps */
+    .ob-cta-green {
+      display: block;
+      width: 100%;
+      background: linear-gradient(135deg, #1A7A4C, #22c55e);
+      color: #fff;
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 800;
+      padding: 15px 24px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 6px 20px rgba(26,122,76,0.3);
+    }
+    .ob-cta-green:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(26,122,76,0.4); }
+
+    /* ── Step 4 — Success ────────────────────────────── */
+    .ob-step-4 { padding-top: 60px; }
+    .ob-success-ring {
+      width: 160px;
+      height: 160px;
+      margin: 0 auto 32px;
+    }
+    .ob-success-ring svg { width: 100%; height: 100%; }
+    .ob-success-title {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--text-primary);
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .ob-success-sub {
+      color: var(--text-secondary);
+      text-align: center;
+      font-size: 15px;
+      margin-bottom: 32px;
+    }
+    .ob-score-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    /* Bottom navigation */
+    .ob-nav-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      padding: 16px 24px calc(16px + env(safe-area-inset-bottom));
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      gap: 12px;
+      max-width: 440px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div class="ob-progress-bar">
+  <div class="ob-progress-fill" id="obProgressFill" style="width: 25%"></div>
+</div>
+
+<div class="ob-shell">
+
+  <!-- ── STEP 1: Welcome ─────────────────────────────── -->
+  <div class="ob-step ob-step-1 active" id="obStep1">
+    <div class="ob-logo-mark">🌿</div>
+    <div class="ob-brand">ArogyaAI</div>
+    <p class="ob-tagline">India's AI health companion — Your personal doctor, always available</p>
+    <div class="ob-features-grid">
+      <div class="ob-feature-chip"><span>🩺</span> AI Doctor</div>
+      <div class="ob-feature-chip"><span>🔒</span> Private</div>
+      <div class="ob-feature-chip"><span>🇮🇳</span> Bharat-first</div>
+      <div class="ob-feature-chip"><span>🌐</span> 8 Languages</div>
+    </div>
+    <button class="ob-cta-primary" onclick="obGoTo(2)">Get Started →</button>
+    <button class="ob-skip" onclick="obSkip()">Skip setup, take me to the app</button>
+  </div>
+
+  <!-- ── STEP 2: Basic Health ────────────────────────── -->
+  <div class="ob-step ob-step-2" id="obStep2">
+    <div class="ob-card">
+      <div class="ob-step-label">Step 2 of 4</div>
+      <h1 class="ob-title">Basic Health Info</h1>
+      <p class="ob-subtitle">Helps Dr. Arogya give you accurate, personalized advice</p>
+
+      <div class="ob-form-group">
+        <label>Your Age</label>
+        <input type="number" class="ob-input" id="obAge" placeholder="e.g. 28" min="1" max="120"/>
+      </div>
+
+      <div class="ob-form-group">
+        <label>Gender</label>
+        <div class="ob-btn-group">
+          <button class="ob-btn-option" onclick="obSelect(this, 'gender', 'male')">Male</button>
+          <button class="ob-btn-option" onclick="obSelect(this, 'gender', 'female')">Female</button>
+          <button class="ob-btn-option" onclick="obSelect(this, 'gender', 'other')">Other</button>
+        </div>
+      </div>
+
+      <div class="ob-row-2">
+        <div class="ob-form-group">
+          <label>Blood Group</label>
+          <select class="ob-input" id="obBloodGroup">
+            <option value="">Select</option>
+            <option>A+</option> <option>A-</option>
+            <option>B+</option> <option>B-</option>
+            <option>AB+</option> <option>AB-</option>
+            <option>O+</option> <option>O-</option>
+          </select>
+        </div>
+        <div></div>
+      </div>
+
+      <div class="ob-row-2">
+        <div class="ob-form-group">
+          <label>Height (cm)</label>
+          <input type="number" class="ob-input" id="obHeight" placeholder="e.g. 170" min="50" max="250"/>
+        </div>
+        <div class="ob-form-group">
+          <label>Weight (kg)</label>
+          <input type="number" class="ob-input" id="obWeight" placeholder="e.g. 70" min="1" max="300"/>
+        </div>
+      </div>
+
+      <button class="ob-cta-green" onclick="obGoTo(3)">Continue →</button>
+    </div>
+    <button class="ob-skip" onclick="obGoTo(3)">Skip for now</button>
+  </div>
+
+  <!-- ── STEP 3: Medical History ─────────────────────── -->
+  <div class="ob-step ob-step-3" id="obStep3">
+    <div class="ob-card">
+      <div class="ob-step-label">Step 3 of 4</div>
+      <h1 class="ob-title">Medical History</h1>
+      <p class="ob-subtitle">Optional but helps Dr. Arogya give better advice</p>
+
+      <div class="ob-form-group">
+        <label>Pre-existing Conditions (select all that apply)</label>
+        <div class="ob-chip-grid" id="obConditions">
+          <div class="ob-chip" onclick="obToggleChip(this, 'conditions')">Diabetes</div>
+          <div class="ob-chip" onclick="obToggleChip(this, 'conditions')">Hypertension</div>
+          <div class="ob-chip" onclick="obToggleChip(this, 'conditions')">Asthma</div>
+          <div class="ob-chip" onclick="obToggleChip(this, 'conditions')">Thyroid</div>
+          <div class="ob-chip" onclick="obToggleChip(this, 'conditions')">Heart Disease</div>
+          <div class="ob-chip" onclick="obToggleChip(this, 'conditions')">PCOS</div>
+          <div class="ob-chip" onclick="obToggleChip(this, 'conditions')">Kidney Disease</div>
+          <div class="ob-chip" onclick="obToggleChip(this, 'conditions')">None</div>
+        </div>
+      </div>
+
+      <div class="ob-form-group">
+        <label>Known Allergies (e.g. Penicillin, Dust)</label>
+        <input type="text" class="ob-input" id="obAllergies" placeholder="Type and press Enter"/>
+      </div>
+
+      <div class="ob-form-group">
+        <label>Preferred Language</label>
+        <div class="ob-lang-grid">
+          <div class="ob-lang-pill selected" onclick="obSelectLang(this, 'en')">EN</div>
+          <div class="ob-lang-pill" onclick="obSelectLang(this, 'hi')">हिंदी</div>
+          <div class="ob-lang-pill" onclick="obSelectLang(this, 'gu')">ગુ</div>
+          <div class="ob-lang-pill" onclick="obSelectLang(this, 'mr')">मर</div>
+          <div class="ob-lang-pill" onclick="obSelectLang(this, 'ta')">தமி</div>
+          <div class="ob-lang-pill" onclick="obSelectLang(this, 'te')">తె</div>
+          <div class="ob-lang-pill" onclick="obSelectLang(this, 'bn')">বাং</div>
+          <div class="ob-lang-pill" onclick="obSelectLang(this, 'kn')">ಕ</div>
+        </div>
+      </div>
+
+      <button class="ob-cta-green" onclick="obSaveAndFinish()">Complete Setup →</button>
+    </div>
+    <button class="ob-skip" onclick="obSaveAndFinish()">Skip for now</button>
+  </div>
+
+  <!-- ── STEP 4: Success ─────────────────────────────── -->
+  <div class="ob-step ob-step-4" id="obStep4">
+    <div class="ob-success-ring">
+      <svg viewBox="0 0 160 160">
+        <circle cx="80" cy="80" r="70" fill="none" stroke="#e8f5ec" stroke-width="12"/>
+        <circle cx="80" cy="80" r="70" fill="none"
+                stroke="url(#scoreGrad)" stroke-width="12"
+                stroke-linecap="round"
+                stroke-dasharray="439.82"
+                stroke-dashoffset="439.82"
+                id="scoreCircle"
+                transform="rotate(-90 80 80)"/>
+        <defs>
+          <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#1A7A4C"/>
+            <stop offset="100%" stop-color="#22c55e"/>
+          </linearGradient>
+        </defs>
+        <text x="80" y="76" text-anchor="middle" font-family="Outfit,sans-serif" font-size="32" font-weight="900" fill="#1A7A4C" id="scoreText">--</text>
+        <text x="80" y="96" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="#6b7280">/100</text>
+      </svg>
+    </div>
+    <h1 class="ob-success-title">Your Arogya Score is Ready! 🎉</h1>
+    <p class="ob-success-sub">Dr. Arogya has analysed your profile.<br>Welcome to your health journey!</p>
+    <button class="ob-cta-primary" onclick="obFinish()" style="max-width: 320px; margin: 0 auto;">
+      Start My First Consultation →
+    </button>
+    <p class="ob-score-label" style="margin-top: 24px; color: var(--text-secondary); font-size: 13px;">
+      🔥 Your health journey starts today!
+    </p>
+  </div>
+
+</div>
+
+<script src="/js/app.js"></script>
+<script>
+  // ── Onboarding State ──────────────────────────────────
+  const OB = {
+    step: 1,
+    data: {
+      gender: '',
+      conditions: [],
+      language: 'en',
+    },
+  };
+
+  function obGoTo(step) {
+    document.getElementById(`obStep${OB.step}`).classList.remove('active');
+    OB.step = step;
+    document.getElementById(`obStep${OB.step}`).classList.add('active');
+    document.getElementById('obProgressFill').style.width = `${step * 25}%`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (step === 4) obAnimateScore();
+  }
+
+  function obSelect(el, key, val) {
+    // Deselect siblings
+    el.parentElement.querySelectorAll('.ob-btn-option').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+    OB.data[key] = val;
+  }
+
+  function obToggleChip(el, key) {
+    el.classList.toggle('selected');
+    const val = el.textContent.trim();
+    if (el.classList.contains('selected')) {
+      OB.data[key] = OB.data[key] || [];
+      OB.data[key].push(val);
+      if (val === 'None') {
+        document.querySelectorAll(`#obConditions .ob-chip`).forEach(c => {
+          if (c !== el) c.classList.remove('selected');
+        });
+        OB.data.conditions = [];
+      }
+    } else {
+      OB.data[key] = (OB.data[key] || []).filter(v => v !== val);
+    }
+  }
+
+  function obSelectLang(el, lang) {
+    document.querySelectorAll('.ob-lang-pill').forEach(p => p.classList.remove('selected'));
+    el.classList.add('selected');
+    OB.data.language = lang;
+  }
+
+  async function obSaveAndFinish() {
+    const token = Auth.getToken();
+    if (token) {
+      const profileData = {
+        age: parseInt(document.getElementById('obAge')?.value) || null,
+        gender: OB.data.gender || null,
+        blood_group: document.getElementById('obBloodGroup')?.value || null,
+        height_cm: parseInt(document.getElementById('obHeight')?.value) || null,
+        weight_kg: parseInt(document.getElementById('obWeight')?.value) || null,
+        conditions: OB.data.conditions || [],
+        allergies: document.getElementById('obAllergies')?.value?.split(',').map(s=>s.trim()).filter(Boolean) || [],
+        language: OB.data.language || 'en',
+      };
+      try {
+        await API.request('PUT', '/api/user/profile/health', profileData);
+      } catch(e) { /* non-fatal */ }
+    }
+    localStorage.setItem('onboarding_done', '1');
+    obGoTo(4);
+  }
+
+  function obAnimateScore() {
+    const score = 82; // Will be dynamic from profile in production
+    const circle = document.getElementById('scoreCircle');
+    const scoreText = document.getElementById('scoreText');
+    const circumference = 439.82;
+    const targetOffset = circumference - (score / 100) * circumference;
+
+    let current = 0;
+    const duration = 1200;
+    const start = performance.now();
+
+    function animate(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      current = Math.round(eased * score);
+      const offset = circumference - (current / 100) * circumference;
+      circle.style.strokeDashoffset = offset;
+      scoreText.textContent = current;
+      if (progress < 1) requestAnimationFrame(animate);
+    }
+    requestAnimationFrame(animate);
+  }
+
+  function obSkip() {
+    localStorage.setItem('onboarding_done', '1');
+    window.location.href = '/dashboard';
+  }
+
+  function obFinish() {
+    localStorage.setItem('onboarding_done', '1');
+    window.location.href = '/dashboard';
+  }
+
+  // Redirect if already onboarded
+  if (localStorage.getItem('onboarding_done') === '1') {
+    window.location.href = '/dashboard';
+  }
+  // Redirect to login if not authenticated
+  if (!Auth.getToken()) {
+    window.location.href = '/login';
+  }
+</script>
+</body>
+</html>

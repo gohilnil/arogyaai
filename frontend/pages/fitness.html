@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#D97706">
+  <meta name="description" content="ArogyaAI AI Fitness Coach — Personalised workout plans, calorie tracking and real-time AI fitness guidance.">
+  <meta http-equiv="Cache-Control" content="no-store">
+  <title>AI Fitness Coach — ArogyaAI</title>
+  <link rel="stylesheet" href="/css/design-system.css">
+  <style>
+    html,body{background:var(--n-50)}
+    .page-hero{background:linear-gradient(135deg,#451A03 0%,#92400E 40%,#D97706 80%,#F59E0B 100%);padding:28px 20px 52px;position:relative;overflow:hidden}
+    .page-hero::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:40px;background:var(--n-50);border-radius:40px 40px 0 0}
+    .hero-inner{max-width:900px;margin:0 auto;position:relative;z-index:1}
+    .hero-back{display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,.7);font-size:.8rem;font-weight:600;margin-bottom:14px;cursor:pointer}
+    .hero-back svg{width:16px;height:16px}
+    .hero-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 12px;border-radius:var(--r-full);background:rgba(255,255,255,.15);color:rgba(255,255,255,.9);font-size:.7rem;font-weight:800;letter-spacing:.08em;margin-bottom:10px}
+    .hero-title{font-family:var(--font-display);font-size:clamp(1.6rem,4vw,2.2rem);font-weight:900;color:#fff;margin-bottom:6px;letter-spacing:-.02em}
+    .hero-sub{color:rgba(255,255,255,.75);font-size:.9rem}
+    .page-wrap{max-width:900px;margin:0 auto;padding:20px 20px 80px;display:flex;flex-direction:column;gap:20px}
+
+    /* Stats row */
+    .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .stat-card{background:var(--n-0);border:1px solid var(--n-150);border-radius:var(--r-xl);padding:16px;box-shadow:var(--sh-xs);text-align:center}
+    .stat-num{font-family:var(--font-display);font-size:1.6rem;font-weight:900;color:var(--n-900)}
+    .stat-lbl{font-size:.68rem;font-weight:700;color:var(--n-500);text-transform:uppercase;letter-spacing:.07em;margin-top:3px}
+
+    /* Calorie Ring */
+    .kcal-card{background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border:1.5px solid rgba(217,119,6,.2);border-radius:var(--r-2xl);padding:22px;box-shadow:var(--sh-card);display:flex;align-items:center;gap:20px}
+    .kcal-ring{position:relative;width:100px;height:100px;flex-shrink:0}
+    .kcal-ring svg{width:100px;height:100px;transform:rotate(-90deg)}
+    .kr-bg{fill:none;stroke:rgba(217,119,6,.15);stroke-width:9}
+    .kr-fill{fill:none;stroke:#D97706;stroke-width:9;stroke-linecap:round;stroke-dasharray:283;stroke-dashoffset:67;transition:stroke-dashoffset 1.2s var(--ease-out)}
+    .kcal-centre{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+    .kcal-num{font-family:var(--font-nums);font-size:1.2rem;font-weight:900;color:#78350F}
+    .kcal-unit{font-size:.55rem;font-weight:700;color:#92400E}
+    .kcal-info h3{font-weight:900;color:#78350F;font-size:1rem;margin-bottom:4px}
+    .kcal-info p{font-size:.82rem;color:#92400E;line-height:1.5}
+
+    /* Workout list */
+    .section-card{background:var(--n-0);border:1px solid var(--n-150);border-radius:var(--r-2xl);overflow:hidden;box-shadow:var(--sh-card)}
+    .section-hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--n-150)}
+    .section-hdr-title{font-weight:900;color:var(--n-900);font-size:1rem}
+    .workout-items{display:flex;flex-direction:column}
+    .workout-row{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--n-100);cursor:pointer;transition:background var(--dur-fast)}
+    .workout-row:last-child{border-bottom:none}
+    .workout-row:hover{background:var(--n-50)}
+    .workout-row.active-row{background:#FFFBEB;border-left:3px solid #D97706}
+    .w-avatar{width:48px;height:48px;border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+    .w-title2{font-weight:800;color:var(--n-900);font-size:.9rem}
+    .w-badge{font-size:.6rem;font-weight:800;background:linear-gradient(135deg,#1D4ED8,#3B82F6);color:#fff;padding:2px 7px;border-radius:var(--r-full);vertical-align:middle;margin-left:6px}
+    .w-meta2{font-size:.75rem;color:var(--n-500);margin-top:2px}
+    .w-status{margin-left:auto;font-size:.8rem;flex-shrink:0}
+
+    /* Coach Chat */
+    .coach-section{background:linear-gradient(135deg,#FFFBEB,#FEF9C3);border:1.5px solid rgba(217,119,6,.2);border-radius:var(--r-2xl);padding:22px;box-shadow:var(--sh-card)}
+    .coach-hdr{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+    .coach-av2{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#D97706,#92400E);display:flex;align-items:center;justify-content:center;font-size:1.3rem;box-shadow:0 4px 14px rgba(217,119,6,.35)}
+    .coach-name{font-weight:800;color:var(--n-900);font-size:.95rem}
+    .coach-tag2{font-size:.68rem;color:#D97706;font-weight:700;background:rgba(217,119,6,.1);padding:2px 8px;border-radius:var(--r-full)}
+    .coach-bubble{background:var(--n-0);border:1px solid var(--n-150);border-radius:16px;border-bottom-left-radius:4px;padding:14px;font-size:.88rem;color:var(--n-700);line-height:1.65;margin-bottom:14px;box-shadow:var(--sh-xs)}
+    .quick-ask-fit{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+    .qa-chip-fit{padding:7px 13px;border-radius:var(--r-full);border:1.5px solid rgba(217,119,6,.3);background:var(--n-0);font-size:.78rem;font-weight:600;color:#D97706;cursor:pointer;transition:all var(--dur-fast)}
+    .qa-chip-fit:hover{background:#D97706;color:#fff;border-color:#D97706}
+    .input-row-fit{display:flex;gap:8px}
+    .fit-input{flex:1;padding:11px 14px;border:1.5px solid var(--n-200);border-radius:var(--r-xl);font-size:.88rem;background:var(--n-0);color:var(--n-900);transition:border-color var(--dur-fast)}
+    .fit-input:focus{outline:none;border-color:#D97706;box-shadow:0 0 0 3px rgba(217,119,6,.1)}
+    .fit-btn{padding:11px 18px;border-radius:var(--r-xl);background:linear-gradient(135deg,#D97706,#92400E);color:#fff;border:none;font-weight:800;font-size:.88rem;cursor:pointer;box-shadow:0 4px 14px rgba(217,119,6,.35);transition:all var(--dur-fast);white-space:nowrap}
+    .fit-btn:hover{transform:translateY(-1px)}
+    .fit-response{display:none;margin-top:12px;background:var(--n-0);border:1px solid var(--n-150);border-radius:var(--r-lg);padding:14px;font-size:.88rem;color:var(--n-700);line-height:1.7;box-shadow:var(--sh-xs)}
+    .fit-response.show{display:block;animation:fadeSlideUp .3s var(--ease-out)}
+    .fit-response h3{color:#92400E;font-size:.88rem;font-weight:800;margin:10px 0 5px}
+    .fit-response strong{color:var(--n-900)}
+    .fit-response ul{padding-left:18px;margin:5px 0}
+    .fit-response li{margin-bottom:4px}
+
+    /* Body goal selector */
+    .body-goals{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    @media(min-width:560px){.body-goals{grid-template-columns:repeat(4,1fr)}}
+    .bg-btn{padding:14px 8px;border-radius:var(--r-xl);border:1.5px solid var(--n-200);background:var(--n-50);cursor:pointer;text-align:center;transition:all var(--dur-fast)}
+    .bg-btn:hover{border-color:#D97706;background:#FFFBEB}
+    .bg-btn.active{border-color:#D97706;background:#FFFBEB}
+    .bg-icon{font-size:1.5rem;margin-bottom:4px}
+    .bg-label{font-size:.75rem;font-weight:700;color:var(--n-700)}
+    .bg-btn.active .bg-label{color:#D97706}
+    .card-title2{font-size:.78rem;font-weight:800;color:var(--n-500);text-transform:uppercase;letter-spacing:.09em;margin-bottom:14px}
+  </style>
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar"></aside>
+  <div class="main-area" style="overflow-y:auto">
+
+    <div class="page-hero">
+      <div class="hero-inner">
+        <div class="hero-back" onclick="history.back()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>Back</div>
+        <div class="hero-badge">🏃 AI FITNESS COACH</div>
+        <div class="hero-title">Fitness Coach</div>
+        <p class="hero-sub">Personalised workout plans, calorie tracking and real-time AI coaching</p>
+      </div>
+    </div>
+
+    <div class="page-wrap">
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-num">6,842</div><div class="stat-lbl">Steps Today</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:#D97706">524</div><div class="stat-lbl">kcal Burned</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:var(--color-primary)">42</div><div class="stat-lbl">Active Min</div></div>
+      </div>
+
+      <!-- Calorie Ring -->
+      <div class="kcal-card">
+        <div class="kcal-ring">
+          <svg><circle class="kr-bg" cx="50" cy="50" r="45"/><circle class="kr-fill" cx="50" cy="50" r="45"/></svg>
+          <div class="kcal-centre"><div class="kcal-num">524</div><div class="kcal-unit">kcal burned</div></div>
+        </div>
+        <div class="kcal-info">
+          <h3>76% of Daily Goal 🔥</h3>
+          <p>You need <strong>176 more kcal</strong> to hit your 700 kcal goal.<br>A 25-min walk will do it!</p>
+        </div>
+      </div>
+
+      <!-- Fitness Goal Selector -->
+      <div class="section-card">
+        <div class="section-hdr"><div class="section-hdr-title">🎯 Fitness Goal</div></div>
+        <div style="padding:18px 20px">
+          <div class="body-goals">
+            <div class="bg-btn active" onclick="setFitGoal(this,'fat_loss')"><div class="bg-icon">🔥</div><div class="bg-label">Fat Loss</div></div>
+            <div class="bg-btn" onclick="setFitGoal(this,'muscle')"><div class="bg-icon">💪</div><div class="bg-label">Build Muscle</div></div>
+            <div class="bg-btn" onclick="setFitGoal(this,'endurance')"><div class="bg-icon">🏃</div><div class="bg-label">Endurance</div></div>
+            <div class="bg-btn" onclick="setFitGoal(this,'flexibility')"><div class="bg-icon">🧘</div><div class="bg-label">Flexibility</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Today's Workout Plan -->
+      <div class="section-card">
+        <div class="section-hdr">
+          <div class="section-hdr-title">💪 Today's Personalised Plan</div>
+          <button class="gen-btn" id="fitGenBtn" onclick="generateWorkoutPlan()" style="background:linear-gradient(135deg,#D97706,#92400E);border:none;color:#fff;padding:9px 16px;border-radius:var(--r-full);font-weight:800;font-size:.78rem;cursor:pointer;box-shadow:0 4px 14px rgba(217,119,6,.35)">✨ Regenerate</button>
+        </div>
+        <div class="workout-items" id="workoutList">
+          <div class="workout-row">
+            <div class="w-avatar" style="background:#DCFCE7">🧘</div>
+            <div><div class="w-title2">Morning Mobility Stretch <span class="w-badge">COMPLETE</span></div><div class="w-meta2">8 mins · Low Intensity · Back pain relief</div></div>
+            <div class="w-status" style="color:var(--color-success)">✓</div>
+          </div>
+          <div class="workout-row active-row">
+            <div class="w-avatar" style="background:#FEF3C7">🔥</div>
+            <div><div class="w-title2">HIIT Cardio Burn <span class="w-badge" style="background:linear-gradient(135deg,#D97706,#92400E)">UP NEXT</span></div><div class="w-meta2">20 mins · High intensity · 250 kcal burn</div></div>
+            <button onclick="askCoach('Guide me through a 20-min HIIT cardio workout step by step')" style="margin-left:auto;padding:7px 14px;background:#D97706;color:#fff;border:none;border-radius:var(--r-full);font-weight:800;font-size:.75rem;cursor:pointer">Start →</button>
+          </div>
+          <div class="workout-row">
+            <div class="w-avatar" style="background:#EFF6FF">🚶</div>
+            <div><div class="w-title2">Evening Walk Target</div><div class="w-meta2">3,000 steps · Low intensity · After dinner</div></div>
+            <div class="w-status" style="color:var(--n-300)">○</div>
+          </div>
+          <div class="workout-row">
+            <div class="w-avatar" style="background:#F5F3FF">💪</div>
+            <div><div class="w-title2">Strength Training — Core + Arms</div><div class="w-meta2">25 mins · Moderate · 3x per week</div></div>
+            <div class="w-status" style="color:var(--n-300)">○</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Coach Chat -->
+      <div class="coach-section">
+        <div class="coach-hdr">
+          <div class="coach-av2">🤖</div>
+          <div>
+            <div class="coach-name">Coach Maya — AI Fitness Coach</div>
+            <div class="coach-tag2">24/7 Personalised Fitness Intelligence</div>
+          </div>
+        </div>
+        <div class="coach-bubble" id="coachBubble">
+          Great work today! Based on your activity level, I've designed today's plan to match your fat loss goal while being achievable. I've reduced tomorrow's intensity by 10% to allow muscle recovery. Ready to start? Ask me anything!
+        </div>
+        <div class="quick-ask-fit">
+          <div class="qa-chip-fit" onclick="askCoach('Guide me through a 20-minute HIIT workout for beginners at home')">🏠 Home HIIT</div>
+          <div class="qa-chip-fit" onclick="askCoach('Best exercises to lose belly fat fast?')">🔥 Belly Fat Burn</div>
+          <div class="qa-chip-fit" onclick="askCoach('Create a 7-day gym workout plan for muscle building')">💪 Muscle Plan</div>
+          <div class="qa-chip-fit" onclick="askCoach('How do I lose weight without going to gym?')">🚶 No Gym Plan</div>
+          <div class="qa-chip-fit" onclick="askCoach('Best stretches for lower back pain relief?')">🧘 Back Pain Fix</div>
+        </div>
+        <div class="input-row-fit">
+          <input class="fit-input" id="fitInput" placeholder="Ask Coach Maya anything…">
+          <button class="fit-btn" onclick="askCoach()">Ask →</button>
+        </div>
+        <div class="fit-response" id="fitResponse"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<script src="/js/app.js"></script>
+<script>
+let fitGoal = 'fat_loss';
+let fitHistory = [];
+
+function setFitGoal(el, goal) {
+  document.querySelectorAll('.bg-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active'); fitGoal = goal;
+}
+
+async function premiumCall(module, message, history=[]) {
+  const token = Auth.getToken();
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  const res = await fetch(`/api/premium/${module}/chat`, {
+    method: 'POST', headers,
+    body: JSON.stringify({ message, history: history.slice(-10), language: Lang.get() })
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data?.detail?.error || data?.detail || `HTTP ${res.status}`);
+  return data.reply || data.response || '';
+}
+
+async function generateWorkoutPlan() {
+  const btn = document.getElementById('fitGenBtn');
+  btn.disabled = true; btn.textContent = '⏳ Generating…';
+  const goalText = { fat_loss:'fat loss (cardio + HIIT, equipment-free home workout)', muscle:'muscle building (strength training, bodyweight or gym)', endurance:'cardiovascular endurance (running, cycling, swimming)', flexibility:'flexibility and mobility (yoga, stretching, mobility drills)' }[fitGoal];
+  const msg = `Create a detailed workout plan for today focused on ${goalText}. Include warm-up (5 min), main exercises with exact sets/reps/duration/rest, and cooldown (5 min). Make it practical for Indian lifestyle. Be specific, structured, and motivating.`;
+  const resp = document.getElementById('fitResponse');
+  resp.innerHTML = '<div style="text-align:center;color:var(--n-400);padding:16px">💪 Coach Arjun is building your workout…</div>';
+  resp.classList.add('show');
+  try {
+    const reply = await premiumCall('fitness', msg, fitHistory);
+    fitHistory.push({ role: 'user', content: msg });
+    fitHistory.push({ role: 'assistant', content: reply });
+    resp.innerHTML = renderMd(reply);
+  } catch(e) {
+    resp.innerHTML = `<div style="color:var(--color-danger)">⚠️ ${e.message || 'Could not generate plan. Please try again.'}</div>`;
+  }
+  btn.disabled = false; btn.textContent = '✨ Regenerate';
+}
+
+async function askCoach(preset) {
+  const input = document.getElementById('fitInput');
+  const msg = preset || input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  const resp = document.getElementById('fitResponse');
+  resp.innerHTML = '<div style="text-align:center;color:var(--n-400);padding:10px">💪 Coach Arjun is thinking…</div>';
+  resp.classList.add('show');
+  try {
+    const reply = await premiumCall('fitness', msg, fitHistory);
+    fitHistory.push({ role: 'user', content: msg });
+    fitHistory.push({ role: 'assistant', content: reply });
+    resp.innerHTML = renderMd(reply);
+  } catch(e) {
+    resp.innerHTML = `<div style="color:var(--color-danger)">⚠️ ${e.message || 'Could not get response. Please try again.'}</div>`;
+  }
+}
+
+function renderMd(text) {
+  return text.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/^### (.+)$/gm,'<h4 style="color:var(--color-primary);margin:10px 0 5px">$1</h4>').replace(/^## (.+)$/gm,'<h3 style="color:var(--color-primary);margin:12px 0 6px">$1</h3>').replace(/^[-•\*] (.+)$/gm,'<li>$1</li>').replace(/((<li>.*<\/li>\n?)+)/g,'<ul style="padding-left:18px;margin:6px 0">$1</ul>').replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>');
+}
+document.getElementById('fitInput').addEventListener('keydown',e=>{if(e.key==='Enter')askCoach();});
+</script>
+</body>
+</html>

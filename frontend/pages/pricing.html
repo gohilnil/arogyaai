@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pricing — ArogyaAI</title>
+  <meta name="description" content="Choose your ArogyaAI health plan. Free, Pro ₹99/mo, or Elite ₹299/mo. Unlimited AI consultations for India."/>
+  <link rel="manifest" href="/manifest.json"/>
+  <meta name="theme-color" content="#1A7A4C"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/css/design-system.css"/>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: #f8faf9; color: var(--text-primary); }
+
+    /* ── Header ─────────────────────────────────── */
+    .pr-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .pr-logo { font-family: var(--font-display); font-size: 22px; font-weight: 900; color: var(--color-primary); }
+    .pr-back-link { color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+    .pr-back-link:hover { color: var(--color-primary); }
+
+    /* ── Hero ───────────────────────────────────── */
+    .pr-hero {
+      text-align: center;
+      padding: 56px 24px 40px;
+      background: linear-gradient(180deg, #fff 0%, #f8faf9 100%);
+    }
+    .pr-hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(26,122,76,0.08);
+      color: var(--color-primary);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+    .pr-hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 6vw, 44px);
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+    }
+    .pr-hero p {
+      font-size: 16px;
+      color: var(--text-secondary);
+      max-width: 480px;
+      margin: 0 auto 32px;
+      line-height: 1.6;
+    }
+
+    /* ── Toggle ───────────────────────────────────── */
+    .pr-toggle {
+      display: inline-flex;
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      padding: 4px;
+      gap: 4px;
+      margin-bottom: 48px;
+    }
+    .pr-toggle-btn {
+      padding: 10px 20px;
+      border-radius: 10px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      background: transparent;
+      color: var(--text-secondary);
+      transition: all 0.2s;
+    }
+    .pr-toggle-btn.active {
+      background: #fff;
+      color: var(--color-primary);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .pr-save-badge {
+      background: linear-gradient(135deg, #F4A300, #f59e0b);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 6px;
+      margin-left: 6px;
+    }
+
+    /* ── Pricing Cards ─────────────────────────── */
+    .pr-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 0 24px 64px;
+    }
+
+    .pr-card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 32px;
+      border: 2px solid var(--border-light);
+      position: relative;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .pr-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,0.1); }
+
+    /* Pro card — highlighted */
+    .pr-card.pro {
+      border-color: #F4A300;
+      box-shadow: 0 8px 32px rgba(244,163,0,0.2);
+    }
+    .pr-card.pro:hover { box-shadow: 0 16px 48px rgba(244,163,0,0.3); }
+
+    /* Elite card — dark */
+    .pr-card.elite {
+      background: linear-gradient(160deg, #0d4a2a 0%, #1A7A4C 100%);
+      border-color: transparent;
+      color: #fff;
+    }
+    .pr-card.elite:hover { box-shadow: 0 16px 48px rgba(26,122,76,0.4); }
+
+    /* Floating badge */
+    .pr-badge {
+      position: absolute;
+      top: -12px;
+      right: 24px;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 5px 14px;
+      border-radius: 20px;
+    }
+    .pr-badge.popular {
+      background: linear-gradient(135deg, #F4A300, #f59e0b);
+      color: #fff;
+    }
+    .pr-badge.dc {
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .pr-plan-name {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      opacity: 0.7;
+    }
+    .pr-price {
+      font-family: var(--font-display);
+      font-size: 48px;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .pr-price sup { font-size: 22px; vertical-align: super; }
+    .pr-price-period {
+      font-size: 14px;
+      margin-bottom: 24px;
+      opacity: 0.6;
+    }
+
+    /* CTA buttons */
+    .pr-cta {
+      display: block;
+      width: 100%;
+      padding: 14px 24px;
+      border-radius: 14px;
+      border: none;
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      margin-bottom: 24px;
+      transition: all 0.15s;
+    }
+    .pr-cta.free-cta {
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      cursor: default;
+    }
+    .pr-cta.pro-cta {
+      background: linear-gradient(135deg, #F4A300 0%, #f59e0b 100%);
+      color: #fff;
+      box-shadow: 0 6px 24px rgba(244,163,0,0.4);
+      animation: shimmer 2.5s infinite;
+      background-size: 200% auto;
+    }
+    @keyframes shimmer {
+      0% { background-position: 0% center; }
+      50% { background-position: 100% center; }
+      100% { background-position: 0% center; }
+    }
+    .pr-cta.pro-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(244,163,0,0.5); }
+    .pr-cta.elite-cta {
+      background: rgba(255,255,255,1);
+      color: #1A7A4C;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+    .pr-cta.elite-cta:hover { transform: translateY(-2px); }
+
+    /* Feature list */
+    .pr-features { list-style: none; }
+    .pr-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      padding: 7px 0;
+      line-height: 1.4;
+    }
+    .pr-features li .check {
+      width: 18px;
+      height: 18px;
+      background: rgba(26,122,76,0.1);
+      color: var(--color-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      font-weight: 700;
+    }
+    .pr-card.elite .pr-features li .check {
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+    }
+    .pr-card.elite .pr-features li { color: rgba(255,255,255,0.9); }
+
+    /* ── Trust Row ──────────────────────────────── */
+    .pr-trust {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 24px;
+      padding: 32px 24px;
+      background: #fff;
+      border-top: 1px solid var(--border-light);
+      border-bottom: 1px solid var(--border-light);
+    }
+    .pr-trust-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+    .pr-trust-item span { font-size: 20px; }
+
+    /* ── FAQ ────────────────────────────────────── */
+    .pr-faq {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 56px 24px;
+    }
+    .pr-faq h2 {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .pr-faq-item {
+      border-bottom: 1px solid var(--border-light);
+    }
+    .pr-faq-q {
+      width: 100%;
+      background: none;
+      border: none;
+      text-align: left;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      padding: 18px 0;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+    .pr-faq-q:after { content: "+"; font-size: 20px; color: var(--color-primary); flex-shrink: 0; }
+    .pr-faq-q.open:after { content: "−"; }
+    .pr-faq-a {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding-bottom 0.3s;
+    }
+    .pr-faq-a.open { max-height: 200px; padding-bottom: 16px; }
+
+    /* ── Footer CTA ─────────────────────────────── */
+    .pr-footer-cta {
+      background: linear-gradient(160deg, #f0f9f4, #e8f5ec);
+      padding: 48px 24px;
+      text-align: center;
+    }
+    .pr-footer-cta h2 {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .pr-footer-cta p { color: var(--text-secondary); margin-bottom: 24px; }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="pr-header">
+  <div class="pr-logo">🌿 ArogyaAI</div>
+  <a href="/dashboard" class="pr-back-link">← Back to App</a>
+</header>
+
+<!-- Hero -->
+<section class="pr-hero">
+  <div class="pr-hero-badge">💎 Upgrade Your Health Journey</div>
+  <h1>Choose Your Health Plan</h1>
+  <p>Join 10,000+ Indians who consult Dr. Arogya every day for personalized health guidance.</p>
+
+  <div class="pr-toggle">
+    <button class="pr-toggle-btn active" id="toggleMonthly" onclick="setPeriod('monthly')">Monthly</button>
+    <button class="pr-toggle-btn" id="toggleAnnual" onclick="setPeriod('annual')">
+      Annual <span class="pr-save-badge">Save 20%</span>
+    </button>
+  </div>
+</section>
+
+<!-- Pricing Cards -->
+<div class="pr-cards">
+
+  <!-- Free -->
+  <div class="pr-card">
+    <div class="pr-plan-name">Free</div>
+    <div class="pr-price">₹<span>0</span></div>
+    <div class="pr-price-period">/month · No credit card needed</div>
+    <button class="pr-cta free-cta">Current Plan</button>
+    <ul class="pr-features">
+      <li><span class="check">✓</span> 5 AI consultations / day</li>
+      <li><span class="check">✓</span> Basic symptom analysis</li>
+      <li><span class="check">✓</span> Emergency detection</li>
+      <li><span class="check">✓</span> Health score tracking</li>
+      <li><span class="check">✓</span> Hindi + Gujarati support</li>
+      <li><span class="check">✓</span> Drug information</li>
+    </ul>
+  </div>
+
+  <!-- Pro -->
+  <div class="pr-card pro">
+    <div class="pr-badge popular">⭐ Most Popular</div>
+    <div class="pr-plan-name">Pro</div>
+    <div class="pr-price">₹<span id="proPrice">99</span></div>
+    <div class="pr-price-period" id="proPeriod">/month · Billed monthly</div>
+    <button class="pr-cta pro-cta" id="proCta" onclick="upgradeTo('pro')">Upgrade to Pro →</button>
+    <ul class="pr-features">
+      <li><span class="check">✓</span> <strong>Unlimited</strong> AI consultations</li>
+      <li><span class="check">✓</span> Nutrition AI module</li>
+      <li><span class="check">✓</span> Fitness & Mindfulness AI</li>
+      <li><span class="check">✓</span> Drug interaction checker</li>
+      <li><span class="check">✓</span> Detailed lab report analysis</li>
+      <li><span class="check">✓</span> Weekly health reports</li>
+      <li><span class="check">✓</span> Family health management</li>
+      <li><span class="check">✓</span> All 8 Indian languages</li>
+      <li><span class="check">✓</span> Priority AI responses</li>
+      <li><span class="check">✓</span> Health insights & trends</li>
+    </ul>
+  </div>
+
+  <!-- Elite -->
+  <div class="pr-card elite">
+    <div class="pr-badge dc">🩺 Doctor Connect</div>
+    <div class="pr-plan-name" style="color:rgba(255,255,255,0.6)">Elite</div>
+    <div class="pr-price" style="color:#fff">₹<span id="elitePrice">299</span></div>
+    <div class="pr-price-period" id="elitePeriod">/month · Billed monthly</div>
+    <button class="pr-cta elite-cta" onclick="upgradeTo('elite')">Go Elite →</button>
+    <ul class="pr-features">
+      <li><span class="check">✓</span> <strong style="color:#fff">Everything in Pro</strong></li>
+      <li><span class="check">✓</span> Live online doctor connect</li>
+      <li><span class="check">✓</span> Genetics & DNA insights</li>
+      <li><span class="check">✓</span> Dedicated health coach</li>
+      <li><span class="check">✓</span> Emergency doctor hotline</li>
+      <li><span class="check">✓</span> Custom health plans</li>
+      <li><span class="check">✓</span> Priority 24/7 support</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- Trust Row -->
+<div class="pr-trust">
+  <div class="pr-trust-item"><span>🔒</span> 256-bit SSL Encrypted</div>
+  <div class="pr-trust-item"><span>💰</span> 30-day Money-back Guarantee</div>
+  <div class="pr-trust-item"><span>🇮🇳</span> Made in India</div>
+  <div class="pr-trust-item"><span>⚡</span> Powered by Razorpay</div>
+  <div class="pr-trust-item"><span>🏥</span> Clinically Reviewed</div>
+</div>
+
+<!-- FAQ -->
+<section class="pr-faq">
+  <h2>Frequently Asked Questions</h2>
+
+  <div class="pr-faq-item">
+    <button class="pr-faq-q" onclick="toggleFaq(this)">Can I cancel anytime?</button>
+    <div class="pr-faq-a">Yes, absolutely. You can cancel your subscription anytime from your Profile → Settings. You'll continue to have premium access until the end of your billing period. No questions asked.</div>
+  </div>
+  <div class="pr-faq-item">
+    <button class="pr-faq-q" onclick="toggleFaq(this)">Is my health data private?</button>
+    <div class="pr-faq-a">Your health data is encrypted end-to-end and never sold to third parties. We comply with India's Digital Personal Data Protection Act 2023. You can export or delete all your data at any time from your Profile.</div>
+  </div>
+  <div class="pr-faq-item">
+    <button class="pr-faq-q" onclick="toggleFaq(this)">What payment methods are accepted?</button>
+    <div class="pr-faq-a">We accept all major payment methods via Razorpay: UPI (GPay, PhonePe, BHIM), Debit/Credit Cards (Visa, Mastercard, RuPay), Net Banking, and EMI options.</div>
+  </div>
+  <div class="pr-faq-item">
+    <button class="pr-faq-q" onclick="toggleFaq(this)">Is ArogyaAI a replacement for a real doctor?</button>
+    <div class="pr-faq-a">No. Dr. Arogya is an AI assistant for health guidance, not a licensed physician. For serious symptoms, always consult a qualified doctor. We help you understand your symptoms and guide you on when to see a doctor.</div>
+  </div>
+  <div class="pr-faq-item">
+    <button class="pr-faq-q" onclick="toggleFaq(this)">How does the 30-day refund work?</button>
+    <div class="pr-faq-a">If you're not satisfied within 30 days of your first purchase, email us at support@arogyaai.in with your order ID and we'll process a full refund within 5-7 business days.</div>
+  </div>
+</section>
+
+<!-- Footer CTA -->
+<section class="pr-footer-cta">
+  <h2>Still unsure? Start for free.</h2>
+  <p>5 free consultations every day — no credit card required.</p>
+  <a href="/dashboard" class="pr-cta free-cta" style="max-width: 280px; margin: 0 auto; display: block; background: #fff; color: var(--color-primary); border: 1.5px solid var(--color-primary);">
+    Continue with Free Plan
+  </a>
+</section>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="/js/app.js"></script>
+<script>
+  let _period = 'monthly';
+  const PRICES = {
+    monthly: { pro: 99, elite: 299 },
+    annual: { pro: Math.round(99*12*0.8/12), elite: Math.round(299*12*0.8/12) },
+  };
+
+  function setPeriod(p) {
+    _period = p;
+    document.getElementById('toggleMonthly').classList.toggle('active', p === 'monthly');
+    document.getElementById('toggleAnnual').classList.toggle('active', p === 'annual');
+    document.getElementById('proPrice').textContent = PRICES[p].pro;
+    document.getElementById('elitePrice').textContent = PRICES[p].elite;
+    const periodLabel = p === 'annual' ? '/month · Billed annually' : '/month · Billed monthly';
+    document.getElementById('proPeriod').textContent = periodLabel;
+    document.getElementById('elitePeriod').textContent = periodLabel;
+  }
+
+  async function upgradeTo(plan) {
+    if (!Auth.getToken()) {
+      window.location.href = '/login?next=/pricing';
+      return;
+    }
+    if (window.Analytics) Analytics.upgradeClicked('pricing_page');
+
+    try {
+      const btn = document.getElementById('proCta');
+      if (plan === 'pro' && btn) { btn.textContent = 'Processing…'; btn.disabled = true; }
+
+      const orderData = await API.request('POST', '/api/billing/create-order', { plan });
+
+      if (orderData.dev_mode) {
+        // Dev mode: simulate success
+        alert(`✅ Dev Mode: Mock payment success for ${plan} plan!\nIn production, Razorpay checkout would open here.`);
+        if (btn) { btn.textContent = 'Upgrade to Pro →'; btn.disabled = false; }
+        return;
+      }
+
+      const rzp = new Razorpay({
+        key: orderData.key_id,
+        amount: orderData.amount,
+        currency: 'INR',
+        name: 'ArogyaAI',
+        description: `ArogyaAI ${plan.charAt(0).toUpperCase() + plan.slice(1)} — Monthly`,
+        order_id: orderData.order_id,
+        prefill: { name: Auth.getUser()?.name || '', email: Auth.getUser()?.email || '' },
+        theme: { color: '#1A7A4C' },
+        modal: { ondismiss: () => { if (btn) { btn.textContent = 'Upgrade to Pro →'; btn.disabled = false; } } },
+        handler: async (response) => {
+          try {
+            const verifyData = await API.request('POST', '/api/billing/verify-payment', {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              plan,
+            });
+            // Update stored tokens
+            if (verifyData.access_token) localStorage.setItem('arogya_token', verifyData.access_token);
+            if (verifyData.refresh_token) localStorage.setItem('arogya_refresh', verifyData.refresh_token);
+            if (window.Analytics) Analytics.premiumPurchased(plan, orderData.amount / 100);
+            Toast.show(verifyData.message || `🎉 Welcome to ArogyaAI ${plan}!`, 'success');
+            setTimeout(() => window.location.href = '/dashboard', 1500);
+          } catch(e) {
+            Toast.show('Payment verification failed. Contact support@arogyaai.in', 'error');
+            if (btn) { btn.textContent = 'Upgrade to Pro →'; btn.disabled = false; }
+          }
+        },
+      });
+      rzp.open();
+    } catch(e) {
+      Toast.show(e.message || 'Something went wrong. Please try again.', 'error');
+      const btn = document.getElementById('proCta');
+      if (btn) { btn.textContent = 'Upgrade to Pro →'; btn.disabled = false; }
+    }
+  }
+
+  function toggleFaq(btn) {
+    const answer = btn.nextElementSibling;
+    btn.classList.toggle('open');
+    answer.classList.toggle('open');
+  }
+
+  // Analytics page view
+  if (window.Analytics) Analytics.pageView('/pricing');
+</script>
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#DC2626">
+  <meta name="description" content="ArogyaAI Emergency SOS — First-aid guides and emergency contacts.">
+  <meta http-equiv="Cache-Control" content="no-store">
+  <title>Emergency SOS — ArogyaAI</title>
+  <link rel="stylesheet" href="/css/design-system.css">
+  <style>
+    html,body{background:#FFF5F5}
+    .sos-hero{background:linear-gradient(135deg,#7F1D1D 0%,#DC2626 60%,#EF4444 100%);padding:32px 20px 52px;text-align:center;position:relative;overflow:hidden}
+    .sos-hero::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:40px;background:#FFF5F5;border-radius:40px 40px 0 0}
+    .sos-icon{font-size:3rem;display:block;margin-bottom:10px;animation:shake 2s ease-in-out infinite;position:relative;z-index:1}
+    @keyframes shake{0%,100%{transform:rotate(0)}10%,30%{transform:rotate(-5deg)}20%,40%{transform:rotate(5deg)}50%{transform:rotate(0)}}
+    .sos-title{font-family:var(--font-display);font-size:2.4rem;font-weight:900;color:#fff;margin-bottom:6px;position:relative;z-index:1}
+    .sos-sub{color:rgba(255,255,255,.8);font-size:.92rem;position:relative;z-index:1}
+    .sos-wrap{max-width:800px;margin:0 auto;padding:20px 20px 80px}
+    .call-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+    @media(min-width:600px){.call-grid{grid-template-columns:repeat(4,1fr)}}
+    .call-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 12px;border-radius:var(--r-xl);text-decoration:none;transition:all var(--dur-base);border:2px solid transparent;box-shadow:var(--sh-sm)}
+    .call-btn:hover{transform:translateY(-4px);box-shadow:var(--sh-lg)}
+    .call-ambulance{background:linear-gradient(135deg,#DC2626,#991B1B);border-color:rgba(239,68,68,.3)}
+    .call-national{background:linear-gradient(135deg,#2563EB,#1D4ED8);border-color:rgba(59,130,246,.3)}
+    .call-police{background:linear-gradient(135deg,#1D4ED8,#1E40AF);border-color:rgba(59,130,246,.3)}
+    .call-women{background:linear-gradient(135deg,#9333EA,#7E22CE);border-color:rgba(147,51,234,.3)}
+    .call-icon{font-size:1.5rem;margin-bottom:8px}
+    .call-num{font-family:var(--font-display);font-size:2rem;font-weight:900;color:#fff;line-height:1}
+    .call-label{font-size:.65rem;font-weight:700;color:rgba(255,255,255,.8);margin-top:4px;text-transform:uppercase;letter-spacing:.08em}
+    .section-title{font-family:var(--font-display);font-size:1.05rem;font-weight:900;color:var(--n-800);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+    .location-card{background:var(--n-0);border:1px solid var(--n-150);border-radius:var(--r-xl);padding:18px;margin-bottom:20px;text-align:center;box-shadow:var(--sh-card)}
+    .location-card p{font-size:.85rem;color:var(--n-500);margin-bottom:12px}
+    .location-btn{padding:11px 28px;border-radius:var(--r-full);background:linear-gradient(135deg,var(--color-primary),var(--color-primary-mid));border:none;color:#fff;font-weight:800;cursor:pointer;font-size:.92rem;box-shadow:var(--sh-green);transition:all var(--dur-base)}
+    .location-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(26,122,76,.35)}
+    .location-result{margin-top:10px;font-size:.8rem;color:var(--n-500)}
+    .location-result a{color:var(--color-primary);font-weight:700}
+    .aid-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:24px}
+    @media(min-width:560px){.aid-grid{grid-template-columns:1fr 1fr}}
+    .aid-card{background:var(--n-0);border:1px solid var(--n-150);border-radius:var(--r-xl);padding:16px;cursor:pointer;transition:all var(--dur-base);box-shadow:var(--sh-xs)}
+    .aid-card:hover{box-shadow:var(--sh-md);transform:translateY(-2px);border-color:rgba(220,38,38,.2)}
+    .aid-header{display:flex;align-items:center;gap:10px}
+    .aid-icon{font-size:1.6rem}
+    .aid-name{font-weight:800;color:var(--n-900);font-size:.93rem}
+    .aid-trigger{font-size:.7rem;color:var(--n-400);margin-top:1px}
+    .aid-chevron{margin-left:auto;font-size:.9rem;color:var(--n-300);transition:transform var(--dur-fast);flex-shrink:0}
+    .aid-card.open .aid-chevron{transform:rotate(180deg)}
+    .aid-steps{display:none;margin-top:14px;border-top:1px solid var(--n-150);padding-top:12px}
+    .aid-steps.show{display:block}
+    .aid-step{display:flex;gap:10px;margin-bottom:9px;font-size:.86rem;line-height:1.5;color:var(--n-700)}
+    .step-num{width:22px;height:22px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--color-danger),#B91C1C);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;color:#fff;margin-top:1px}
+    .aid-urgent{color:var(--color-danger);font-weight:700;font-size:.8rem;margin-top:8px;padding:7px 10px;background:var(--color-danger-bg);border-radius:var(--r-sm)}
+    .mental-card{background:linear-gradient(135deg,#EDE9FE,#F5F3FF);border:1.5px solid #C4B5FD}
+    .mental-card .aid-name{color:#5B21B6}
+    .mental-card .step-num{background:linear-gradient(135deg,#7C3AED,#5B21B6)}
+    .mental-card .aid-urgent{color:#5B21B6;background:rgba(124,58,237,.1)}
+    .helplines-strip{background:var(--n-0);border:1px solid var(--n-150);border-radius:var(--r-xl);padding:16px;box-shadow:var(--sh-card);margin-top:24px}
+    .helpline-item{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--n-100)}
+    .helpline-item:last-child{border-bottom:none}
+    .helpline-name{font-size:.87rem;font-weight:700;color:var(--n-800);display:flex;align-items:center;gap:6px}
+    .helpline-num{font-family:var(--font-nums);font-size:.95rem;font-weight:900;color:var(--color-primary);text-decoration:none}
+    .bottom-nav{background:rgba(255,255,255,.96);border-top:1px solid var(--n-200)}
+  </style>
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar"></aside>
+  <div class="main-area" style="overflow-y:auto">
+    <div class="sos-hero">
+      <span class="sos-icon">🚨</span>
+      <div class="sos-title">Emergency SOS</div>
+      <p class="sos-sub">Stay calm — help is one tap away. Call immediately for life-threatening situations.</p>
+    </div>
+    <div class="sos-wrap">
+      <!-- Call Buttons -->
+      <div class="call-grid">
+        <a href="tel:108" class="call-btn call-ambulance"><div class="call-icon">🚑</div><div class="call-num">108</div><div class="call-label">Ambulance</div></a>
+        <a href="tel:112" class="call-btn call-national"><div class="call-icon">🆘</div><div class="call-num">112</div><div class="call-label">National Emergency</div></a>
+        <a href="tel:100" class="call-btn call-police"><div class="call-icon">👮</div><div class="call-num">100</div><div class="call-label">Police</div></a>
+        <a href="tel:1091" class="call-btn call-women"><div class="call-icon">👩</div><div class="call-num">1091</div><div class="call-label">Women Helpline</div></a>
+      </div>
+      <!-- GPS -->
+      <div class="location-card">
+        <p>📍 Share your precise location with emergency contacts or first responders</p>
+        <button class="location-btn" onclick="shareLocation()">📍 Get &amp; Share My Location</button>
+        <div class="location-result" id="locationResult"></div>
+      </div>
+      <!-- First Aid -->
+      <div class="section-title">🩺 AI First Aid Guides <span style="font-size:.72rem;color:var(--n-400);font-weight:600">— Tap to expand</span></div>
+      <div class="aid-grid">
+        <div class="aid-card" onclick="toggleAid(this)">
+          <div class="aid-header"><span class="aid-icon">❤️</span><div><div class="aid-name">Heart Attack</div><div class="aid-trigger">Chest pain, arm pain, sweating</div></div><span class="aid-chevron">▼</span></div>
+          <div class="aid-steps">
+            <div class="aid-step"><div class="step-num">1</div><div>Call <strong>108</strong> immediately — do not wait for symptoms to pass</div></div>
+            <div class="aid-step"><div class="step-num">2</div><div>Help them sit or lie; loosen tight clothing (collar, belt)</div></div>
+            <div class="aid-step"><div class="step-num">3</div><div>If conscious &amp; not allergic: chew 1 aspirin (300–325mg) — NOT swallow whole</div></div>
+            <div class="aid-step"><div class="step-num">4</div><div>If unresponsive and not breathing: CPR — 30 compressions + 2 breaths, repeat</div></div>
+            <div class="aid-urgent">🚑 Every minute matters. Call 108 first!</div>
+          </div>
+        </div>
+        <div class="aid-card" onclick="toggleAid(this)">
+          <div class="aid-header"><span class="aid-icon">🧠</span><div><div class="aid-name">Stroke — FAST Test</div><div class="aid-trigger">Facial droop, arm weakness, slurred speech</div></div><span class="aid-chevron">▼</span></div>
+          <div class="aid-steps">
+            <div class="aid-step"><div class="step-num" style="font-size:.6rem">F</div><div><strong>Face:</strong> Ask to smile — one side drooping?</div></div>
+            <div class="aid-step"><div class="step-num" style="font-size:.6rem">A</div><div><strong>Arms:</strong> Raise both — one drifts down?</div></div>
+            <div class="aid-step"><div class="step-num" style="font-size:.6rem">S</div><div><strong>Speech:</strong> Repeat a phrase — slurred or confused?</div></div>
+            <div class="aid-step"><div class="step-num" style="font-size:.6rem">T</div><div><strong>Time:</strong> Call 108 immediately. Note when symptoms started.</div></div>
+            <div class="aid-urgent">🧠 Treatment must begin within 3–4.5 hours of onset!</div>
+          </div>
+        </div>
+        <div class="aid-card" onclick="toggleAid(this)">
+          <div class="aid-header"><span class="aid-icon">🫁</span><div><div class="aid-name">Choking</div><div class="aid-trigger">Can't breathe, hands on throat, turning blue</div></div><span class="aid-chevron">▼</span></div>
+          <div class="aid-steps">
+            <div class="aid-step"><div class="step-num">1</div><div>If they can cough, encourage strong coughing</div></div>
+            <div class="aid-step"><div class="step-num">2</div><div>Lean forward — 5 firm back blows between shoulder blades</div></div>
+            <div class="aid-step"><div class="step-num">3</div><div>Heimlich: stand behind, fist above navel, pull sharply inward &amp; upward</div></div>
+            <div class="aid-step"><div class="step-num">4</div><div>Alternate 5 back blows + 5 abdominal thrusts until cleared or help arrives</div></div>
+          </div>
+        </div>
+        <div class="aid-card" onclick="toggleAid(this)">
+          <div class="aid-header"><span class="aid-icon">🤕</span><div><div class="aid-name">Severe Bleeding</div><div class="aid-trigger">Heavy uncontrolled blood loss</div></div><span class="aid-chevron">▼</span></div>
+          <div class="aid-steps">
+            <div class="aid-step"><div class="step-num">1</div><div>Apply firm direct pressure with clean cloth — do NOT remove</div></div>
+            <div class="aid-step"><div class="step-num">2</div><div>Elevate injured limb above heart level if possible</div></div>
+            <div class="aid-step"><div class="step-num">3</div><div>Do NOT remove embedded objects — stabilise them in place</div></div>
+            <div class="aid-step"><div class="step-num">4</div><div>Apply tourniquet 5–7cm above wound only if bleeding persists after 10 min</div></div>
+          </div>
+        </div>
+        <div class="aid-card" onclick="toggleAid(this)">
+          <div class="aid-header"><span class="aid-icon">🔥</span><div><div class="aid-name">Burns</div><div class="aid-trigger">Scalding, thermal, chemical burns</div></div><span class="aid-chevron">▼</span></div>
+          <div class="aid-steps">
+            <div class="aid-step"><div class="step-num">1</div><div>Cool with lukewarm (NOT cold) running water for 20 minutes</div></div>
+            <div class="aid-step"><div class="step-num">2</div><div>Do NOT apply ice, butter, toothpaste or oil</div></div>
+            <div class="aid-step"><div class="step-num">3</div><div>Cover loosely with clean cling film or sterile material</div></div>
+            <div class="aid-step"><div class="step-num">4</div><div>Call 108 for large, deep, facial or chemical burns</div></div>
+          </div>
+        </div>
+        <div class="aid-card" onclick="toggleAid(this)">
+          <div class="aid-header"><span class="aid-icon">🍬</span><div><div class="aid-name">Diabetic Emergency</div><div class="aid-trigger">Confusion, sweating, shaking, collapse</div></div><span class="aid-chevron">▼</span></div>
+          <div class="aid-steps">
+            <div class="aid-step"><div class="step-num">1</div><div>If conscious: give 15g fast sugar — 3 glucose tabs, 150ml juice, or 3 sugar cubes</div></div>
+            <div class="aid-step"><div class="step-num">2</div><div>Wait 15 min. Recheck. Repeat if still symptomatic.</div></div>
+            <div class="aid-step"><div class="step-num">3</div><div>If unconscious: call 108, recovery position, do NOT give anything by mouth</div></div>
+            <div class="aid-urgent">⚠️ Sugar &gt;400 with vomiting: call 108 immediately</div>
+          </div>
+        </div>
+        <div class="aid-card" onclick="toggleAid(this)">
+          <div class="aid-header"><span class="aid-icon">🤧</span><div><div class="aid-name">Severe Allergic Reaction</div><div class="aid-trigger">Swollen throat, hives, can't breathe</div></div><span class="aid-chevron">▼</span></div>
+          <div class="aid-steps">
+            <div class="aid-step"><div class="step-num">1</div><div>Call 108 immediately — anaphylaxis closes the airway in minutes</div></div>
+            <div class="aid-step"><div class="step-num">2</div><div>If they have EpiPen: inject on outer thigh NOW, through clothing if needed</div></div>
+            <div class="aid-step"><div class="step-num">3</div><div>Sit upright for breathing difficulty; lay flat if BP is low</div></div>
+          </div>
+        </div>
+        <div class="aid-card" onclick="toggleAid(this)">
+          <div class="aid-header"><span class="aid-icon">☠️</span><div><div class="aid-name">Suspected Poisoning</div><div class="aid-trigger">Swallowed chemicals, overdose, snake bite</div></div><span class="aid-chevron">▼</span></div>
+          <div class="aid-steps">
+            <div class="aid-step"><div class="step-num">1</div><div>Call 108 immediately. Tell them what was ingested and when.</div></div>
+            <div class="aid-step"><div class="step-num">2</div><div>Do NOT induce vomiting unless specifically instructed</div></div>
+            <div class="aid-step"><div class="step-num">3</div><div>Snake bite: immobilize limb, keep below heart, do NOT suck venom</div></div>
+            <div class="aid-step"><div class="step-num">4</div><div>Poison India helpline: <strong>1800-116-117</strong></div></div>
+          </div>
+        </div>
+      </div>
+      <!-- Mental Health -->
+      <div class="section-title">🧠 Mental Health Crisis</div>
+      <div class="aid-card mental-card" onclick="toggleAid(this)" style="margin-bottom:24px">
+        <div class="aid-header"><span class="aid-icon">💙</span><div><div class="aid-name">Suicidal Crisis / Self-Harm</div><div class="aid-trigger">Someone expressing suicidal thoughts or in immediate distress</div></div><span class="aid-chevron">▼</span></div>
+        <div class="aid-steps">
+          <div class="aid-step"><div class="step-num">1</div><div>Stay with them. Do not leave them alone under any circumstances.</div></div>
+          <div class="aid-step"><div class="step-num">2</div><div>Listen without judgment: "I hear you. You are not alone. I'm here."</div></div>
+          <div class="aid-step"><div class="step-num">3</div><div><strong>iCall (TISS):</strong> 9152987821 — free, confidential mental health support</div></div>
+          <div class="aid-step"><div class="step-num">4</div><div><strong>Vandrevala 24/7:</strong> 1860-2662-345</div></div>
+          <div class="aid-step"><div class="step-num">5</div><div>Remove access to means (medications, sharp objects) safely</div></div>
+          <div class="aid-urgent">💙 You are not alone. Help is just one call away.</div>
+        </div>
+      </div>
+      <!-- Helplines -->
+      <div class="section-title">📞 Emergency Helplines — India</div>
+      <div class="helplines-strip">
+        <div class="helpline-item"><div class="helpline-name">🚑 Ambulance</div><a href="tel:108" class="helpline-num">108</a></div>
+        <div class="helpline-item"><div class="helpline-name">🆘 National Emergency</div><a href="tel:112" class="helpline-num">112</a></div>
+        <div class="helpline-item"><div class="helpline-name">👮 Police</div><a href="tel:100" class="helpline-num">100</a></div>
+        <div class="helpline-item"><div class="helpline-name">🔥 Fire Brigade</div><a href="tel:101" class="helpline-num">101</a></div>
+        <div class="helpline-item"><div class="helpline-name">👩 Women Helpline</div><a href="tel:1091" class="helpline-num">1091</a></div>
+        <div class="helpline-item"><div class="helpline-name">☠️ Poison Control</div><a href="tel:18001116117" class="helpline-num">1800-116-117</a></div>
+        <div class="helpline-item"><div class="helpline-name">🧠 iCall Mental Health</div><a href="tel:9152987821" class="helpline-num">9152987821</a></div>
+        <div class="helpline-item"><div class="helpline-name">🧠 Vandrevala 24/7</div><a href="tel:18602662345" class="helpline-num">1860-2662-345</a></div>
+      </div>
+      <div style="text-align:center;margin-top:20px">
+        <a href="/chat" class="btn btn-confirm" style="text-decoration:none">🩺 Talk to Dr. Arogya</a>
+      </div>
+    </div>
+  </div>
+</div>
+<nav class="bottom-nav">
+  <button class="nav-item" onclick="window.location.href='/dashboard'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</button>
+  <button class="nav-item" onclick="window.location.href='/chat'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Chat</button>
+  <button class="nav-item active" style="color:var(--color-danger)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--color-danger)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>SOS</button>
+  <button class="nav-item" onclick="window.location.href='/drug-checker'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>Drugs</button>
+  <button class="nav-item" onclick="window.location.href='/profile'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile</button>
+</nav>
+<script src="/js/app.js"></script>
+<script>
+function toggleAid(card){const steps=card.querySelector('.aid-steps');card.classList.toggle('open');steps.classList.toggle('show');}
+function shareLocation(){
+  const btn=document.querySelector('.location-btn');btn.textContent='⏳ Getting location…';btn.disabled=true;
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const lat=pos.coords.latitude.toFixed(5);const lng=pos.coords.longitude.toFixed(5);
+    const url=`https://maps.google.com/?q=${lat},${lng}`;
+    document.getElementById('locationResult').innerHTML=`✅ <a href="${url}" target="_blank">View on Google Maps</a> · Lat: ${lat}, Lng: ${lng}`;
+    navigator.clipboard?.writeText(url).then(()=>Toast?.success('Location copied!'));
+    btn.textContent='📍 Get & Share My Location';btn.disabled=false;
+  },()=>{document.getElementById('locationResult').innerHTML='<span style="color:var(--color-danger)">⚠️ Could not access location. Share address manually.</span>';btn.textContent='📍 Get & Share My Location';btn.disabled=false;});
+}
+</script>
+</body>
+</html>

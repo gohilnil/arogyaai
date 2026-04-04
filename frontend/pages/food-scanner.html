@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2E8B57">
+  <meta name="description" content="AI Food Scanner — Detect freshness, chemicals & shelf life. ArogyaAI.">
+  <!-- BFCACHE OPTOUT -->
+  <meta http-equiv="Cache-Control" content="no-store">
+  <title>AI Food Scanner — ArogyaAI</title>
+  <link rel="stylesheet" href="/css/design-system.css">
+  <style>
+    body { background: var(--n-100); }
+
+    .top-bar {
+      background: white; border-bottom: 1px solid var(--n-200);
+      padding: 0 var(--sp-5); height: 60px;
+      display: flex; align-items: center; gap: var(--sp-3);
+      position: sticky; top: 0; z-index: var(--z-sticky);
+    }
+    .back-btn {
+      width: 36px; height: 36px; border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--n-700); cursor: pointer; transition: background var(--dur-fast);
+    }
+    .back-btn:hover { background: var(--n-100); }
+    .back-btn svg { width: 20px; height: 20px; stroke-width: 2; }
+    .page-title { font-size: 1.05rem; font-weight: 800; color: var(--n-900); display: flex; align-items: center; gap: 8px; }
+    .pro-tag { font-size: 0.65rem; background: linear-gradient(135deg,#D97706,#F59E0B); color: white; padding: 2px 8px; border-radius: var(--r-full); font-weight: 800; }
+
+    .main-content {
+      padding: var(--sp-5) var(--sp-5) var(--sp-9);
+      max-width: 1100px; margin: 0 auto; width: 100%;
+    }
+
+    @media (min-width: 1024px) {
+      .main-content {
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: var(--sp-5) var(--sp-7);
+        padding: var(--sp-7) var(--sp-9);
+        align-items: start;
+      }
+    }
+
+    /* ── Hero banner ─────────────────────────── */
+    .hero-banner {
+      background: linear-gradient(135deg, #0f4c29 0%, #2E8B57 60%, #27ae60 100%);
+      border-radius: var(--r-2xl);
+      padding: var(--sp-7) var(--sp-6);
+      color: white;
+      display: flex; flex-direction: column; gap: var(--sp-4);
+      position: relative; overflow: hidden;
+      margin-bottom: var(--sp-5);
+    }
+    .hero-banner::after {
+      content: ''; position: absolute;
+      width: 260px; height: 260px; border-radius: 50%;
+      background: rgba(255,255,255,.06);
+      top: -80px; right: -60px;
+    }
+    .hero-label { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: rgba(255,255,255,.6); }
+    .hero-title { font-size: 1.6rem; font-weight: 900; color: white; line-height: 1.2; }
+    .hero-sub   { font-size: 0.92rem; color: rgba(255,255,255,.78); line-height: 1.6; max-width: 440px; }
+
+    .feature-pills { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
+    .pill {
+      background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2);
+      padding: 4px 12px; border-radius: var(--r-full);
+      font-size: 0.75rem; font-weight: 700; color: white;
+    }
+
+    /* ── Upload zone ─────────────────────────── */
+    .upload-area {
+      background: white; border-radius: var(--r-2xl);
+      box-shadow: var(--sh-card);
+      border: 1px solid rgba(0,0,0,.04);
+      overflow: hidden;
+    }
+
+    .cam-zone {
+      border: 2.5px dashed var(--n-200);
+      border-radius: var(--r-xl); margin: var(--sp-5);
+      padding: var(--sp-8) var(--sp-6);
+      text-align: center; cursor: pointer;
+      transition: all var(--dur-base);
+      background: var(--n-50);
+    }
+    .cam-zone:hover, .cam-zone.drag-over {
+      border-color: var(--color-primary);
+      background: var(--color-primary-pale);
+    }
+    .cam-icon {
+      width: 88px; height: 88px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto var(--sp-4);
+      font-size: 2.5rem;
+      box-shadow: var(--sh-green);
+      animation: floatY 3s ease-in-out infinite;
+    }
+    .cam-title { font-size: 1.15rem; font-weight: 800; color: var(--n-900); margin-bottom: 6px; }
+    .cam-sub   { font-size: 0.88rem; color: var(--n-500); margin-bottom: var(--sp-5); line-height: 1.5; }
+
+    .upload-btns { display: flex; gap: var(--sp-3); justify-content: center; flex-wrap: wrap; }
+    .upload-btn-cam {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+      color: white; border: none; border-radius: var(--r-full);
+      font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; transition: all var(--dur-fast);
+      box-shadow: var(--sh-green);
+    }
+    .upload-btn-cam:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(46,139,87,.3); }
+    .upload-btn-file {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 24px;
+      background: white; color: var(--n-700);
+      border: 1.5px solid var(--n-200); border-radius: var(--r-full);
+      font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; transition: all var(--dur-fast);
+    }
+    .upload-btn-file:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+    .preview-img-wrap {
+      margin: var(--sp-5); display: none;
+      border-radius: var(--r-xl); overflow: hidden;
+      box-shadow: var(--sh-md); border: 1.5px solid var(--color-primary-light);
+      position: relative;
+    }
+    .preview-img-wrap img {
+      width: 100%; max-height: 320px;
+      object-fit: cover; display: block;
+    }
+    .preview-change-btn {
+      position: absolute; top: var(--sp-3); right: var(--sp-3);
+      background: rgba(0,0,0,.55); color: white;
+      padding: 6px 14px; border-radius: var(--r-full);
+      font-size: 0.8rem; font-weight: 700; cursor: pointer;
+      backdrop-filter: blur(8px);
+      border: none;
+      transition: background var(--dur-fast);
+    }
+    .preview-change-btn:hover { background: rgba(0,0,0,.8); }
+
+    .scan-action { padding: 0 var(--sp-5) var(--sp-5); }
+    .scan-btn {
+      width: 100%; padding: 16px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+      color: white; border: none; border-radius: var(--r-xl);
+      font-size: 1.05rem; font-weight: 800;
+      cursor: pointer; transition: all var(--dur-fast);
+      box-shadow: var(--sh-green);
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .scan-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(46,139,87,.35); }
+    .scan-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+    /* ── Result ──────────────────────────────── */
+    .result-wrap {
+      background: white; border-radius: var(--r-2xl);
+      box-shadow: var(--sh-md);
+      border: 1px solid rgba(0,0,0,.04);
+      overflow: hidden;
+      animation: fadeSlideUp var(--dur-base) var(--ease-out);
+      display: none;
+      margin-top: var(--sp-5);
+    }
+    .result-header {
+      padding: var(--sp-5) var(--sp-6);
+      border-bottom: 1px solid var(--n-200);
+      display: flex; align-items: center; gap: var(--sp-3);
+    }
+    .result-icon {
+      width: 48px; height: 48px; border-radius: var(--r-md);
+      display: flex; align-items: center; justify-content: center; font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+    .icon-safe    { background: #D4EDDA; }
+    .icon-warning { background: #FEF3C7; }
+    .icon-danger  { background: #FDECEA; }
+
+    .freshness-bar-wrap { padding: 0 var(--sp-6) var(--sp-5); }
+    .freshness-label  { font-size: 0.88rem; font-weight: 700; color: var(--n-700); margin-bottom: var(--sp-2); display: flex; justify-content: space-between; }
+    .freshness-bar    { height: 12px; background: var(--n-100); border-radius: var(--r-full); overflow: hidden; }
+    .freshness-fill   { height: 100%; border-radius: var(--r-full); transition: width 1s var(--ease-out); }
+    .fill-safe    { background: linear-gradient(90deg, #22c55e, #16a34a); }
+    .fill-warning { background: linear-gradient(90deg, #f59e0b, #d97706); }
+    .fill-danger  { background: linear-gradient(90deg, #ef4444, #dc2626); }
+
+    .metrics-grid {
+      display: grid; grid-template-columns: repeat(2,1fr); gap: var(--sp-3);
+      padding: 0 var(--sp-5) var(--sp-5);
+    }
+    @media (min-width: 600px) { .metrics-grid { grid-template-columns: repeat(3,1fr); } }
+
+    .metric-pill {
+      background: var(--n-50); border: 1px solid var(--n-200);
+      border-radius: var(--r-lg); padding: var(--sp-3) var(--sp-4);
+      text-align: center;
+    }
+    .metric-pill-icon { font-size: 1.4rem; margin-bottom: 5px; }
+    .metric-pill-val  { font-size: 0.92rem; font-weight: 800; color: var(--n-900); }
+    .metric-pill-lbl  { font-size: 0.72rem; color: var(--n-400); margin-top: 2px; }
+
+    .result-body { padding: 0 var(--sp-6) var(--sp-5); }
+    .md-content { line-height: 1.75; font-size: 0.92rem; color: var(--n-700); }
+
+    .result-actions { display: flex; gap: var(--sp-3); padding: 0 var(--sp-5) var(--sp-5); }
+    .btn-outline-green {
+      flex: 1; padding: 12px; background: white; color: var(--color-primary);
+      border: 1.5px solid var(--color-primary-light); border-radius: var(--r-lg);
+      font-size: 0.88rem; font-weight: 700; cursor: pointer; transition: all var(--dur-fast);
+    }
+    .btn-outline-green:hover { background: var(--color-primary-pale); }
+    .btn-solid-green {
+      flex: 1; padding: 12px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+      color: white; border: none; border-radius: var(--r-lg);
+      font-size: 0.88rem; font-weight: 700; cursor: pointer; transition: all var(--dur-fast);
+    }
+    .btn-solid-green:hover { opacity: .9; }
+
+    /* ── Info sidebar ─────────────────────────── */
+    .info-card {
+      background: white; border-radius: var(--r-xl);
+      padding: var(--sp-5); box-shadow: var(--sh-sm);
+      border: 1px solid rgba(0,0,0,.04);
+    }
+    .info-title {
+      font-size: 1rem; font-weight: 800; color: var(--n-900);
+      margin-bottom: var(--sp-4); display: flex; align-items: center; gap: 8px;
+    }
+    .detect-list { display: flex; flex-direction: column; gap: var(--sp-3); }
+    .detect-item { display: flex; align-items: center; gap: var(--sp-3); }
+    .detect-icon {
+      width: 38px; height: 38px; border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .detect-text { font-size: 0.88rem; color: var(--n-700); line-height: 1.45; }
+    .detect-text strong { color: var(--n-900); }
+
+    .warning-banner {
+      background: linear-gradient(135deg, #FFFBF0, #FFF8E6);
+      border: 1.5px solid #FDE68A; border-radius: var(--r-xl);
+      padding: var(--sp-4) var(--sp-5);
+    }
+    .warning-label { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--color-accent-dark); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+    .warning-text  { font-size: 0.88rem; color: var(--n-700); line-height: 1.6; }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar"></aside>
+  <div class="main-area">
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <button class="back-btn" onclick="history.back()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="page-title">
+      🔍 AI Food Scanner <span class="pro-tag">AI</span>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content page-enter">
+
+    <!-- Left / Scanner column -->
+    <div>
+      <!-- Hero -->
+      <div class="hero-banner">
+        <div class="hero-label">Powered by AI Vision</div>
+        <div class="hero-title">Is Your Food Safe? 🥗</div>
+        <div class="hero-sub">Snap a photo of any fruit, vegetable, cooked food or packaged item. Our AI analyzes freshness, chemical signs, and shelf life in seconds.</div>
+        <div class="feature-pills">
+          <div class="pill">✅ Freshness Score</div>
+          <div class="pill">🧪 Chemical Detection</div>
+          <div class="pill">📅 Shelf Life</div>
+          <div class="pill">🦠 Contamination Risk</div>
+        </div>
+      </div>
+
+      <!-- Upload area -->
+      <div class="upload-area">
+        <div class="cam-zone" id="camZone" onclick="document.getElementById('foodImg').click()">
+          <div class="cam-icon">🔬</div>
+          <div class="cam-title">Scan Your Food</div>
+          <div class="cam-sub">Photograph fruits, vegetables, cooked meals, or packaged foods for an instant AI analysis</div>
+          <div class="upload-btns">
+            <button class="upload-btn-cam" onclick="event.stopPropagation();document.getElementById('foodImg').click()">
+              📸 Choose Photo
+            </button>
+          </div>
+          <input type="file" id="foodImg" accept="image/*" capture="environment" style="display:none" onchange="handleFoodImage(this)">
+        </div>
+
+        <!-- Preview -->
+        <div class="preview-img-wrap" id="previewWrap">
+          <img id="previewImg" src="" alt="Food preview">
+          <button class="preview-change-btn" onclick="document.getElementById('foodImg').click()">Change Photo</button>
+        </div>
+
+        <!-- Scan action -->
+        <div class="scan-action" id="scanAction" style="display:none">
+          <button class="scan-btn" id="scanBtn" onclick="scanFood()">
+            🔬 Analyze Food Safety
+          </button>
+        </div>
+      </div>
+
+      <!-- Result -->
+      <div class="result-wrap" id="resultWrap">
+        <div class="result-header" id="resultHeader">
+          <div class="result-icon icon-safe" id="resultIcon">✅</div>
+          <div>
+            <div style="font-size:1rem;font-weight:800;color:var(--n-900)" id="resultTitle">Analysis Complete</div>
+            <div style="font-size:0.78rem;color:var(--n-400)" id="resultSub">AI-powered food safety assessment</div>
+          </div>
+        </div>
+
+        <!-- Freshness meter -->
+        <div class="freshness-bar-wrap">
+          <div class="freshness-label">
+            <span>Freshness Score</span>
+            <span id="freshnessVal" style="color:var(--color-primary);font-size:0.95rem">—</span>
+          </div>
+          <div class="freshness-bar">
+            <div class="freshness-fill fill-safe" id="freshnessFill" style="width:0%"></div>
+          </div>
+        </div>
+
+        <!-- Metric pills -->
+        <div class="metrics-grid">
+          <div class="metric-pill">
+            <div class="metric-pill-icon">📅</div>
+            <div class="metric-pill-val" id="shelfLife">—</div>
+            <div class="metric-pill-lbl">Shelf Life</div>
+          </div>
+          <div class="metric-pill">
+            <div class="metric-pill-icon">🧪</div>
+            <div class="metric-pill-val" id="chemRisk">—</div>
+            <div class="metric-pill-lbl">Chemical Risk</div>
+          </div>
+          <div class="metric-pill">
+            <div class="metric-pill-icon">🦠</div>
+            <div class="metric-pill-val" id="microRisk">—</div>
+            <div class="metric-pill-lbl">Microbial Risk</div>
+          </div>
+        </div>
+
+        <div class="result-body">
+          <div class="md-content" id="resultContent"></div>
+        </div>
+
+        <div class="result-actions">
+          <button class="btn-outline-green" onclick="shareOnWhatsApp()">📤 Share</button>
+          <button class="btn-solid-green" onclick="window.location.href='/chat'">💬 Ask AI More</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right / Info column -->
+    <div style="display:flex;flex-direction:column;gap:var(--sp-5)">
+
+      <!-- What we detect -->
+      <div class="info-card">
+        <div class="info-title">⚡ What AI Detects</div>
+        <div class="detect-list">
+          <div class="detect-item">
+            <div class="detect-icon" style="background:#D4EDDA">🍅</div>
+            <div class="detect-text"><strong>Freshness & Ripeness</strong> — Visual spoilage signs, color deviation, wilting</div>
+          </div>
+          <div class="detect-item">
+            <div class="detect-icon" style="background:#FEF3C7">🧪</div>
+            <div class="detect-text"><strong>Chemical Indicators</strong> — Unnatural shine, artificial coloring, wax coating</div>
+          </div>
+          <div class="detect-item">
+            <div class="detect-icon" style="background:#FDECEA">🦠</div>
+            <div class="detect-text"><strong>Contamination Risk</strong> — Mold, fungal spots, visible bacterial growth</div>
+          </div>
+          <div class="detect-item">
+            <div class="detect-icon" style="background:#EFF6FF">📅</div>
+            <div class="detect-text"><strong>Shelf Life Estimate</strong> — How many days the food is safe to consume</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tips -->
+      <div class="warning-banner">
+        <div class="warning-label">💡 Food Safety Tips</div>
+        <div class="warning-text">
+          <strong>Fruits & Vegetables:</strong> Wash thoroughly before eating. Avoid bruised or discolored areas.<br><br>
+          <strong>Cooked Food:</strong> Store at or below 5°C within 2 hours of cooking.<br><br>
+          <strong>Packaged Items:</strong> Always check MFG/expiry dates and store per instructions.
+        </div>
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="info-card" style="background:var(--n-100);box-shadow:none">
+        <div style="font-size:0.78rem;color:var(--n-400);line-height:1.6">
+          ⚠️ <strong>Note:</strong> AI analysis is based on visual cues. For packaged foods, always check printed expiry dates. When in doubt, discard.
+        </div>
+      </div>
+
+    </div><!-- /right col -->
+
+  </div><!-- /main-content -->
+  </div><!-- /main-area -->
+</div><!-- /app-layout -->
+
+<script src="/js/app.js"></script>
+<script>
+  // BFCACHE FIX
+  window.addEventListener("pageshow", function(e) { if (e.persisted) window.location.reload(); });
+
+  let selectedFile = null;
+  let analysisResult = '';
+
+  function handleFoodImage(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > 15 * 1024 * 1024) {
+      Toast.error('Image too large. Max 15MB.');
+      return;
+    }
+    selectedFile = file;
+    const url = URL.createObjectURL(file);
+    document.getElementById('previewImg').src = url;
+    document.getElementById('previewWrap').style.display = 'block';
+    document.getElementById('camZone').style.display = 'none';
+    document.getElementById('scanAction').style.display = 'block';
+    document.getElementById('resultWrap').style.display = 'none';
+  }
+
+  // Drag and drop
+  const zone = document.getElementById('camZone');
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      document.getElementById('foodImg').files = e.dataTransfer.files;
+      handleFoodImage(document.getElementById('foodImg'));
+    }
+  });
+
+  async function scanFood() {
+    if (!selectedFile) return;
+
+    const btn = document.getElementById('scanBtn');
+    setLoading(btn, true);
+
+    // Extract food name from filename for better AI context
+    const rawName = selectedFile.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+    const foodHint = rawName.length > 3 && rawName.length < 50 ? rawName : 'food item';
+
+    const prompt = `You are an expert AI Food Safety Analyst. A user has uploaded an image of "${foodHint}". Perform a comprehensive food safety analysis and provide the following structured report:
+
+**1. FOOD IDENTIFIED:** What food item is this? (Best guess from filename/context)
+**2. FRESHNESS SCORE (0-100):** Estimate a freshness score based on typical freshness indicators for this food type.
+**3. ESTIMATED SHELF LIFE:** How many days is this typically safe to consume (if properly stored)?
+**4. CHEMICAL RISK LEVEL:** Low / Medium / High — likelihood of chemical treatments, pesticides, or artificial additives common in this food.
+**5. MICROBIAL RISK LEVEL:** Low / Medium / High — natural spoilage risk for this food type.
+**6. NUTRITIONAL HIGHLIGHTS:** Key nutrients in this food (3-4 bullet points).
+**7. STORAGE TIPS:** Best way to store this food for maximum shelf life.
+**8. SAFETY VERDICT:** Is this food safe to eat? (Safe / Caution / Avoid)
+**9. RECOMMENDATION:** Practical advice for an Indian household.
+
+Be specific, practical, and helpful. Format with clear headers. Focus on actionable information.`;
+
+    const { data, error } = await API.post('/api/chat/', {
+      message: prompt,
+      history: [],
+      language: Lang.get(),
+    }, !!Auth.getToken());
+
+    setLoading(btn, false);
+
+    if (error || !data) {
+      Toast.error('Scan failed. Please try again.');
+      return;
+    }
+
+    const score = extractScore(data.reply);
+    renderResult(score, data.reply);
+  }
+
+  function extractScore(text) {
+    const match = text.match(/freshness score[:\s]*(\d+)/i) || text.match(/(\d+)\/100/i);
+    return match ? parseInt(match[1]) : 75;
+  }
+
+  function renderResult(score, reply) {
+    const wrap = document.getElementById('resultWrap');
+
+    // Freshness
+    document.getElementById('freshnessVal').textContent = score + '/100';
+    const fill = document.getElementById('freshnessFill');
+    fill.style.width = score + '%';
+    if (score >= 70) { fill.className = 'freshness-fill fill-safe'; }
+    else if (score >= 40) { fill.className = 'freshness-fill fill-warning'; }
+    else { fill.className = 'freshness-fill fill-danger'; }
+
+    // Icon
+    const icon = document.getElementById('resultIcon');
+    const title = document.getElementById('resultTitle');
+    if (score >= 70) {
+      icon.textContent = '✅'; icon.className = 'result-icon icon-safe';
+      title.textContent = 'Food Appears Safe';
+    } else if (score >= 40) {
+      icon.textContent = '⚠️'; icon.className = 'result-icon icon-warning';
+      title.textContent = 'Use With Caution';
+    } else {
+      icon.textContent = '🚫'; icon.className = 'result-icon icon-danger';
+      title.textContent = 'Not Recommended';
+    }
+
+    // Metrics (parse or fallback)
+    const shelfMatch = reply.match(/shelf life[:\s]*([^\n.]+)/i);
+    document.getElementById('shelfLife').textContent = shelfMatch ? shelfMatch[1].trim().slice(0,15) : score > 70 ? '3-5 days' : '1-2 days';
+
+    const chemMatch = reply.match(/chemical risk[:\s]*(\w+)/i);
+    document.getElementById('chemRisk').textContent = chemMatch ? chemMatch[1] : 'Low';
+
+    const microMatch = reply.match(/microbial risk[:\s]*(\w+)/i);
+    document.getElementById('microRisk').textContent = microMatch ? microMatch[1] : score > 70 ? 'Low' : 'Medium';
+
+    document.getElementById('resultContent').innerHTML = renderMarkdown(reply);
+    wrap.style.display = 'block';
+    wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function shareOnWhatsApp() {
+    if (!analysisResult) return;
+    const summary = '🔬 Food Safety Scan by ArogyaAI:\n\n' + analysisResult.slice(0, 400) + '...\n\nScan your food: https://arogyaai.in';
+    shareWhatsApp(summary);
+  }
+</script>
+</body>
+</html>

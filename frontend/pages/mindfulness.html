@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1A7A4C">
+  <meta name="description" content="ArogyaAI Mind & Peace — AI CBT therapy, guided breathing, and mental health support.">
+  <meta http-equiv="Cache-Control" content="no-store">
+  <title>Mind & Peace — ArogyaAI</title>
+  <link rel="stylesheet" href="/css/design-system.css">
+  <style>
+    html,body{background:var(--n-50)}
+    .page-hero{background:linear-gradient(135deg,#2E1065 0%,#4C1D95 30%,#6D28D9 65%,#7C3AED 100%);padding:28px 20px 52px;position:relative;overflow:hidden;text-align:center}
+    .page-hero::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:40px;background:var(--n-50);border-radius:40px 40px 0 0}
+    .hero-back{display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,.7);font-size:.8rem;font-weight:600;margin-bottom:14px;cursor:pointer;position:relative;z-index:1}
+    .hero-back svg{width:16px;height:16px}
+    .hero-icon{font-size:3rem;margin-bottom:10px;display:block;animation:floatY 3s ease-in-out infinite;position:relative;z-index:1}
+    .hero-title{font-family:var(--font-display);font-size:2rem;font-weight:900;color:#fff;margin-bottom:6px;position:relative;z-index:1}
+    .hero-sub{color:rgba(255,255,255,.75);font-size:.9rem;position:relative;z-index:1}
+    .mind-wrap{max-width:720px;margin:0 auto;padding:20px 20px 80px;display:flex;flex-direction:column;gap:20px}
+
+    /* Mood Tracker */
+    .mood-card{background:var(--n-0);border-radius:var(--r-2xl);padding:22px;border:1px solid var(--n-150);box-shadow:var(--sh-card)}
+    .card-title{font-size:.78rem;font-weight:800;color:var(--n-500);text-transform:uppercase;letter-spacing:.09em;margin-bottom:14px}
+    .mood-grid{display:flex;gap:8px;flex-wrap:wrap}
+    .mood-opt{flex:1;min-width:80px;padding:12px 8px;border-radius:var(--r-lg);border:1.5px solid var(--n-200);background:var(--n-50);cursor:pointer;text-align:center;transition:all var(--dur-fast);font-size:1.4rem}
+    .mood-opt span{display:block;font-size:.68rem;font-weight:700;color:var(--n-500);margin-top:4px}
+    .mood-opt:hover{border-color:#7C3AED;background:#F5F3FF}
+    .mood-opt.selected{border-color:#7C3AED;background:#EDE9FE;transform:scale(1.05)}
+    .mood-opt.selected span{color:#5B21B6}
+
+    /* Breathing Ring */
+    .breathe-card{background:var(--n-0);border-radius:var(--r-2xl);padding:28px;border:1px solid var(--n-150);box-shadow:var(--sh-card);text-align:center}
+    .breathe-sub{font-size:.85rem;color:var(--n-500);margin-bottom:22px}
+    .breathe-ring{width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,#DDD6FE,#C4B5FD 40%,#A78BFA 70%,#7C3AED 100%);margin:0 auto;display:flex;align-items:center;justify-content:center;animation:breathe 8s ease-in-out infinite;box-shadow:0 0 0 14px rgba(124,58,237,.06),0 0 40px rgba(124,58,237,.15);cursor:pointer}
+    @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.5);opacity:.6}}
+    .breathe-text{font-family:var(--font-display);font-size:1rem;font-weight:900;color:#fff;letter-spacing:.04em;user-select:none}
+    .breathe-counter{margin-top:18px;font-size:.82rem;color:#7C3AED;font-weight:700}
+    .breathe-controls{display:flex;gap:10px;justify-content:center;margin-top:14px}
+    .breathe-ctrl-btn{padding:9px 20px;border-radius:var(--r-full);font-weight:700;font-size:.8rem;cursor:pointer;transition:all var(--dur-fast)}
+    .breathe-start{background:linear-gradient(135deg,#7C3AED,#5B21B6);color:#fff;border:none;box-shadow:0 4px 14px rgba(124,58,237,.35)}
+    .breathe-stop{background:var(--n-0);color:#7C3AED;border:1.5px solid #7C3AED}
+
+    /* CBT Chat */
+    .therapy-card{background:var(--n-0);border-radius:var(--r-2xl);padding:22px;border:1px solid var(--n-150);box-shadow:var(--sh-card)}
+    .therapy-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+    .therapy-avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#5B21B6);display:flex;align-items:center;justify-content:center;font-size:1.3rem;box-shadow:0 4px 14px rgba(124,58,237,.3)}
+    .therapy-name{font-weight:800;color:var(--n-900);font-size:.95rem}
+    .therapy-tag{font-size:.7rem;color:#7C3AED;font-weight:700;background:#EDE9FE;padding:2px 8px;border-radius:var(--r-full)}
+    .chat-area{background:#F5F3FF;border-radius:var(--r-xl);padding:16px;margin-bottom:14px;min-height:80px;max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+    .t-bubble{padding:11px 14px;border-radius:16px;font-size:.88rem;line-height:1.65;max-width:90%;animation:fadeSlideUp .25s var(--ease-out)}
+    .t-bubble.dr{background:var(--n-0);color:var(--n-700);border:1px solid var(--n-150);align-self:flex-start;border-bottom-left-radius:4px}
+    .t-bubble.user{background:linear-gradient(135deg,#7C3AED,#5B21B6);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+    .quick-mood-btns{display:flex;flex-direction:column;gap:8px}
+    .mood-quick-btn{background:var(--n-0);color:#5B21B6;border:1.5px solid #C4B5FD;padding:12px 16px;border-radius:var(--r-xl);font-weight:700;font-size:.87rem;cursor:pointer;transition:all var(--dur-base);text-align:left;display:flex;align-items:center;gap:8px}
+    .mood-quick-btn:hover{background:#EDE9FE;border-color:#7C3AED;transform:translateX(4px)}
+    .input-row-t{display:flex;gap:8px;margin-top:12px}
+    .t-input{flex:1;padding:11px 14px;border:1.5px solid #DDD6FE;border-radius:var(--r-xl);font-size:.88rem;background:var(--n-0);color:var(--n-900)}
+    .t-input:focus{outline:none;border-color:#7C3AED;box-shadow:0 0 0 3px rgba(124,58,237,.1)}
+    .t-send{padding:11px 18px;border-radius:var(--r-xl);background:linear-gradient(135deg,#7C3AED,#5B21B6);color:#fff;border:none;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(124,58,237,.3);transition:all var(--dur-fast)}
+    .t-send:hover{transform:translateY(-1px)}
+    .t-typing{display:none;gap:4px;align-items:center;padding:8px}
+    .t-typing span{width:7px;height:7px;border-radius:50%;background:#C4B5FD;animation:typing .9s ease-in-out infinite}
+    .t-typing span:nth-child(2){animation-delay:.15s}
+    .t-typing span:nth-child(3){animation-delay:.3s}
+
+    /* Wellness tiles */
+    .wellness-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .wellness-tile{background:var(--n-0);border:1px solid var(--n-150);border-radius:var(--r-xl);padding:16px;cursor:pointer;transition:all var(--dur-base);box-shadow:var(--sh-xs)}
+    .wellness-tile:hover{transform:translateY(-3px);box-shadow:var(--sh-md);border-color:rgba(124,58,237,.2)}
+    .wt-icon{font-size:1.8rem;margin-bottom:8px}
+    .wt-title{font-size:.85rem;font-weight:800;color:var(--n-800)}
+    .wt-desc{font-size:.72rem;color:var(--n-500);margin-top:3px;line-height:1.4}
+
+    /* Helpline strip */
+    .helpline-strip{background:linear-gradient(135deg,#EDE9FE,#F5F3FF);border:1.5px solid #C4B5FD;border-radius:var(--r-xl);padding:16px}
+    .helpline-strip p{font-size:.85rem;color:#4C1D95;font-weight:600;margin-bottom:8px}
+    .helpline-numbers{display:flex;flex-wrap:wrap;gap:10px}
+    .helpline-num-chip{display:flex;flex-direction:column;align-items:center;padding:10px 14px;background:var(--n-0);border-radius:var(--r-lg);border:1px solid #DDD6FE;text-decoration:none}
+    .h-num{font-family:var(--font-nums);font-size:.95rem;font-weight:900;color:#7C3AED}
+    .h-lbl{font-size:.65rem;font-weight:700;color:var(--n-500);margin-top:2px}
+  </style>
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar"></aside>
+  <div class="main-area" style="overflow-y:auto">
+
+    <div class="page-hero">
+      <div style="max-width:600px;margin:0 auto">
+        <div class="hero-back" onclick="history.back()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>Back</div>
+        <span class="hero-icon">🧘</span>
+        <div class="hero-title">Mind &amp; Peace</div>
+        <p class="hero-sub">AI-powered CBT therapy, breathing exercises &amp; stress relief — 24/7</p>
+      </div>
+    </div>
+
+    <div class="mind-wrap">
+
+      <!-- Mood Check-In -->
+      <div class="mood-card">
+        <div class="card-title">How are you feeling right now?</div>
+        <div class="mood-grid">
+          <div class="mood-opt" onclick="selectMood(this,'Happy','I am feeling happy and grateful today. Tell me how to maintain this positive energy.')">😊<span>Happy</span></div>
+          <div class="mood-opt" onclick="selectMood(this,'Calm','I am feeling calm and peaceful today.')">😌<span>Calm</span></div>
+          <div class="mood-opt" onclick="selectMood(this,'Anxious','I am feeling very anxious and worried. My mind is racing. Please help me calm down using CBT techniques.')">😰<span>Anxious</span></div>
+          <div class="mood-opt" onclick="selectMood(this,'Sad','I am feeling sad, low, and unmotivated today. I need support and guidance.')">😢<span>Sad</span></div>
+          <div class="mood-opt" onclick="selectMood(this,'Angry','I feel very angry and frustrated and I cannot control it. Help me manage my anger.')">😤<span>Angry</span></div>
+          <div class="mood-opt" onclick="selectMood(this,'Stressed','I am extremely stressed with work and life. Help me de-stress immediately.')">😩<span>Stressed</span></div>
+        </div>
+      </div>
+
+      <!-- Box Breathing -->
+      <div class="breathe-card">
+        <div class="card-title" style="text-align:center">Box Breathing — Clinical Anxiety Relief</div>
+        <div class="breathe-sub">Used by doctors & special forces to calm the nervous system in 4 minutes</div>
+        <div class="breathe-ring" onclick="toggleBreathe()">
+          <div class="breathe-text" id="breatheText">Tap to Start</div>
+        </div>
+        <div class="breathe-counter" id="breatheCounter">4-4-4-4 Box Breathing Technique</div>
+        <div class="breathe-controls">
+          <button class="breathe-ctrl-btn breathe-start" onclick="toggleBreathe()">▶ Start</button>
+          <button class="breathe-ctrl-btn breathe-stop" onclick="stopBreathe()">■ Stop</button>
+        </div>
+      </div>
+
+      <!-- CBT AI Therapy Chat -->
+      <div class="therapy-card">
+        <div class="therapy-header">
+          <div class="therapy-avatar">🧠</div>
+          <div>
+            <div class="therapy-name">AI CBT Companion</div>
+            <div class="therapy-tag">Cognitive Behavioral Therapy · Trauma-Informed Care</div>
+          </div>
+        </div>
+        <div class="chat-area" id="therapyChat">
+          <div class="t-bubble dr">Welcome. I'm here for you without judgment. I use evidence-based CBT techniques tailored for you. What would you like to work on today?</div>
+        </div>
+        <div style="display:flex;gap:4px;margin-bottom:12px" id="tTyping">
+          <div class="t-typing" id="tTypingDots"><span></span><span></span><span></span></div>
+        </div>
+        <div class="quick-mood-btns" id="quickMoodBtns">
+          <button class="mood-quick-btn" onclick="sendTherapy('I am having an anxiety attack right now. Help me calm down immediately.')">😰 I&apos;m having an anxiety attack — help me NOW</button>
+          <button class="mood-quick-btn" onclick="sendTherapy('Guide me through the 5-4-3-2-1 grounding technique for anxiety')">🌱 5-4-3-2-1 Grounding Exercise</button>
+          <button class="mood-quick-btn" onclick="sendTherapy('I just need to vent about how I am feeling. Please listen without judgment.')">💬 I just need to talk to someone</button>
+          <button class="mood-quick-btn" onclick="sendTherapy('I have been feeling really depressed and hopeless. Can you help me?')">💙 I feel depressed and hopeless</button>
+          <button class="mood-quick-btn" onclick="sendTherapy('Help me identify and reframe negative thoughts using CBT techniques')">🔄 Reframe my negative thoughts</button>
+        </div>
+        <div class="input-row-t">
+          <input class="t-input" id="therapyInput" placeholder="Type how you're feeling or ask anything…">
+          <button class="t-send" onclick="sendTherapy()">Send</button>
+        </div>
+      </div>
+
+      <!-- Wellness Techniques -->
+      <div class="mood-card">
+        <div class="card-title">Wellness Techniques</div>
+        <div class="wellness-grid">
+          <div class="wellness-tile" onclick="sendTherapy('Guide me through a full 5-minute mindfulness meditation session. Speak to me like a meditation teacher.')"><div class="wt-icon">🧘</div><div class="wt-title">5-Min Meditation</div><div class="wt-desc">Guided mindfulness to reset your mind instantly</div></div>
+          <div class="wellness-tile" onclick="sendTherapy('Guide me through a complete progressive muscle relaxation (PMR) session step by step.')"><div class="wt-icon">💪</div><div class="wt-title">Muscle Relaxation</div><div class="wt-desc">Release body tension with PMR technique</div></div>
+          <div class="wellness-tile" onclick="sendTherapy('Help me write a gratitude journal. Ask me guided questions one at a time about things I am grateful for today.')"><div class="wt-icon">📝</div><div class="wt-title">Gratitude Journal</div><div class="wt-desc">AI-guided reflection and journaling session</div></div>
+          <div class="wellness-tile" onclick="sendTherapy('Tell me a calming, relaxing sleep story to help me fall asleep. Make it peaceful and soothing.')"><div class="wt-icon">🌙</div><div class="wt-title">Sleep Story</div><div class="wt-desc">Gentle AI-narrated story to help you sleep</div></div>
+        </div>
+      </div>
+
+      <!-- Helplines -->
+      <div class="helpline-strip">
+        <p>💙 If you are in crisis, reach out to a human now:</p>
+        <div class="helpline-numbers">
+          <a href="tel:9152987821" class="helpline-num-chip"><div class="h-num">9152987821</div><div class="h-lbl">iCall (TISS)</div></a>
+          <a href="tel:18602662345" class="helpline-num-chip"><div class="h-num">1860-2662-345</div><div class="h-lbl">Vandrevala 24/7</div></a>
+          <a href="tel:112" class="helpline-num-chip"><div class="h-num">112</div><div class="h-lbl">Emergency</div></a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<script src="/js/app.js"></script>
+<script>
+/* Therapy Chat */
+let tHistory = [];
+
+async function sendTherapy(preset) {
+  const input = document.getElementById('therapyInput');
+  const msg = preset || input.value.trim();
+  if (!msg) return;
+  input.value = '';
+
+  // Hide quick buttons after first message
+  document.getElementById('quickMoodBtns').style.display = 'none';
+
+  addTBubble('user', msg);
+  showTTyping();
+
+  const history = tHistory.slice(-10).map(m => ({ role: m.role === 'dr' ? 'assistant' : 'user', content: m.text }));
+  const token = Auth.getToken();
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  try {
+    const res = await fetch('/api/premium/mindfulness/chat', {
+      method: 'POST', headers,
+      body: JSON.stringify({ message: msg, history, language: Lang.get() })
+    });
+    const data = await res.json();
+    hideTTyping();
+    if (!res.ok) {
+      const errMsg = data?.detail?.error || data?.detail || 'Connection issue';
+      addTBubble('dr', `I apologise — ${errMsg} Please try again. 💙`);
+    } else {
+      addTBubble('dr', data.reply || data.response || "I'm here for you. Could you share more? 💙");
+    }
+  } catch(e) {
+    hideTTyping();
+    addTBubble('dr', "I'm sorry, there was a connection issue. Please try again. 💙");
+  }
+}
+
+function addTBubble(role, text) {
+  tHistory.push({ role, text });
+  const chat = document.getElementById('therapyChat');
+  const div = document.createElement('div');
+  div.className = `t-bubble ${role}`;
+  div.innerHTML = renderMd(text);
+  chat.appendChild(div);
+  chat.scrollTo({ top: chat.scrollHeight, behavior: 'smooth' });
+}
+function showTTyping() { document.getElementById('tTypingDots').style.display = 'flex'; }
+function hideTTyping() { document.getElementById('tTypingDots').style.display = 'none'; }
+function renderMd(t) { return t.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>'); }
+document.getElementById('therapyInput').addEventListener('keydown', e => { if(e.key === 'Enter') sendTherapy(); });
+
+/* Mood */
+function selectMood(el, mood, msg) {
+  document.querySelectorAll('.mood-opt').forEach(m => m.classList.remove('selected'));
+  el.classList.add('selected');
+  setTimeout(() => sendTherapy(msg), 600);
+}
+
+/* Breathing */
+const phases = [{t:'Breathe In',d:'Inhale… 4 seconds',dur:4},{t:'Hold',d:'Hold… 4 seconds',dur:4},{t:'Breathe Out',d:'Exhale… 4 seconds',dur:4},{t:'Hold',d:'Hold… 4 seconds',dur:4}];
+let breatheActive = false, phase = 0, countdown = 0, breatheTimer = null;
+
+function toggleBreathe() { breatheActive ? stopBreathe() : startBreathe(); }
+function startBreathe() { breatheActive = true; tick(); }
+function stopBreathe() {
+  breatheActive = false; clearInterval(breatheTimer); phase = 0; countdown = 0;
+  document.getElementById('breatheText').textContent = 'Tap to Start';
+  document.getElementById('breatheCounter').textContent = '4-4-4-4 Box Breathing Technique';
+}
+function tick() {
+  if (!breatheActive) return;
+  const p = phases[phase];
+  document.getElementById('breatheText').textContent = p.t;
+  countdown = p.dur;
+  clearInterval(breatheTimer);
+  breatheTimer = setInterval(() => {
+    countdown--;
+    document.getElementById('breatheCounter').textContent = p.d.replace('…', ` … ${countdown}s`);
+    if (countdown <= 0) { clearInterval(breatheTimer); phase = (phase + 1) % 4; if (breatheActive) tick(); }
+  }, 1000);
+}
+</script>
+</body>
+</html>

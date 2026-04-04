@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1A7A4C">
+  <meta name="description" content="ArogyaAI DNA Insights — AI-powered genomic health analysis and personalized predictions.">
+  <meta http-equiv="Cache-Control" content="no-store">
+  <title>DNA Insights — ArogyaAI</title>
+  <link rel="stylesheet" href="/css/design-system.css">
+  <style>
+    html,body{background:var(--n-50)}
+    .page-hero{background:linear-gradient(135deg,#0F172A 0%,#1E3A5F 40%,#0D4E8A 70%,#0EA5E9 100%);padding:28px 20px 52px;text-align:center;position:relative;overflow:hidden}
+    .page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 80% 0%,rgba(14,165,233,.15) 0%,transparent 60%)}
+    .page-hero::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:40px;background:var(--n-50);border-radius:40px 40px 0 0}
+    .hero-back{display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,.7);font-size:.8rem;font-weight:600;margin-bottom:16px;cursor:pointer;position:relative;z-index:1}
+    .hero-back:hover{color:#fff}
+    .hero-back svg{width:16px;height:16px}
+    .hero-icon{font-size:3rem;margin-bottom:10px;display:block;animation:floatY 3s ease-in-out infinite;position:relative;z-index:1}
+    .hero-title{font-family:var(--font-display);font-size:2rem;font-weight:900;color:#fff;margin-bottom:6px;position:relative;z-index:1;letter-spacing:-.02em}
+    .hero-sub{color:rgba(255,255,255,.75);font-size:.9rem;max-width:500px;margin:0 auto;position:relative;z-index:1}
+    .dna-wrap{max-width:900px;margin:0 auto;padding:20px 20px 80px}
+
+    /* Premium unlock banner */
+    .unlock-banner{background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border:1.5px solid rgba(244,163,0,.3);border-radius:var(--r-xl);padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px;box-shadow:var(--sh-card)}
+    .unlock-text .unlock-title{font-weight:800;color:var(--n-800);font-size:.95rem;margin-bottom:3px}
+    .unlock-text p{font-size:.8rem;color:var(--n-500)}
+    .unlock-btn{background:linear-gradient(135deg,var(--color-accent),#E8960A);border:none;color:var(--n-950);padding:10px 18px;border-radius:var(--r-full);font-weight:800;font-size:.85rem;cursor:pointer;box-shadow:var(--sh-gold);white-space:nowrap;transition:all var(--dur-base)}
+    .unlock-btn:hover{transform:translateY(-1px);box-shadow:var(--sh-gold-h)}
+
+    .insights-grid{display:grid;grid-template-columns:1fr;gap:16px}
+    @media(min-width:640px){.insights-grid{grid-template-columns:1fr 1fr}}
+
+    .insight-card{background:var(--n-0);border:1px solid var(--n-150);border-radius:var(--r-2xl);padding:22px;box-shadow:var(--sh-card);transition:all var(--dur-base);position:relative;overflow:hidden}
+    .insight-card:hover{transform:translateY(-4px);box-shadow:var(--sh-lg)}
+    .insight-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--card-color,#0EA5E9)}
+
+    .insight-badge{position:absolute;top:18px;right:16px;font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;padding:3px 8px;border-radius:var(--r-full);background:rgba(14,165,233,.1);color:#0284C7}
+    .insight-icon-wrap{width:52px;height:52px;border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:14px}
+    .insight-title{font-size:1rem;font-weight:800;color:var(--n-900);margin-bottom:6px}
+    .insight-desc{font-size:.85rem;color:var(--n-600);line-height:1.6}
+
+    /* Risk bar */
+    .risk-wrap{margin-top:14px}
+    .risk-header{display:flex;justify-content:space-between;font-size:.72rem;font-weight:700;margin-bottom:5px}
+    .risk-label{color:var(--n-500)}
+    .risk-val{font-weight:900}
+    .risk-bar{height:8px;background:var(--n-150);border-radius:4px;overflow:hidden}
+    .risk-fill{height:100%;border-radius:4px;transition:width 1s var(--ease-out)}
+    .risk-low{background:var(--color-success)}
+    .risk-med{background:var(--color-warning)}
+    .risk-high{background:var(--color-danger)}
+
+    /* Action card */
+    .insight-action{margin-top:14px;padding-top:12px;border-top:1px solid var(--n-100);display:flex;align-items:center;justify-content:space-between}
+    .insight-action-label{font-size:.72rem;font-weight:700;color:var(--n-500)}
+    .insight-action-btn{font-size:.75rem;font-weight:800;color:#0284C7;cursor:pointer;background:none;border:none;transition:color var(--dur-fast)}
+    .insight-action-btn:hover{color:#0369A1}
+
+    /* CTA */
+    .upload-cta{background:linear-gradient(135deg,#F0F9FF,#E0F2FE);border:1.5px solid rgba(14,165,233,.2);border-radius:var(--r-2xl);padding:28px;text-align:center;margin-top:24px}
+    .cta-icon{font-size:2.5rem;margin-bottom:12px}
+    .cta-title{font-family:var(--font-display);font-size:1.2rem;font-weight:800;color:var(--n-800);margin-bottom:6px}
+    .cta-sub{font-size:.85rem;color:var(--n-500);margin-bottom:16px}
+    .cta-btn{background:linear-gradient(135deg,#0EA5E9,#0284C7);color:#fff;border:none;padding:14px 28px;border-radius:var(--r-xl);font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(14,165,233,.35);transition:all var(--dur-base);font-size:.95rem}
+    .cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(14,165,233,.45)}
+
+    .bottom-nav{background:rgba(255,255,255,.96);border-top:1px solid var(--n-200)}
+  </style>
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar"></aside>
+  <div class="main-area" style="overflow-y:auto">
+    <div class="page-hero">
+      <div style="max-width:700px;margin:0 auto">
+        <div class="hero-back" onclick="history.back()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>Back</div>
+        <span class="hero-icon">🧬</span>
+        <div class="hero-title">DNA Insights</div>
+        <p class="hero-sub">Your genome analysed by our billion-parameter AI model — predict, prevent and personalise your health journey</p>
+      </div>
+    </div>
+    <div class="dna-wrap">
+      <!-- Premium Banner -->
+      <div class="unlock-banner">
+        <div class="unlock-text">
+          <div class="unlock-title">✦ Unlock Full Genome Report</div>
+          <p>Upload your DNA data (23andMe, AncestryDNA) for a full personalised analysis</p>
+        </div>
+        <button class="unlock-btn">Upload DNA Data</button>
+      </div>
+
+      <!-- Insights Grid (Demo Data) -->
+      <div class="insights-grid">
+
+        <div class="insight-card" style="--card-color:#DC2626">
+          <div class="insight-badge" style="background:rgba(220,38,38,.08);color:#DC2626">PREDICTIVE</div>
+          <div class="insight-icon-wrap" style="background:#FEE2E2">🫀</div>
+          <div class="insight-title">Cardiovascular Risk</div>
+          <div class="insight-desc">APOE-e4 variant detected — indicates elevated baseline cardiovascular risk over the next 10 years.</div>
+          <div class="risk-wrap">
+            <div class="risk-header"><span class="risk-label">10-Year Risk Score</span><span class="risk-val" style="color:#DC2626">Elevated (45%)</span></div>
+            <div class="risk-bar"><div class="risk-fill risk-med" style="width:45%"></div></div>
+          </div>
+          <div class="insight-action">
+            <span class="insight-action-label">Personalised prevention plan available</span>
+            <button class="insight-action-btn" onclick="window.location.href='/chat?msg=Based on my APOE-e4 variant, what lifestyle changes reduce my cardiovascular risk?'">Ask Dr. Arogya →</button>
+          </div>
+        </div>
+
+        <div class="insight-card" style="--card-color:#D97706">
+          <div class="insight-badge" style="background:rgba(217,119,6,.08);color:#D97706">NUTRIGENOMICS</div>
+          <div class="insight-icon-wrap" style="background:#FEF3C7">☕</div>
+          <div class="insight-title">Caffeine Metabolism</div>
+          <div class="insight-desc">Slow metaboliser (CYP1A2 gene) — late-day caffeine is 3× more likely to disrupt your REM sleep cycle.</div>
+          <div class="risk-wrap">
+            <div class="risk-header"><span class="risk-label">Sleep Disruption Risk</span><span class="risk-val" style="color:#D97706">Moderate</span></div>
+            <div class="risk-bar"><div class="risk-fill risk-med" style="width:60%"></div></div>
+          </div>
+          <div class="insight-action">
+            <span class="insight-action-label">Action: Limit caffeine after 2 PM</span>
+            <button class="insight-action-btn" onclick="window.location.href='/chat?msg=I am a slow caffeine metaboliser. How should I optimise my diet?'">Get Diet Plan →</button>
+          </div>
+        </div>
+
+        <div class="insight-card" style="--card-color:#7C3AED">
+          <div class="insight-badge" style="background:rgba(124,58,237,.08);color:#7C3AED">PHARMACOGENOMICS</div>
+          <div class="insight-icon-wrap" style="background:#EDE9FE">💊</div>
+          <div class="insight-title">Medication Efficacy</div>
+          <div class="insight-desc">Standard metaboliser for most NSAIDs. Reduced efficacy detected for certain statins — your profile has been flagged for your doctor.</div>
+          <div class="risk-wrap">
+            <div class="risk-header"><span class="risk-label">Statin Efficacy</span><span class="risk-val" style="color:#7C3AED">Reduced</span></div>
+            <div class="risk-bar"><div class="risk-fill" style="width:30%;background:#7C3AED"></div></div>
+          </div>
+          <div class="insight-action">
+            <span class="insight-action-label">Alternative medications identified</span>
+            <button class="insight-action-btn" onclick="window.location.href='/drug-checker'">Check Medications →</button>
+          </div>
+        </div>
+
+        <div class="insight-card" style="--card-color:#16A34A">
+          <div class="insight-badge" style="background:rgba(22,163,74,.08);color:#16A34A">FITNESS GENES</div>
+          <div class="insight-icon-wrap" style="background:#DCFCE7">⚡</div>
+          <div class="insight-title">Muscle Fiber Composition</div>
+          <div class="insight-desc">ACTN3 variant detected — predisposes you to power and explosive movements. Your AI Fitness Coach has updated your workout plan.</div>
+          <div class="risk-wrap">
+            <div class="risk-header"><span class="risk-label">Power Fiber %</span><span class="risk-val" style="color:#16A34A">High (72%)</span></div>
+            <div class="risk-bar"><div class="risk-fill risk-low" style="width:72%"></div></div>
+          </div>
+          <div class="insight-action">
+            <span class="insight-action-label">HIIT + strength training recommended</span>
+            <button class="insight-action-btn" onclick="window.location.href='/fitness'">View Workout Plan →</button>
+          </div>
+        </div>
+
+        <div class="insight-card" style="--card-color:#0EA5E9">
+          <div class="insight-badge" style="background:rgba(14,165,233,.08);color:#0EA5E9">VITAMIN GENES</div>
+          <div class="insight-icon-wrap" style="background:#E0F2FE">☀️</div>
+          <div class="insight-title">Vitamin D Absorption</div>
+          <div class="insight-desc">GC gene variant — reduced Vitamin D synthesis from sunlight. Supplementation strongly recommended, especially in winter months.</div>
+          <div class="risk-wrap">
+            <div class="risk-header"><span class="risk-label">Deficiency Risk</span><span class="risk-val" style="color:#D97706">Elevated</span></div>
+            <div class="risk-bar"><div class="risk-fill risk-med" style="width:55%"></div></div>
+          </div>
+          <div class="insight-action">
+            <span class="insight-action-label">2000 IU/day Vit D3 recommended</span>
+            <button class="insight-action-btn" onclick="window.location.href='/chat?msg=I have a GC gene variant. What is the right Vitamin D dosage for me?'">Ask Dr. Arogya →</button>
+          </div>
+        </div>
+
+        <div class="insight-card" style="--card-color:#F59E0B">
+          <div class="insight-badge" style="background:rgba(245,158,11,.08);color:#D97706">METABOLISM</div>
+          <div class="insight-icon-wrap" style="background:#FEF3C7">🍎</div>
+          <div class="insight-title">Carbohydrate Sensitivity</div>
+          <div class="insight-desc">TCF7L2 variant — moderately elevated risk of type-2 diabetes. Refined carbohydrates should be minimised. Low-GI diet recommended.</div>
+          <div class="risk-wrap">
+            <div class="risk-header"><span class="risk-label">Diabetes Risk (lifetime)</span><span class="risk-val" style="color:#D97706">Moderate (32%)</span></div>
+            <div class="risk-bar"><div class="risk-fill risk-med" style="width:32%"></div></div>
+          </div>
+          <div class="insight-action">
+            <span class="insight-action-label">Low-GI diet plan available</span>
+            <button class="insight-action-btn" onclick="window.location.href='/nutrition'">Get Diet Plan →</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Upload CTA -->
+      <div class="upload-cta">
+        <div class="cta-icon">🧬</div>
+        <div class="cta-title">Get Your Full Genome Report</div>
+        <p class="cta-sub">Upload your raw DNA data from 23andMe, AncestryDNA or any genome sequencing service for a complete 500+ trait analysis personalised to your biology.</p>
+        <button class="cta-btn">Upload DNA Data File →</button>
+      </div>
+
+      <!-- AI Genomic Counselor -->
+      <div style="background:linear-gradient(135deg,#F0F9FF,#E0F2FE);border:1.5px solid rgba(14,165,233,.2);border-radius:var(--r-2xl);padding:24px;margin-top:24px;box-shadow:0 4px 20px rgba(14,165,233,.08)">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+          <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#0EA5E9,#0284C7);display:flex;align-items:center;justify-content:center;font-size:1.3rem;box-shadow:0 4px 14px rgba(14,165,233,.35)">🧬</div>
+          <div>
+            <div style="font-weight:800;color:var(--n-900);font-size:.95rem">Dr. Rao — AI Genomic Counselor</div>
+            <div style="font-size:.7rem;color:#0284C7;font-weight:700;background:rgba(14,165,233,.1);padding:2px 8px;border-radius:20px;display:inline-block">Precision Medicine · PhD Genomics</div>
+          </div>
+        </div>
+        <div style="background:var(--n-0);border:1px solid var(--n-150);border-radius:14px;border-bottom-left-radius:4px;padding:14px;font-size:.88rem;color:var(--n-700);line-height:1.65;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.04)">
+          Hello! I'm Dr. Rao, your AI Genomic Counselor. I can explain what your genetic markers mean, help you understand disease risk, and design a personalised lifestyle plan based on your DNA profile. What would you like to explore?
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px" id="dnaQuickAsk">
+          <button onclick="askGenomics('Explain my APOE-e4 variant and how to reduce cardiovascular risk through lifestyle changes.')" style="padding:7px 13px;border-radius:20px;border:1.5px solid rgba(14,165,233,.3);background:var(--n-0);font-size:.78rem;font-weight:600;color:#0284C7;cursor:pointer;transition:all .2s">🫀 Cardio Risk</button>
+          <button onclick="askGenomics('I have a TCF7L2 variant. What diet and lifestyle changes best protect me from developing Type 2 diabetes?')" style="padding:7px 13px;border-radius:20px;border:1.5px solid rgba(14,165,233,.3);background:var(--n-0);font-size:.78rem;font-weight:600;color:#0284C7;cursor:pointer;transition:all .2s">🩸 Diabetes Gene</button>
+          <button onclick="askGenomics('I have a GC gene variant affecting Vitamin D absorption. What supplements and foods should I focus on?')" style="padding:7px 13px;border-radius:20px;border:1.5px solid rgba(14,165,233,.3);background:var(--n-0);font-size:.78rem;font-weight:600;color:#0284C7;cursor:pointer;transition:all .2s">☀️ Vitamin D Gene</button>
+          <button onclick="askGenomics('I am a slow caffeine metaboliser (CYP1A2). How does this affect my health and sleep?')" style="padding:7px 13px;border-radius:20px;border:1.5px solid rgba(14,165,233,.3);background:var(--n-0);font-size:.78rem;font-weight:600;color:#0284C7;cursor:pointer;transition:all .2s">☕ Caffeine Genes</button>
+          <button onclick="askGenomics('What are the most important epigenetic changes I can make to improve my genetic health outcomes?')" style="padding:7px 13px;border-radius:20px;border:1.5px solid rgba(14,165,233,.3);background:var(--n-0);font-size:.78rem;font-weight:600;color:#0284C7;cursor:pointer;transition:all .2s">🔬 Epigenetics</button>
+        </div>
+        <div style="display:flex;gap:8px">
+          <input id="dnaInput" placeholder="Ask about your genes, variants, or genomic health…" style="flex:1;padding:11px 14px;border:1.5px solid rgba(14,165,233,.3);border-radius:var(--r-xl);font-size:.88rem;background:var(--n-0);color:var(--n-900);outline:none;transition:border-color .2s" onfocus="this.style.borderColor='#0EA5E9'" onblur="this.style.borderColor='rgba(14,165,233,.3)'">
+          <button onclick="askGenomics()" style="padding:11px 18px;border-radius:var(--r-xl);background:linear-gradient(135deg,#0EA5E9,#0284C7);color:#fff;border:none;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(14,165,233,.35);white-space:nowrap">Ask →</button>
+        </div>
+        <div id="dnaResponse" style="display:none;margin-top:12px;background:var(--n-0);border:1px solid var(--n-150);border-radius:var(--r-lg);padding:14px;font-size:.88rem;color:var(--n-700);line-height:1.7;box-shadow:0 1px 4px rgba(0,0,0,.04)"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<script src="/js/app.js"></script>
+<script>
+window.addEventListener('pageshow', e => { if (e.persisted) window.location.reload(); });
+// No login redirect — demo data is visible to all; login is optional for personalised data
+
+let dnaHistory = [];
+
+async function askGenomics(preset) {
+  const input = document.getElementById('dnaInput');
+  const msg = preset || input.value.trim();
+  if (!msg) return;
+  input.value = '';
+
+  const resp = document.getElementById('dnaResponse');
+  resp.style.display = 'block';
+  resp.innerHTML = '<div style="text-align:center;color:var(--n-400);padding:10px">🧬 Dr. Rao is analysing your genome data…</div>';
+
+  const token = Auth.getToken();
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  try {
+    const res = await fetch('/api/premium/genetics/chat', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        message: msg,
+        history: dnaHistory.slice(-8),
+        language: Lang.get(),
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      resp.innerHTML = `<div style="color:var(--color-danger)">⚠️ ${data?.detail?.error || data?.detail || 'Error. Please try again.'}</div>`;
+      return;
+    }
+    const reply = data.reply || data.response || '';
+    dnaHistory.push({ role: 'user', content: msg });
+    dnaHistory.push({ role: 'assistant', content: reply });
+    resp.innerHTML = renderMd(reply);
+  } catch(e) {
+    resp.innerHTML = '<div style="color:var(--color-danger)">⚠️ Connection error. Please try again.</div>';
+  }
+}
+
+function renderMd(text) {
+  return text.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/^### (.+)$/gm,'<h4 style="color:#0284C7;font-size:.9rem;margin:10px 0 5px">$1</h4>').replace(/^## (.+)$/gm,'<h3 style="color:#0284C7;font-size:.95rem;margin:10px 0 5px">$1</h3>').replace(/^[-•] (.+)$/gm,'<li>$1</li>').replace(/((<li>.*<\/li>\n?)+)/g,'<ul style="padding-left:18px;margin:6px 0">$1</ul>').replace(/\n/g,'<br>');
+}
+document.getElementById('dnaInput').addEventListener('keydown', e => { if (e.key === 'Enter') askGenomics(); });
+</script>
+</body>
+</html>

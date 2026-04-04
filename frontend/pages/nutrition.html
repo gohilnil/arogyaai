@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1A7A4C">
+  <meta name="description" content="ArogyaAI AI Diet & Nutrition — Personalized Indian meal plans, macro tracking and AI dietitian.">
+  <meta http-equiv="Cache-Control" content="no-store">
+  <title>AI Diet & Nutrition — ArogyaAI</title>
+  <link rel="stylesheet" href="/css/design-system.css">
+  <style>
+    html,body{background:var(--n-50)}
+    .page-hero{background:linear-gradient(135deg,#0D3D24 0%,#1A7A4C 55%,#2E8B57 100%);padding:28px 20px 52px;position:relative;overflow:hidden}
+    .page-hero::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:40px;background:var(--n-50);border-radius:40px 40px 0 0}
+    .hero-inner{max-width:900px;margin:0 auto;position:relative;z-index:1}
+    .hero-back{display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,.7);font-size:.8rem;font-weight:600;margin-bottom:14px;cursor:pointer}
+    .hero-back svg{width:16px;height:16px}
+    .hero-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 12px;border-radius:var(--r-full);background:rgba(255,255,255,.15);color:rgba(255,255,255,.9);font-size:.7rem;font-weight:800;letter-spacing:.08em;margin-bottom:10px}
+    .hero-title{font-family:var(--font-display);font-size:clamp(1.6rem,4vw,2.2rem);font-weight:900;color:#fff;margin-bottom:6px;letter-spacing:-.02em}
+    .hero-sub{color:rgba(255,255,255,.75);font-size:.9rem;max-width:520px}
+
+    .page-wrap{max-width:900px;margin:0 auto;padding:20px 20px 80px;display:flex;flex-direction:column;gap:20px}
+
+    /* Goal Selector */
+    .goal-card{background:var(--n-0);border:1px solid var(--n-150);border-radius:var(--r-2xl);padding:22px;box-shadow:var(--sh-card)}
+    .card-title{font-size:.78rem;font-weight:800;color:var(--n-500);text-transform:uppercase;letter-spacing:.09em;margin-bottom:14px}
+    .goal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    @media(min-width:480px){.goal-grid{grid-template-columns:repeat(4,1fr)}}
+    .goal-btn{padding:14px 8px;border-radius:var(--r-xl);border:1.5px solid var(--n-200);background:var(--n-50);cursor:pointer;text-align:center;transition:all var(--dur-fast)}
+    .goal-btn:hover{border-color:var(--color-primary);background:var(--color-primary-pale)}
+    .goal-btn.active{border-color:var(--color-primary);background:var(--color-primary-pale)}
+    .goal-icon{font-size:1.6rem;margin-bottom:4px}
+    .goal-label{font-size:.78rem;font-weight:700;color:var(--n-700)}
+    .goal-btn.active .goal-label{color:var(--color-primary)}
+
+    /* Macro Ring */
+    .macro-section{background:var(--n-0);border:1px solid var(--n-150);border-radius:var(--r-2xl);padding:22px;box-shadow:var(--sh-card)}
+    .macro-top{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+    .calorie-ring{position:relative;width:110px;height:110px;flex-shrink:0}
+    .calorie-ring svg{width:110px;height:110px;transform:rotate(-90deg)}
+    .ring-bg2{fill:none;stroke:var(--n-150);stroke-width:10}
+    .ring-fill2{fill:none;stroke:var(--color-primary);stroke-width:10;stroke-linecap:round;stroke-dasharray:314;stroke-dashoffset:80;transition:stroke-dashoffset 1.2s var(--ease-out)}
+    .ring-centre{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+    .ring-kcal{font-family:var(--font-nums);font-size:1.3rem;font-weight:900;color:var(--n-900)}
+    .ring-kcal-lbl{font-size:.6rem;font-weight:700;color:var(--n-400)}
+    .macros-info{flex:1}
+    .macros-info-title{font-weight:800;color:var(--n-900);margin-bottom:12px;font-size:.95rem}
+    .macro-item{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+    .macro-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+    .macro-label-wrap{font-size:.82rem;color:var(--n-600);flex:1}
+    .macro-val2{font-family:var(--font-nums);font-weight:800;color:var(--n-800);font-size:.88rem}
+    .macro-bar2{height:5px;background:var(--n-150);border-radius:3px;margin-top:3px;overflow:hidden}
+    .macro-fill2{height:100%;border-radius:3px;transition:width 1s var(--ease-out)}
+
+    /* Meal Plan */
+    .meal-section{background:var(--n-0);border:1px solid var(--n-150);border-radius:var(--r-2xl);overflow:hidden;box-shadow:var(--sh-card)}
+    .meal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--n-150)}
+    .meal-header-title{font-weight:900;color:var(--n-900);font-size:1rem}
+    .gen-btn{background:linear-gradient(135deg,var(--color-accent),#E8960A);color:var(--n-950);border:none;padding:9px 18px;border-radius:var(--r-full);font-weight:800;font-size:.8rem;cursor:pointer;box-shadow:var(--sh-gold);transition:all var(--dur-base)}
+    .gen-btn:hover{transform:translateY(-1px);box-shadow:var(--sh-gold-h)}
+    .gen-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+    .meal-list{display:flex;flex-direction:column}
+    .meal-row{display:flex;align-items:center;gap:14px;padding:16px 20px;border-bottom:1px solid var(--n-100);transition:background var(--dur-fast);cursor:pointer}
+    .meal-row:last-child{border-bottom:none}
+    .meal-row:hover{background:var(--n-50)}
+    .meal-emoji{width:52px;height:52px;border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;font-size:1.7rem;flex-shrink:0}
+    .meal-time-tag{font-size:.68rem;font-weight:800;color:var(--color-primary);text-transform:uppercase;letter-spacing:.08em}
+    .meal-name2{font-weight:800;color:var(--n-900);font-size:.92rem;margin:2px 0}
+    .meal-cals2{font-size:.78rem;color:var(--n-500)}
+    .meal-check{margin-left:auto;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .meal-check.done{background:var(--color-success);color:#fff;font-size:.75rem}
+    .meal-check.todo{border:2px solid var(--n-200)}
+
+    /* AI Dietitian Chat Section */
+    .dietitian-section{background:linear-gradient(135deg,#F0FDF4,#DCFCE7);border:1.5px solid rgba(22,163,74,.15);border-radius:var(--r-2xl);padding:22px;box-shadow:var(--sh-card)}
+    .dietitian-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+    .dietitian-av{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--color-primary),var(--color-primary-mid));display:flex;align-items:center;justify-content:center;font-size:1.3rem;box-shadow:var(--sh-green)}
+    .dietitian-name{font-weight:800;color:var(--n-900);font-size:.95rem}
+    .dietitian-tag{font-size:.68rem;color:var(--color-primary);font-weight:700;background:var(--color-primary-pale);padding:2px 8px;border-radius:var(--r-full)}
+    .dietitian-bubble{background:var(--n-0);border:1px solid var(--n-150);border-radius:16px;border-bottom-left-radius:4px;padding:14px 16px;font-size:.88rem;color:var(--n-700);line-height:1.65;margin-bottom:14px;box-shadow:var(--sh-xs)}
+    .quick-ask{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+    .qa-chip{padding:7px 13px;border-radius:var(--r-full);border:1.5px solid rgba(22,163,74,.3);background:var(--n-0);font-size:.78rem;font-weight:600;color:var(--color-primary);cursor:pointer;transition:all var(--dur-fast)}
+    .qa-chip:hover{background:var(--color-primary);color:#fff;border-color:var(--color-primary)}
+    .input-row2{display:flex;gap:8px}
+    .nutri-input{flex:1;padding:11px 14px;border:1.5px solid var(--n-200);border-radius:var(--r-xl);font-size:.88rem;background:var(--n-0);color:var(--n-900);transition:border-color var(--dur-fast)}
+    .nutri-input:focus{outline:none;border-color:var(--color-primary);box-shadow:var(--sh-focus)}
+    .ask-btn{padding:11px 18px;border-radius:var(--r-xl);background:var(--color-primary);color:#fff;border:none;font-weight:800;font-size:.88rem;cursor:pointer;box-shadow:var(--sh-green);transition:all var(--dur-fast);white-space:nowrap}
+    .ask-btn:hover{transform:translateY(-1px)}
+    .response-area{display:none;margin-top:12px;background:var(--n-0);border:1px solid var(--n-150);border-radius:var(--r-lg);padding:14px;font-size:.88rem;color:var(--n-700);line-height:1.7;box-shadow:var(--sh-xs)}
+    .response-area.show{display:block;animation:fadeSlideUp .3s var(--ease-out)}
+    .response-area h3{color:var(--color-primary-dark);font-size:.88rem;font-weight:800;margin:10px 0 5px}
+    .response-area strong{color:var(--n-900)}
+    .response-area ul{padding-left:18px;margin:5px 0}
+    .response-area li{margin-bottom:4px}
+  </style>
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar"></aside>
+  <div class="main-area" style="overflow-y:auto">
+
+    <div class="page-hero">
+      <div class="hero-inner">
+        <div class="hero-back" onclick="history.back()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>Back</div>
+        <div class="hero-badge">🥗 AI DIETITIAN</div>
+        <div class="hero-title">Diet & Nutrition</div>
+        <p class="hero-sub">Personalised Indian meal plans, macro tracking and AI-powered nutrition coaching</p>
+      </div>
+    </div>
+
+    <div class="page-wrap">
+
+      <!-- Goal Selector -->
+      <div class="goal-card">
+        <div class="card-title">Your Nutrition Goal</div>
+        <div class="goal-grid">
+          <div class="goal-btn active" onclick="setGoal(this,'weight_loss')"><div class="goal-icon">⬇️</div><div class="goal-label">Lose Weight</div></div>
+          <div class="goal-btn" onclick="setGoal(this,'muscle_gain')"><div class="goal-icon">💪</div><div class="goal-label">Build Muscle</div></div>
+          <div class="goal-btn" onclick="setGoal(this,'balanced')"><div class="goal-icon">⚖️</div><div class="goal-label">Stay Balanced</div></div>
+          <div class="goal-btn" onclick="setGoal(this,'diabetes')"><div class="goal-icon">🩸</div><div class="goal-label">Manage Diabetes</div></div>
+        </div>
+      </div>
+
+      <!-- Macro Tracker -->
+      <div class="macro-section">
+        <div class="card-title">Today's Macro Progress</div>
+        <div class="macro-top">
+          <div class="calorie-ring">
+            <svg><circle class="ring-bg2" cx="55" cy="55" r="45"/><circle class="ring-fill2" id="calRing" cx="55" cy="55" r="45"/></svg>
+            <div class="ring-centre"><div class="ring-kcal" id="calAte">1,485</div><div class="ring-kcal-lbl">of 1,800 kcal</div></div>
+          </div>
+          <div class="macros-info">
+            <div class="macros-info-title">Macronutrients</div>
+            <div class="macro-item">
+              <div class="macro-dot" style="background:#F59E0B"></div>
+              <div class="macro-label-wrap">Carbohydrates <div class="macro-bar2"><div class="macro-fill2" style="width:68%;background:#F59E0B"></div></div></div>
+              <div class="macro-val2">124g</div>
+            </div>
+            <div class="macro-item">
+              <div class="macro-dot" style="background:#EF4444"></div>
+              <div class="macro-label-wrap">Protein <div class="macro-bar2"><div class="macro-fill2" style="width:82%;background:#EF4444"></div></div></div>
+              <div class="macro-val2">86g</div>
+            </div>
+            <div class="macro-item">
+              <div class="macro-dot" style="background:var(--color-primary)"></div>
+              <div class="macro-label-wrap">Healthy Fats <div class="macro-bar2"><div class="macro-fill2" style="width:38%;background:var(--color-primary)"></div></div></div>
+              <div class="macro-val2">38g</div>
+            </div>
+            <div class="macro-item">
+              <div class="macro-dot" style="background:#6366F1"></div>
+              <div class="macro-label-wrap">Fibre <div class="macro-bar2"><div class="macro-fill2" style="width:55%;background:#6366F1"></div></div></div>
+              <div class="macro-val2">16g</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Meal Plan -->
+      <div class="meal-section">
+        <div class="meal-header">
+          <div class="meal-header-title">🍽️ Today's AI Meal Plan</div>
+          <button class="gen-btn" id="genBtn" onclick="generateMealPlan()">✨ Regenerate</button>
+        </div>
+        <div class="meal-list" id="mealList">
+          <div class="meal-row">
+            <div class="meal-emoji" style="background:#FEF3C7">🥣</div>
+            <div><div class="meal-time-tag">Breakfast · 7:30 AM</div><div class="meal-name2">Moong Dal Chilla with Green Chutney</div><div class="meal-cals2">320 kcal · 18g Protein · High Fibre</div></div>
+            <div class="meal-check done">✓</div>
+          </div>
+          <div class="meal-row">
+            <div class="meal-emoji" style="background:#DCFCE7">🥗</div>
+            <div><div class="meal-time-tag">Lunch · 1:00 PM</div><div class="meal-name2">Dal Tadka + Brown Rice + Palak Sabzi</div><div class="meal-cals2">480 kcal · 22g Protein · Iron-Rich</div></div>
+            <div class="meal-check done">✓</div>
+          </div>
+          <div class="meal-row">
+            <div class="meal-emoji" style="background:#FEF9C3">🍎</div>
+            <div><div class="meal-time-tag">Snack · 4:30 PM</div><div class="meal-name2">Apple + Handful of Almonds</div><div class="meal-cals2">185 kcal · 5g Protein · Low GI</div></div>
+            <div class="meal-check todo"></div>
+          </div>
+          <div class="meal-row">
+            <div class="meal-emoji" style="background:#E0F2FE">🍛</div>
+            <div><div class="meal-time-tag">Dinner · 7:30 PM</div><div class="meal-name2">Grilled Chicken Curry + Millet Roti</div><div class="meal-cals2">500 kcal · 41g Protein · Low Carb</div></div>
+            <div class="meal-check todo"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Dietitian Chat -->
+      <div class="dietitian-section">
+        <div class="dietitian-header">
+          <div class="dietitian-av">🥗</div>
+          <div>
+            <div class="dietitian-name">AI Dietitian</div>
+            <div class="dietitian-tag">Personalized Nutrition Intelligence</div>
+          </div>
+        </div>
+        <div class="dietitian-bubble" id="dietBubble">
+          Hi! I'm your AI Dietitian. I've analysed your goal and prepared today's meal plan to maximise nutrition while fitting Indian food culture. Ask me anything about your diet, healthy substitutes, or meal ideas!
+        </div>
+        <div class="quick-ask">
+          <div class="qa-chip" onclick="askNutri('Best high-protein Indian breakfast options?')">🥚 Protein Breakfast</div>
+          <div class="qa-chip" onclick="askNutri('Healthy Indian snacks under 200 calories?')">🍒 Low-Cal Snacks</div>
+          <div class="qa-chip" onclick="askNutri('Foods that help reduce belly fat?')">🔥 Belly Fat Diet</div>
+          <div class="qa-chip" onclick="askNutri('What should a diabetic eat for dinner?')">🩸 Diabetic Dinner</div>
+          <div class="qa-chip" onclick="askNutri('Iron-rich Indian foods for anaemia?')">💉 Iron-Rich Foods</div>
+        </div>
+        <div class="input-row2">
+          <input class="nutri-input" id="nutriInput" placeholder="Ask anything about your diet…" onkeydown="if(e.key==='Enter')askNutri()">
+          <button class="ask-btn" onclick="askNutri()">Ask →</button>
+        </div>
+        <div class="response-area" id="nutriResponse"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<script src="/js/app.js"></script>
+<script>
+let currentGoal = 'weight_loss';
+let nutriHistory = [];
+
+function setGoal(el, goal) {
+  document.querySelectorAll('.goal-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active'); currentGoal = goal;
+  generateMealPlan();
+}
+
+async function premiumCall(module, message, history=[]) {
+  const token = Auth.getToken();
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  const res = await fetch(`/api/premium/${module}/chat`, {
+    method: 'POST', headers,
+    body: JSON.stringify({ message, history: history.slice(-10), language: Lang.get() })
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data?.detail?.error || data?.detail || `HTTP ${res.status}`);
+  return data.reply || data.response || '';
+}
+
+async function generateMealPlan() {
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true; btn.textContent = '⏳ Generating…';
+  const goalText = { weight_loss:'weight loss (low calorie, high fibre, Indian foods)', muscle_gain:'muscle gain (high protein, Indian diet)', balanced:'balanced nutrition (Indian meals)', diabetes:'diabetic management (low GI, low sugar, Indian diet)' }[currentGoal];
+  const msg = `Generate a healthy Indian meal plan for today for someone with goal: ${goalText}. Include Breakfast, Lunch, Snack and Dinner. For each meal give: name, key ingredients, calories, protein, and why it's great for this goal. Format clearly with emojis.`;
+  const resp = document.getElementById('nutriResponse');
+  resp.innerHTML = '<div style="text-align:center;color:var(--n-400);padding:16px">🥗 Dr. Priya is creating your personalised meal plan…</div>';
+  resp.classList.add('show');
+  try {
+    const reply = await premiumCall('nutrition', msg, nutriHistory);
+    nutriHistory.push({ role: 'user', content: msg });
+    nutriHistory.push({ role: 'assistant', content: reply });
+    resp.innerHTML = renderMd(reply);
+  } catch(e) {
+    resp.innerHTML = `<div style="color:var(--color-danger)">⚠️ ${e.message || 'Could not generate plan. Please try again.'}</div>`;
+  }
+  btn.disabled = false; btn.textContent = '✨ Regenerate';
+}
+
+async function askNutri(preset) {
+  const input = document.getElementById('nutriInput');
+  const msg = preset || input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  const resp = document.getElementById('nutriResponse');
+  resp.innerHTML = '<div style="text-align:center;color:var(--n-400);padding:10px">⏳ Dr. Priya is thinking…</div>';
+  resp.classList.add('show');
+  try {
+    const reply = await premiumCall('nutrition', msg, nutriHistory);
+    nutriHistory.push({ role: 'user', content: msg });
+    nutriHistory.push({ role: 'assistant', content: reply });
+    resp.innerHTML = renderMd(reply);
+  } catch(e) {
+    resp.innerHTML = `<div style="color:var(--color-danger)">⚠️ ${e.message || 'Could not get response. Please try again.'}</div>`;
+  }
+}
+
+function renderMd(text) {
+  return text.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/^### (.+)$/gm,'<h4 style="color:var(--color-primary);margin:10px 0 5px">$1</h4>').replace(/^## (.+)$/gm,'<h3 style="color:var(--color-primary);margin:12px 0 6px">$1</h3>').replace(/^[-•] (.+)$/gm,'<li>$1</li>').replace(/((<li>.*<\/li>\n?)+)/g,'<ul style="padding-left:18px;margin:6px 0">$1</ul>').replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>');
+}
+document.getElementById('nutriInput').addEventListener('keydown',e=>{if(e.key==='Enter')askNutri();});
+// Auto-generate meal plan on load
+document.addEventListener('DOMContentLoaded', () => setTimeout(generateMealPlan, 500));
+</script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+# ── Python ────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.whl
+
+# ── Virtual Environments ──────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+backend/.venv/
+backend/venv/
+
+# ── SECRETS — NEVER COMMIT ────────────────────────────────
+.env
+.env.local
+.env.production
+.env.staging
+backend/.env
+
+# ── IDE / Editor ──────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Testing / Linting ─────────────────────────────────────
+.pytest_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+coverage.xml
+*.cover
+
+# ── Docker volumes ────────────────────────────────────────
+redis_data/
+postgres_data/
+
+# ── Node (future) ─────────────────────────────────────────
+node_modules/
+.next/
+
+# ── Logs & temp ───────────────────────────────────────────
+*.log
+logs/
+tmp/
+
+# ── Security — NEVER commit these ────────────────────────
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/

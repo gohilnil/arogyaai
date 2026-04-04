@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0a3d2a">
+  <meta name="description" content="ArogyaAI — India's #1 AI Health Companion. Ask health questions in Hindi, Gujarati or English. Free, instant, doctor-quality guidance for every Indian family.">
+  <meta name="keywords" content="AI doctor, health AI, Hindi health chat, Indian health app, free doctor consultation">
+  <meta property="og:title" content="ArogyaAI — Bharat ka #1 AI Doctor">
+  <meta property="og:description" content="Free AI health guidance in 8+ Indian languages. Voice-first, doctor-reviewed, always available.">
+  <title>ArogyaAI — India's #1 AI Health Companion 🩺</title>
+  <link rel="stylesheet" href="/css/design-system.css">
+
+  <style>
+    /* ── Navbar ── */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: var(--z-sticky);
+      background: rgba(10,61,42,.85);
+      backdrop-filter: blur(24px) saturate(1.8);
+      -webkit-backdrop-filter: blur(24px) saturate(1.8);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      transition: all var(--dur-base);
+    }
+    .navbar.scrolled {
+      background: rgba(10,61,42,.96);
+      box-shadow: 0 4px 30px rgba(0,0,0,.3);
+    }
+    .navbar-inner {
+      max-width: var(--page-max); margin: 0 auto;
+      padding: var(--sp-3) var(--page-px);
+      display: flex; align-items: center; justify-content: space-between; gap: var(--sp-5);
+    }
+    .brand { display: flex; align-items: center; gap: var(--sp-3); }
+    .brand-icon {
+      width: 40px; height: 40px; border-radius: var(--r-md);
+      background: linear-gradient(135deg, rgba(255,255,255,.2), rgba(255,255,255,.05));
+      border: 1px solid rgba(255,255,255,.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; flex-shrink: 0;
+    }
+    .brand-name { font-family: var(--font-nums); font-weight: 800; font-size: 1.15rem; color: #fff; }
+    .brand-name em { color: #4ADE80; font-style: normal; }
+    .brand-sub { font-size: .6rem; color: rgba(255,255,255,.5); text-transform: uppercase; letter-spacing: .1em; margin-top: 1px; }
+    .nav-links { display: none; align-items: center; gap: var(--sp-6); }
+    @media(min-width:1024px) { .nav-links { display: flex; } }
+    .nav-links a { font-size: var(--text-label); font-weight: 600; color: rgba(255,255,255,.7); transition: color var(--dur-fast); }
+    .nav-links a:hover { color: #4ADE80; }
+    .nav-actions { display: flex; align-items: center; gap: var(--sp-3); }
+    .nav-login {
+      height: 38px; padding: 0 var(--sp-5); border-radius: var(--r-full);
+      border: 1.5px solid rgba(255,255,255,.2); font-size: var(--text-label);
+      font-weight: 600; color: #fff; background: transparent; transition: all var(--dur-fast);
+    }
+    .nav-login:hover { border-color: #4ADE80; color: #4ADE80; background: rgba(74,222,128,.08); }
+    .nav-cta {
+      height: 38px; padding: 0 var(--sp-5); border-radius: var(--r-full);
+      background: linear-gradient(135deg, #4ADE80, #22c55e);
+      color: #0a3d2a; font-size: var(--text-label); font-weight: 800; border: none;
+      box-shadow: 0 4px 20px rgba(74,222,128,.3); transition: all var(--dur-fast);
+    }
+    .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(74,222,128,.4); }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100dvh; position: relative; overflow: hidden;
+      display: flex; align-items: center;
+      padding: calc(80px + var(--sp-9)) 0 var(--sp-9);
+    }
+    .hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background: linear-gradient(155deg, #020c07 0%, #0a3d2a 20%, #1A5E3A 45%, #2E8B57 65%, #1a4a34 85%, #071f14 100%);
+      background-size: 300% 300%;
+      animation: meshGradient 16s ease infinite;
+    }
+    .hero-grid {
+      position: absolute; inset: 0; z-index: 1;
+      background-image:
+        linear-gradient(rgba(74,222,128,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(74,222,128,.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .hero-orb {
+      position: absolute; border-radius: 50%; pointer-events: none; z-index: 1;
+      filter: blur(80px);
+    }
+    .hero-orb-1 { width: 600px; height: 600px; right: -100px; top: -100px; background: rgba(74,222,128,.12); }
+    .hero-orb-2 { width: 400px; height: 400px; left: -80px; bottom: -80px; background: rgba(244,163,0,.08); }
+    .hero-orb-3 { width: 300px; height: 300px; left: 40%; top: 20%; background: rgba(91,79,233,.06); }
+
+    .hero-inner {
+      max-width: var(--page-max); margin: 0 auto; padding: 0 var(--page-px);
+      display: grid; grid-template-columns: 1fr; gap: var(--sp-9);
+      align-items: center; position: relative; z-index: 2;
+    }
+    @media(min-width:768px) { .hero-inner { grid-template-columns: 1.15fr .85fr; gap: var(--sp-11); } }
+
+    .live-badge {
+      display: inline-flex; align-items: center; gap: var(--sp-2);
+      padding: 6px 16px; border-radius: var(--r-full);
+      background: rgba(74,222,128,.1); border: 1px solid rgba(74,222,128,.2);
+      color: #4ADE80; font-size: var(--text-label); font-weight: 700;
+      margin-bottom: var(--sp-5);
+    }
+    .live-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ADE80; animation: heartbeat 2s ease-in-out infinite; }
+    .hero-h1 {
+      font-family: var(--font-display); font-size: clamp(2.4rem, 6vw, 4.2rem);
+      font-weight: 900; line-height: 1.05; color: #fff;
+      letter-spacing: -.04em; margin-bottom: var(--sp-4);
+    }
+    .hero-h1 .green { color: #4ADE80; }
+    .hero-h1 .gold {
+      background: linear-gradient(90deg, #ffd200, #f7971e, #ffd200);
+      background-size: 200% auto;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; animation: goldShimmer 3s linear infinite;
+    }
+    @keyframes goldShimmer { from{background-position:-200% center} to{background-position:200% center} }
+    .hero-desc {
+      font-size: clamp(1rem, 1.8vw, 1.15rem); color: rgba(255,255,255,.65);
+      line-height: 1.7; max-width: 520px; margin-bottom: var(--sp-7);
+    }
+    .hero-ctas { display: flex; flex-wrap: wrap; gap: var(--sp-4); margin-bottom: var(--sp-7); }
+    .hero-btn-primary {
+      height: 56px; padding: 0 var(--sp-8); border-radius: var(--r-full);
+      background: linear-gradient(135deg, #4ADE80, #22c55e);
+      color: #0a3d2a; font-size: var(--text-body); font-weight: 800; border: none;
+      box-shadow: 0 8px 32px rgba(74,222,128,.35); display: inline-flex; align-items: center; gap: var(--sp-3);
+      transition: all var(--dur-fast) var(--ease-out);
+    }
+    .hero-btn-primary:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(74,222,128,.45); }
+    .hero-btn-secondary {
+      height: 56px; padding: 0 var(--sp-7); border-radius: var(--r-full);
+      background: rgba(255,255,255,.08); color: #fff; font-size: var(--text-body); font-weight: 700;
+      border: 1.5px solid rgba(255,255,255,.15); display: inline-flex; align-items: center; gap: var(--sp-2);
+      transition: all var(--dur-fast);
+    }
+    .hero-btn-secondary:hover { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.3); }
+
+    /* Social proof */
+    .social-proof { display: flex; align-items: center; gap: var(--sp-4); flex-wrap: wrap; }
+    .sp-text { font-size: var(--text-label); color: rgba(255,255,255,.5); }
+    .sp-text strong { color: #4ADE80; }
+    .sp-stars { color: #ffd200; font-size: .9rem; letter-spacing: 2px; }
+
+    /* Hero phone */
+    .hero-visual { display: flex; justify-content: center; }
+    .hero-phone {
+      background: rgba(255,255,255,.06); border-radius: var(--r-3xl);
+      border: 1px solid rgba(255,255,255,.1);
+      box-shadow: 0 20px 60px rgba(0,0,0,.4), 0 0 0 1px rgba(255,255,255,.05), inset 0 1px 0 rgba(255,255,255,.1);
+      overflow: hidden; max-width: 320px; width: 100%;
+      backdrop-filter: blur(10px);
+    }
+    .phone-header {
+      background: linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.04));
+      padding: var(--sp-5); display: flex; align-items: center; gap: var(--sp-3);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .phone-avatar { width: 40px; height: 40px; border-radius: 50%; background: rgba(74,222,128,.2); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; border: 1.5px solid rgba(74,222,128,.3); }
+    .phone-title { font-size: var(--text-body); font-weight: 700; color: #fff; }
+    .phone-status { font-size: var(--text-caption); color: rgba(255,255,255,.6); display: flex; align-items: center; gap: 5px; }
+    .online { width: 6px; height: 6px; background: #4ADE80; border-radius: 50%; animation: heartbeat 2s infinite; }
+    .phone-body { padding: var(--sp-5); display: flex; flex-direction: column; gap: var(--sp-4); }
+    .bubble { max-width: 85%; padding: var(--sp-3) var(--sp-4); border-radius: 16px; font-size: var(--text-label); line-height: 1.55; }
+    .bubble-user { background: rgba(74,222,128,.2); color: #fff; border-bottom-right-radius: 4px; margin-left: auto; border: 1px solid rgba(74,222,128,.15); }
+    .bubble-ai { background: rgba(255,255,255,.08); color: rgba(255,255,255,.9); border-bottom-left-radius: 4px; border: 1px solid rgba(255,255,255,.08); }
+    .bubble-ai strong { color: #4ADE80; }
+    .phone-footer {
+      padding: var(--sp-4) var(--sp-5); border-top: 1px solid rgba(255,255,255,.08);
+      display: flex; align-items: center; gap: var(--sp-3);
+    }
+    .phone-input-mock {
+      flex: 1; height: 40px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+      border-radius: var(--r-md); padding: 0 var(--sp-4); font-size: var(--text-caption);
+      color: rgba(255,255,255,.35); display: flex; align-items: center;
+    }
+    .phone-mic {
+      width: 40px; height: 40px; border-radius: 50%; background: var(--color-voice); color: #fff;
+      display: flex; align-items: center; justify-content: center; font-size: .9rem; border: none;
+      box-shadow: 0 4px 16px rgba(91,79,233,.4); flex-shrink: 0;
+    }
+
+    /* ── Stats Strip ── */
+    .stats-strip {
+      background: var(--n-0); border-bottom: 1px solid var(--n-200);
+      position: relative; z-index: 2;
+    }
+    .stats-inner {
+      max-width: var(--page-max); margin: 0 auto; padding: var(--sp-8) var(--page-px);
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--sp-6);
+    }
+    @media(min-width:768px) { .stats-inner { grid-template-columns: repeat(4, 1fr); } }
+    .stat-item { text-align: center; }
+    .stat-num {
+      font-family: var(--font-nums); font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 900; line-height: 1; margin-bottom: 6px;
+      background: var(--gradient-premium);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .stat-lbl { font-size: var(--text-caption); color: var(--n-500); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+
+    /* ── Press / Logos Marquee ── */
+    .press-strip { background: var(--n-50); padding: var(--sp-6) 0; border-bottom: 1px solid var(--n-200); }
+    .press-label { text-align: center; font-size: var(--text-caption); font-weight: 700; color: var(--n-400); text-transform: uppercase; letter-spacing: .12em; margin-bottom: var(--sp-4); }
+    .press-logo {
+      font-family: var(--font-nums); font-size: 1.2rem; font-weight: 800;
+      color: var(--n-300); white-space: nowrap; padding: 0 var(--sp-4);
+      transition: color var(--dur-fast);
+    }
+    .press-logo:hover { color: var(--n-500); }
+
+    /* ── Section shared ── */
+    .sect-head { text-align: center; max-width: 640px; margin: 0 auto var(--sp-9); }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: var(--sp-2);
+      font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em;
+      color: var(--color-primary); background: var(--color-primary-pale);
+      border: 1px solid rgba(46,139,87,.15); padding: 5px 16px; border-radius: var(--r-full); margin-bottom: var(--sp-4);
+    }
+    .sect-h2 { font-family: var(--font-display); font-size: clamp(1.6rem, 4vw, 2.6rem); font-weight: 900; color: var(--n-900); line-height: 1.12; letter-spacing: -.03em; margin-bottom: var(--sp-3); }
+    .sect-sub { font-size: var(--text-body); color: var(--n-500); line-height: 1.65; }
+
+    /* ── How It Works ── */
+    .hiw-bg { background: var(--n-0); }
+    .hiw-grid { display: grid; grid-template-columns: 1fr; gap: var(--sp-5); }
+    @media(min-width:768px) { .hiw-grid { grid-template-columns: repeat(3,1fr); } }
+    .hiw-step {
+      background: var(--n-50); border: 1px solid var(--n-200); border-radius: var(--r-xl);
+      padding: var(--sp-7) var(--sp-6); text-align: center;
+      transition: all var(--dur-base) var(--ease-out); position: relative; overflow: hidden;
+    }
+    .hiw-step::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: var(--gradient-premium); opacity: 0; transition: opacity var(--dur-base);
+    }
+    .hiw-step:hover { border-color: var(--color-primary); transform: translateY(-4px); box-shadow: var(--sh-premium); }
+    .hiw-step:hover::before { opacity: 1; }
+    .hiw-num {
+      width: 56px; height: 56px; border-radius: var(--r-lg);
+      background: var(--gradient-premium); color: #fff;
+      font-family: var(--font-nums); font-size: 1.3rem; font-weight: 900;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto var(--sp-5); box-shadow: var(--sh-green);
+    }
+    .hiw-title { font-size: var(--text-h4); font-weight: 800; color: var(--n-900); margin-bottom: var(--sp-3); }
+    .hiw-desc { font-size: var(--text-body); color: var(--n-500); line-height: 1.65; }
+
+    /* ── Features ── */
+    .feat-bg { background: var(--n-50); }
+    .feat-grid { display: grid; grid-template-columns: 1fr; gap: var(--sp-5); }
+    @media(min-width:768px) { .feat-grid { grid-template-columns: repeat(2,1fr); } }
+    @media(min-width:1024px) { .feat-grid { grid-template-columns: repeat(4,1fr); } }
+    .feat-card {
+      background: var(--n-0); border: 1px solid var(--n-200); border-radius: var(--r-xl);
+      padding: var(--sp-6); display: flex; flex-direction: column; gap: var(--sp-3);
+      transition: all var(--dur-base) var(--ease-out);
+      transform-style: preserve-3d;
+    }
+    .feat-card:hover { transform: perspective(800px) rotateY(-1deg) rotateX(1deg) translateY(-6px); box-shadow: var(--sh-3d); border-color: rgba(46,139,87,.2); }
+    .feat-card.green-card { background: var(--gradient-premium); border-color: transparent; }
+    .feat-card.gold-card { background: linear-gradient(135deg, #f7971e, #ffd200); border-color: transparent; }
+    .feat-icon { font-size: 2.2rem; animation: floatY 3.5s ease-in-out infinite; }
+    .feat-title { font-size: var(--text-body); font-weight: 800; color: var(--n-900); }
+    .feat-desc { font-size: var(--text-label); color: var(--n-500); line-height: 1.55; }
+    .feat-card.green-card .feat-title, .feat-card.green-card .feat-desc { color: rgba(255,255,255,.92); }
+    .feat-card.green-card .feat-title { color: #fff; }
+    .feat-card.gold-card .feat-title { color: #0a3d2a; }
+    .feat-card.gold-card .feat-desc { color: rgba(10,61,42,.7); }
+    .feat-full { grid-column: 1/-1; flex-direction: row; align-items: center; gap: var(--sp-5); }
+    @media(max-width:767px) { .feat-full { flex-direction: column; } }
+
+    /* ── Testimonials ── */
+    .test-bg { background: var(--n-0); }
+    .test-grid { display: grid; grid-template-columns: 1fr; gap: var(--sp-5); }
+    @media(min-width:768px) { .test-grid { grid-template-columns: repeat(3,1fr); } }
+    .test-card {
+      background: var(--n-50); border: 1px solid var(--n-200); border-radius: var(--r-xl);
+      padding: var(--sp-6); position: relative; transition: all var(--dur-base) var(--ease-out);
+    }
+    .test-card::before {
+      content: '"'; position: absolute; top: 12px; left: 18px;
+      font-size: 4rem; font-family: Georgia, serif; color: var(--color-primary); opacity: .1; line-height: 1;
+    }
+    .test-card:hover { transform: translateY(-6px); box-shadow: var(--sh-premium); border-color: rgba(46,139,87,.15); }
+    .test-text { font-size: var(--text-body); color: var(--n-700); line-height: 1.65; margin-bottom: var(--sp-5); position: relative; z-index: 1; }
+    .test-author { display: flex; align-items: center; gap: var(--sp-3); }
+    .test-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--gradient-premium); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: #fff; flex-shrink: 0; }
+    .test-name { font-size: var(--text-label); font-weight: 700; color: var(--n-900); }
+    .test-role { font-size: var(--text-caption); color: var(--n-400); }
+
+    /* ── Pricing ── */
+    .pricing-bg { background: var(--n-50); }
+    .pricing-grid { display: grid; grid-template-columns: 1fr; gap: var(--sp-5); max-width: 900px; margin: 0 auto; }
+    @media(min-width:768px) { .pricing-grid { grid-template-columns: repeat(2,1fr); } }
+
+    /* ── FAQ ── */
+    .faq-bg { background: var(--n-0); }
+    .faq-list { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: var(--sp-3); }
+
+    /* ── Final CTA ── */
+    .final-cta { position: relative; overflow: hidden; }
+    .fct-inner {
+      position: relative; z-index: 1; max-width: 720px; margin: 0 auto;
+      padding: var(--sp-12) var(--page-px);
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+    }
+    .fct-icon { font-size: 4rem; margin-bottom: var(--sp-6); animation: floatY 3s ease-in-out infinite; }
+    .fct-h2 { font-family: var(--font-display); font-size: clamp(1.8rem, 4.5vw, 3rem); font-weight: 900; color: #fff; line-height: 1.1; letter-spacing: -.03em; margin-bottom: var(--sp-5); }
+    .fct-sub { font-size: clamp(1rem, 1.5vw, 1.15rem); color: rgba(255,255,255,.7); line-height: 1.65; margin-bottom: var(--sp-8); max-width: 500px; }
+    .fct-btns { display: flex; flex-wrap: wrap; gap: var(--sp-4); justify-content: center; margin-bottom: var(--sp-7); }
+    .fct-disc { display: flex; align-items: center; gap: var(--sp-2); color: rgba(255,255,255,.4); font-size: var(--text-caption); }
+
+    /* ── Footer ── */
+    .footer { background: #071510; color: rgba(255,255,255,.5); }
+    .footer-inner {
+      max-width: var(--page-max); margin: 0 auto; padding: var(--sp-10) var(--page-px) var(--sp-8);
+      display: grid; grid-template-columns: 1fr; gap: var(--sp-8);
+    }
+    @media(min-width:768px) { .footer-inner { grid-template-columns: 1.5fr 1fr 1fr 1fr; } }
+    .footer-brand .brand-name { color: #fff; }
+    .footer-brand .brand-sub { color: rgba(255,255,255,.35); }
+    .footer-tagline { font-size: var(--text-label); color: rgba(255,255,255,.4); line-height: 1.6; margin-top: var(--sp-4); }
+    .footer-sos { display: inline-flex; align-items: center; gap: var(--sp-2); background: var(--color-danger); color: #fff; padding: 6px 14px; border-radius: var(--r-full); font-size: var(--text-label); font-weight: 700; margin-top: var(--sp-5); }
+    .footer-col h4 { font-size: var(--text-label); font-weight: 700; color: rgba(255,255,255,.8); margin-bottom: var(--sp-4); letter-spacing: .04em; text-transform: uppercase; }
+    .footer-col a { display: block; font-size: var(--text-label); color: rgba(255,255,255,.4); margin-bottom: var(--sp-3); transition: color var(--dur-fast); }
+    .footer-col a:hover { color: #4ADE80; }
+    .footer-bottom {
+      max-width: var(--page-max); margin: 0 auto; padding: var(--sp-5) var(--page-px) var(--sp-6);
+      border-top: 1px solid rgba(255,255,255,.06);
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--sp-4);
+    }
+    .footer-disc { font-size: var(--text-caption); color: rgba(255,255,255,.25); line-height: 1.6; max-width: 640px; }
+    .footer-copy { font-size: var(--text-caption); color: rgba(255,255,255,.2); }
+  </style>
+</head>
+
+<body>
+
+  <!-- ── Navbar ── -->
+  <nav class="navbar" id="mainNav" role="navigation" aria-label="Main navigation">
+    <div class="navbar-inner">
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">🩺</div>
+        <div>
+          <div class="brand-name">Arogya<em>AI</em></div>
+          <div class="brand-sub">India's #1 AI Doctor</div>
+        </div>
+      </div>
+      <div class="nav-links" role="list">
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#testimonials">Reviews</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <div class="nav-actions">
+        <button class="nav-login" onclick="window.location.href='/login'">Log in</button>
+        <button class="nav-cta" onclick="window.location.href='/signup'">Start Free →</button>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- ── Hero ── -->
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="hero-bg" aria-hidden="true"></div>
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="hero-orb hero-orb-1" aria-hidden="true"></div>
+      <div class="hero-orb hero-orb-2" aria-hidden="true"></div>
+      <div class="hero-orb hero-orb-3" aria-hidden="true"></div>
+      <canvas class="particles-canvas" id="particlesCanvas" aria-hidden="true"></canvas>
+
+      <div class="hero-inner">
+        <div class="hero-text">
+          <div class="live-badge anim-1" role="status">
+            <span class="live-dot" aria-hidden="true"></span>
+            🇮🇳 Trusted by 10,000+ Indian families
+          </div>
+
+          <h1 id="hero-heading" class="hero-h1 anim-2">
+            Your AI Doctor,<br>
+            <span class="green">Always On Call</span><br>
+            <span class="gold">Har Ghar Ka Doctor</span>
+          </h1>
+
+          <p class="hero-desc anim-3">
+            Ask health questions in Hindi, Gujarati, or English.
+            Get doctor-quality guidance — free, instant, and powered by the most advanced AI.
+          </p>
+
+          <div class="hero-ctas anim-4">
+            <button class="hero-btn-primary" onclick="window.location.href='/signup'" id="hero-cta-primary">
+              🩺 Start Free Checkup →
+            </button>
+            <button class="hero-btn-secondary" onclick="window.location.href='/chat'" id="hero-cta-secondary">
+              💬 Try Without Account
+            </button>
+          </div>
+
+          <div class="social-proof anim-5">
+            <div class="avatar-stack">
+              <div class="avatar-stack-item" style="background:linear-gradient(135deg,#4ADE80,#22c55e);color:#fff">R</div>
+              <div class="avatar-stack-item" style="background:linear-gradient(135deg,#60A5FA,#3B82F6);color:#fff">P</div>
+              <div class="avatar-stack-item" style="background:linear-gradient(135deg,#F472B6,#EC4899);color:#fff">A</div>
+              <div class="avatar-stack-item" style="background:linear-gradient(135deg,#FBBF24,#F59E0B);color:#fff">S</div>
+              <div class="avatar-stack-item" style="background:linear-gradient(135deg,#A78BFA,#7C3AED);color:#fff">M</div>
+            </div>
+            <div>
+              <div class="sp-stars">★★★★★</div>
+              <div class="sp-text"><strong>4.9/5</strong> from 2,400+ reviews</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phone Mockup -->
+        <div class="hero-visual anim-5">
+          <div class="hero-phone">
+            <div class="phone-header">
+              <div class="phone-avatar" aria-hidden="true">🩺</div>
+              <div>
+                <div class="phone-title">ArogyaAI Doctor</div>
+                <div class="phone-status"><span class="online"></span>Online · Hindi mode</div>
+              </div>
+            </div>
+            <div class="phone-body" aria-label="Sample chat">
+              <div class="bubble bubble-user" lang="hi">मुझे बुखार और सिर दर्द है 🤒</div>
+              <div class="bubble bubble-ai">
+                <strong>🟡 Moderate</strong> — Viral fever ho sakta hai.<br><br>
+                ✅ Paracetamol 500mg, kaafi paani piyen.<br>
+                🌿 Tulsi kadha raat ko helpful hoga.
+              </div>
+              <div class="bubble bubble-user" lang="hi">क्या डॉक्टर के पास जाऊं?</div>
+              <div class="bubble bubble-ai">
+                3 din zyada bukhar → doctor.<br>
+                <strong>Emergency?</strong> 📞 <strong>108</strong> call karein.
+              </div>
+            </div>
+            <div class="phone-footer">
+              <div class="phone-input-mock">बोलिए...</div>
+              <button class="phone-mic" aria-label="Voice input" tabindex="-1">🎙️</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Stats Strip ── -->
+    <div class="stats-strip" role="region" aria-label="Key statistics">
+      <div class="stats-inner">
+        <div class="stat-item reveal">
+          <div class="stat-num" data-target="10000">0+</div>
+          <div class="stat-lbl">Active Users</div>
+        </div>
+        <div class="stat-item reveal">
+          <div class="stat-num" data-target="50000">0+</div>
+          <div class="stat-lbl">Health Queries Answered</div>
+        </div>
+        <div class="stat-item reveal">
+          <div class="stat-num">8+</div>
+          <div class="stat-lbl">Indian Languages</div>
+        </div>
+        <div class="stat-item reveal">
+          <div class="stat-num">99.9%</div>
+          <div class="stat-lbl">Uptime SLA</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Press Marquee ── -->
+    <div class="press-strip" aria-hidden="true">
+      <div class="press-label">As Featured In</div>
+      <div class="marquee-wrap">
+        <div class="marquee-track">
+          <span class="press-logo">🏆 YourStory</span>
+          <span class="press-logo">📰 Economic Times</span>
+          <span class="press-logo">💡 Inc42</span>
+          <span class="press-logo">🚀 TechCrunch India</span>
+          <span class="press-logo">🏥 HealthTech Weekly</span>
+          <span class="press-logo">🇮🇳 Digital India Awards</span>
+          <span class="press-logo">⭐ Product Hunt #1</span>
+          <span class="press-logo">🏆 YourStory</span>
+          <span class="press-logo">📰 Economic Times</span>
+          <span class="press-logo">💡 Inc42</span>
+          <span class="press-logo">🚀 TechCrunch India</span>
+          <span class="press-logo">🏥 HealthTech Weekly</span>
+          <span class="press-logo">🇮🇳 Digital India Awards</span>
+          <span class="press-logo">⭐ Product Hunt #1</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── How It Works ── -->
+    <div class="hiw-bg" id="how-it-works">
+      <div class="section container">
+        <div class="sect-head reveal">
+          <span class="eyebrow">⚡ How It Works</span>
+          <h2 class="sect-h2">Health Guidance in 3 Simple Steps</h2>
+          <p class="sect-sub">So simple even your grandparents can use it</p>
+        </div>
+        <div class="hiw-grid">
+          <div class="hiw-step reveal">
+            <div class="hiw-num">1</div>
+            <div class="hiw-title">🎙️ Apna Sawaal Boliye</div>
+            <div class="hiw-desc">Speak or type in Hindi, Gujarati, or English — no complicated forms, just talk naturally.</div>
+          </div>
+          <div class="hiw-step reveal">
+            <div class="hiw-num">2</div>
+            <div class="hiw-title">🤖 AI Analyses Instantly</div>
+            <div class="hiw-desc">Advanced AI understands symptoms and gives clear, safe, doctor-reviewed guidance in seconds.</div>
+          </div>
+          <div class="hiw-step reveal">
+            <div class="hiw-num">3</div>
+            <div class="hiw-title">✅ Get Clear Answers</div>
+            <div class="hiw-desc">Plain-language advice, home remedies, when to see a doctor — and emergency alerts if needed.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Features ── -->
+    <div class="feat-bg" id="features">
+      <div class="section container">
+        <div class="sect-head reveal">
+          <span class="eyebrow">🚀 Features</span>
+          <h2 class="sect-h2">Everything Your Family Needs</h2>
+          <p class="sect-sub">A complete health ecosystem, free for every Indian</p>
+        </div>
+        <div class="feat-grid">
+          <div class="feat-card green-card reveal"><span class="feat-icon">🤖</span><div class="feat-title">AI Doctor Chat</div><div class="feat-desc">Ask any health question — get safe, instant, doctor-reviewed advice 24/7</div></div>
+          <div class="feat-card gold-card reveal"><span class="feat-icon">🎤</span><div class="feat-title">Voice First</div><div class="feat-desc">Speak in Hindi or Gujarati — no typing needed, even for elderly users</div></div>
+          <div class="feat-card reveal"><span class="feat-icon">📄</span><div class="feat-title">Report Reader</div><div class="feat-desc">Upload blood tests, X-rays — get plain language explanations</div></div>
+          <div class="feat-card reveal"><span class="feat-icon">🚨</span><div class="feat-title">Emergency AI</div><div class="feat-desc">Instant 108 alert when dangerous symptoms are detected</div></div>
+          <div class="feat-card reveal"><span class="feat-icon">👨‍👩‍👧</span><div class="feat-title">Family Mode</div><div class="feat-desc">Track parents, kids & spouse health — all in one place</div></div>
+          <div class="feat-card reveal"><span class="feat-icon">📊</span><div class="feat-title">Arogya Score</div><div class="feat-desc">Daily health score with trends — share on WhatsApp</div></div>
+          <div class="feat-card reveal"><span class="feat-icon">🔥</span><div class="feat-title">Health Streaks</div><div class="feat-desc">Gamified daily habits & medication reminders</div></div>
+          
+          <!-- Premium AI SaaS Features -->
+          <div class="feat-card reveal" style="border: 1px solid rgba(46,139,87,.3); background: linear-gradient(135deg, var(--color-primary-pale), white);">
+            <span class="feat-icon">🥗</span><div class="feat-title">AI Diet Planner</div><div class="feat-desc">Upload food photos for real-time calorie tracking and hyper-personalized generative meal plans</div>
+          </div>
+          <div class="feat-card reveal" style="border: 1px solid rgba(244,163,0,.4); background: linear-gradient(135deg, var(--color-accent-pale), white);">
+            <span class="feat-icon">🏃‍♂️</span><div class="feat-title">AI Fitness Coach</div><div class="feat-desc">Adaptive workout generation adjusting daily to your sleep data, mood, and recovery metrics</div>
+          </div>
+          <div class="feat-card reveal" style="border: 1px solid rgba(168,85,247,.3); background: linear-gradient(135deg, #FAF5FF, white);">
+            <span class="feat-icon">🧘‍♀️</span><div class="feat-title">AI Mind Therapist</div><div class="feat-desc">CBT-driven intelligent companion for anxiety relief, grounding exercises, and mental clarity</div>
+          </div>
+          <div class="feat-card reveal" style="border: 1px solid rgba(14,165,233,.3); background: linear-gradient(135deg, #F0F9FF, white);">
+            <span class="feat-icon">🧬</span><div class="feat-title">Genomics Analytics</div><div class="feat-desc">Predictive modeling mapping your DNA with billions of datapoints for ultimate health personalization</div>
+          </div>
+          
+          <div class="feat-card feat-full reveal" style="background: linear-gradient(135deg, #1E293B, #0F172A); border: transparent;">
+            <span class="feat-icon" style="font-size:2.8rem">🚀</span>
+            <div>
+              <div class="feat-title" style="font-size:1.25rem; color: #38BDF8;">ArogyaAI Pro — The Billion Dollar Health Suite</div>
+              <div class="feat-desc" style="color: rgba(255,255,255,0.8); font-size: 0.95rem; margin-top: 8px;">Upgrade to India's most advanced health ecosystem. Medicine Encyclopedia, DNA Analysis, Dedicated Chat, and Premium Specialist Network all under one unified platform.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Testimonials ── -->
+    <div class="test-bg" id="testimonials">
+      <div class="section container">
+        <div class="sect-head reveal">
+          <span class="eyebrow">❤️ Loved by Families</span>
+          <h2 class="sect-h2">10,000+ Families Trust ArogyaAI</h2>
+          <p class="sect-sub">Real stories from real Indian families</p>
+        </div>
+        <div class="test-grid">
+          <div class="test-card reveal">
+            <div class="test-text">"Mere papa ko raat 2 baje chest pain hua. ArogyaAI ne turant bola 108 call karo. Bohot fast response — ambulance 12 min mein aa gayi. Lifesaver hai ye!"</div>
+            <div class="test-author">
+              <div class="test-avatar">R</div>
+              <div><div class="test-name">Rajesh Kumar</div><div class="test-role">Delhi · Father saved</div></div>
+            </div>
+          </div>
+          <div class="test-card reveal">
+            <div class="test-text">"I'm 68 years old. Can't type well. ArogyaAI's voice feature changed everything — I just speak in Hindi and get answers like talking to a real doctor. Bahut accha hai!"</div>
+            <div class="test-author">
+              <div class="test-avatar">S</div>
+              <div><div class="test-name">Shanta Devi</div><div class="test-role">Jaipur · Senior citizen</div></div>
+            </div>
+          </div>
+          <div class="test-card reveal">
+            <div class="test-text">"As a village teacher, nearest doctor is 40km away. ArogyaAI helps me check symptoms for my students. The Gujarati support is perfect for our community."</div>
+            <div class="test-author">
+              <div class="test-avatar">P</div>
+              <div><div class="test-name">Priya Patel</div><div class="test-role">Gujarat · Teacher</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Pricing ── -->
+    <div class="pricing-bg" id="pricing">
+      <div class="section container">
+        <div class="sect-head reveal">
+          <span class="eyebrow">💎 Simple Pricing</span>
+          <h2 class="sect-h2">Free Forever. Seriously.</h2>
+          <p class="sect-sub">Premium health AI shouldn't cost a fortune</p>
+        </div>
+        <div class="pricing-grid">
+          <div class="pricing-card reveal">
+            <h3 style="font-size:1.3rem;font-weight:800;color:var(--n-900);margin-bottom:var(--sp-2)">🌿 Free</h3>
+            <div style="font-family:var(--font-nums);font-size:2.8rem;font-weight:900;color:var(--n-900);margin-bottom:var(--sp-2)">₹0</div>
+            <div style="font-size:var(--text-label);color:var(--n-400);margin-bottom:var(--sp-6)">Forever · No credit card</div>
+            <div style="display:flex;flex-direction:column;gap:var(--sp-3);text-align:left;margin-bottom:var(--sp-7)">
+              <div style="display:flex;align-items:center;gap:8px;font-size:var(--text-body);color:var(--n-700)">✅ 10 AI queries/day</div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:var(--text-body);color:var(--n-700)">✅ Voice input (Hindi, English)</div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:var(--text-body);color:var(--n-700)">✅ Emergency 108 detection</div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:var(--text-body);color:var(--n-700)">✅ Arogya Health Score</div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:var(--text-body);color:var(--n-700)">✅ 2 family members</div>
+            </div>
+            <button class="btn btn-secondary btn-full" onclick="window.location.href='/signup'" style="border-radius:var(--r-full)">Get Started Free</button>
+          </div>
+          <div class="pricing-card popular reveal">
+            <div class="pricing-popular-tag">Most Popular</div>
+            <h3 style="font-size:1.3rem;font-weight:800;color:var(--color-primary);margin-bottom:var(--sp-2)">⭐ Premium</h3>
+            <div style="font-family:var(--font-nums);font-size:2.8rem;font-weight:900;color:var(--n-900);margin-bottom:var(--sp-2)">₹99<span style="font-size:1rem;color:var(--n-400)">/mo</span></div>
+            <div style="font-size:var(--text-label);color:var(--n-400);margin-bottom:var(--sp-6)">Less than a cup of chai/day</div>
+            <div style="display:flex;flex-direction:column;gap:var(--sp-3);text-align:left;margin-bottom:var(--sp-7)">
+              <div style="display:flex;align-items:center;gap:8px;font-size:var(--text-body);color:var(--n-700)">✅ <strong>Unlimited</strong> AI queries</div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:var(--text-body);color:var(--n-700)">✅ Voice in <strong>8+ languages</strong></div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:var(--text-body);color:var(--n-700)">✅ Medical report analysis</div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:var(--text-body);color:var(--n-700)">✅ Priority AI responses</div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:var(--text-body);color:var(--n-700)">✅ <strong>5 family members</strong></div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:var(--text-body);color:var(--n-700)">✅ Doctor booking (coming)</div>
+            </div>
+            <button class="btn btn-primary btn-full" onclick="window.location.href='/signup'" style="border-radius:var(--r-full)">Upgrade to Premium ⭐</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FAQ ── -->
+    <div class="faq-bg" id="faq">
+      <div class="section container">
+        <div class="sect-head reveal">
+          <span class="eyebrow">❓ FAQ</span>
+          <h2 class="sect-h2">Questions? We've Got Answers</h2>
+        </div>
+        <div class="faq-list">
+          <div class="faq-item reveal"><button class="faq-question" onclick="toggleFaq(this)">Is ArogyaAI really free?<span class="faq-icon">+</span></button><div class="faq-answer">Yes! ArogyaAI is 100% free for basic use — 10 AI queries per day, voice input, emergency detection, and health scoring. No credit card required, no hidden charges. Premium is ₹99/month for unlimited access.</div></div>
+          <div class="faq-item reveal"><button class="faq-question" onclick="toggleFaq(this)">Can ArogyaAI replace my doctor?<span class="faq-icon">+</span></button><div class="faq-answer">No. ArogyaAI provides general health guidance and first-aid triage. For serious conditions, we always recommend consulting a licensed doctor. We auto-detect emergencies and prompt you to call 108.</div></div>
+          <div class="faq-item reveal"><button class="faq-question" onclick="toggleFaq(this)">Which languages are supported?<span class="faq-icon">+</span></button><div class="faq-answer">Hindi, English, Gujarati, Marathi, Tamil, Telugu, Bengali, and Kannada. Voice input works in Hindi, English, and Gujarati. More languages coming soon!</div></div>
+          <div class="faq-item reveal"><button class="faq-question" onclick="toggleFaq(this)">Is my health data private?<span class="faq-icon">+</span></button><div class="faq-answer">Absolutely. Your data is encrypted end-to-end. We never share your health information with third parties. You can delete your data anytime from your profile.</div></div>
+          <div class="faq-item reveal"><button class="faq-question" onclick="toggleFaq(this)">Can elderly people use it?<span class="faq-icon">+</span></button><div class="faq-answer">Yes! ArogyaAI is designed for all ages. Large text, voice-first interface, simple Hindi interface — your parents and grandparents can use it easily without typing.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Final CTA ── -->
+    <div class="final-cta bg-mesh">
+      <div class="fct-inner">
+        <span class="fct-icon" aria-hidden="true">🩺</span>
+        <h2 class="fct-h2">Apna AI Doctor<br>Aaj Hi Shuru Karen</h2>
+        <p class="fct-sub">Free forever. No doctor appointment needed. No credit card.<br>Sirf ek tap — AI aapka doctor ban jaata hai.</p>
+        <div class="fct-btns">
+          <button class="hero-btn-primary" onclick="window.location.href='/signup'" id="final-cta-btn" style="height:64px;font-size:var(--text-body-lg)">🌿 Abhi Shuru Karen — Free!</button>
+          <button class="hero-btn-secondary" onclick="window.location.href='/chat'" style="height:64px">💬 Try Without Account</button>
+        </div>
+        <div class="fct-disc"><span>⚠️</span><span>ArogyaAI is an AI assistant — not a substitute for a licensed doctor.</span></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="brand">
+          <div class="brand-icon" aria-hidden="true">🩺</div>
+          <div>
+            <div class="brand-name">Arogya<em>AI</em></div>
+            <div class="brand-sub">India's #1 AI Doctor</div>
+          </div>
+        </div>
+        <p class="footer-tagline">Bharat ka Apna AI Health Companion.<br>हर घर का डॉक्टर — free &amp; always available.</p>
+        <div class="footer-sos" role="note">🚨 Emergency: <strong>&nbsp;108</strong></div>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="/chat">AI Doctor Chat</a>
+        <a href="/reports">Report Reader</a>
+        <a href="/family">Family Mode</a>
+        <a href="/dashboard">Arogya Score</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="/about">About Us</a>
+        <a href="/blog">Blog</a>
+        <a href="/careers">Careers</a>
+        <a href="/contact">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/terms">Terms of Service</a>
+        <a href="/disclaimer">Medical Disclaimer</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-disc">⚠️ ArogyaAI provides general health information only. It is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a licensed doctor.</p>
+      <p class="footer-copy">&copy; 2026 ArogyaAI. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/js/app.js"></script>
+  <script>
+    // Auth redirect
+    if (typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
+      window.location.href = '/dashboard';
+    }
+
+    // Navbar scroll effect
+    const nav = document.getElementById('mainNav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 30);
+    }, { passive: true });
+
+    // Scroll reveal
+    const io = new IntersectionObserver(
+      entries => entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const siblings = [...e.target.parentElement.querySelectorAll('.reveal')];
+        const i = siblings.indexOf(e.target);
+        setTimeout(() => e.target.classList.add('visible'), i * 100);
+        io.unobserve(e.target);
+      }),
+      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+    );
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    // FAQ toggle
+    function toggleFaq(btn) {
+      const item = btn.closest('.faq-item');
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+      if (!wasOpen) item.classList.add('open');
+    }
+
+    // Animated counter
+    function animateCounters() {
+      document.querySelectorAll('.stat-num[data-target]').forEach(el => {
+        const target = parseInt(el.dataset.target);
+        const duration = 2000;
+        const start = performance.now();
+        function update(now) {
+          const progress = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const current = Math.floor(eased * target);
+          el.textContent = current.toLocaleString('en-IN') + '+';
+          if (progress < 1) requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
+      });
+    }
+    const counterObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { animateCounters(); counterObs.unobserve(e.target); }
+      });
+    }, { threshold: 0.3 });
+    const statsEl = document.querySelector('.stats-strip');
+    if (statsEl) counterObs.observe(statsEl);
+
+    // Floating particles
+    (function() {
+      const canvas = document.getElementById('particlesCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+      function resize() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
+      resize();
+      window.addEventListener('resize', resize);
+
+      for (let i = 0; i < 40; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 2 + 0.5,
+          dx: (Math.random() - 0.5) * 0.4,
+          dy: (Math.random() - 0.5) * 0.4,
+          opacity: Math.random() * 0.3 + 0.1,
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(74,222,128,${p.opacity})`;
+          ctx.fill();
+          p.x += p.dx; p.y += p.dy;
+          if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+          if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+        });
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+  </script>
+</body>
+</html>

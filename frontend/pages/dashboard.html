@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1A7A4C">
+  <meta name="description" content="ArogyaAI Dashboard — Your Personal Health Command Center">
+  <meta http-equiv="Cache-Control" content="no-store">
+  <title>Dashboard — ArogyaAI</title>
+  <link rel="stylesheet" href="/css/design-system.css">
+  <style>
+    html, body { height: 100%; }
+
+    /* ── Hero Header ── */
+    .hero-header {
+      background: linear-gradient(150deg, #0D3D24 0%, #145F3A 25%, #1A7A4C 55%, #2E8B57 80%, #3CA06A 100%);
+      position: relative; overflow: hidden; flex-shrink: 0;
+    }
+    .hero-header::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(ellipse 70% 80% at 80% -10%, rgba(255,255,255,0.08) 0%, transparent 60%),
+                  radial-gradient(ellipse 40% 60% at 10% 110%, rgba(255,255,255,0.05) 0%, transparent 50%);
+    }
+    .hero-container {
+      padding: 24px 20px 72px;
+      max-width: 1280px; margin: 0 auto;
+      position: relative; z-index: 2;
+    }
+    @media(min-width:768px)  { .hero-container { padding: 28px 32px 80px; } }
+    @media(min-width:1024px) { .hero-container { padding: 32px 48px 88px; } }
+
+    /* Curved bottom */
+    .hero-header::after {
+      content: ''; position: absolute; bottom: -2px; left: 0; right: 0;
+      height: 48px; background: var(--n-50); border-radius: 48px 48px 0 0;
+    }
+
+    /* Header row */
+    .header-row {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .greeting-name {
+      font-family: var(--font-display); font-size: 1.35rem; font-weight: 900;
+      color: #fff; letter-spacing: -0.02em;
+    }
+    .greeting-sub { font-size: .82rem; color: rgba(255,255,255,.65); margin-top: 2px; }
+    .header-actions { display: flex; align-items: center; gap: 10px; }
+    .header-icon-btn {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: rgba(255,255,255,.15); border: 1.5px solid rgba(255,255,255,.25);
+      color: rgba(255,255,255,.9); display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all var(--dur-fast); font-size: .9rem;
+      backdrop-filter: blur(8px);
+    }
+    .header-icon-btn:hover { background: rgba(255,255,255,.25); }
+    .sos-btn {
+      background: rgba(220,38,38,.85); border-color: rgba(255,100,100,.4);
+      color: #fff; font-size: .75rem; font-weight: 800; padding: 0 14px;
+      border-radius: var(--r-full); width: auto; letter-spacing: .04em;
+    }
+
+    /* Score area */
+    .score-hero { display: flex; align-items: center; gap: 20px; position: relative; z-index: 1; }
+    .score-ring-track { stroke: rgba(255,255,255,.18); }
+    .score-info { flex: 1; }
+    .score-eyebrow {
+      font-size: .68rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: .12em; color: rgba(255,255,255,.55); margin-bottom: 4px;
+    }
+    .score-status {
+      font-family: var(--font-display); font-size: 1.7rem; font-weight: 900;
+      color: #fff; letter-spacing: -0.02em; margin-bottom: 8px;
+    }
+    .streak-badge-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(255,209,102,.18); border: 1px solid rgba(255,209,102,.4);
+      padding: 4px 12px; border-radius: var(--r-full);
+      font-size: .75rem; font-weight: 700; color: #FFD166;
+    }
+
+    /* ── Main Content ── */
+    .main-content {
+      padding: 20px 20px calc(72px + env(safe-area-inset-bottom,0px) + 12px);
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    @media(min-width:768px)  { .main-content { padding: 24px 32px 32px; gap: 24px; } }
+    @media(min-width:1024px) {
+      .main-content {
+        display: grid; grid-template-columns: 1fr 320px;
+        gap: 24px 32px; padding: 28px 48px 40px;
+        align-items: start; max-width: 1280px; margin: 0 auto; width: 100%;
+      }
+      .col-left  { grid-column: 1; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+      .col-right { grid-column: 2; display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+    }
+
+    /* ── Dashboard Card ── */
+    .db-card {
+      background: var(--n-0); border-radius: var(--r-xl);
+      padding: 20px; border: 1px solid var(--n-150);
+      box-shadow: var(--sh-card);
+      transition: box-shadow var(--dur-base), border-color var(--dur-base);
+    }
+    .db-card:hover { box-shadow: var(--sh-md); }
+    .card-title {
+      font-size: 1rem; font-weight: 800; color: var(--n-900);
+      margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+    }
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .section-label {
+      font-size: .7rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: .09em; color: var(--n-500);
+    }
+    .link-btn {
+      font-size: .8rem; font-weight: 700; color: var(--color-primary);
+      cursor: pointer; background: none; border: none; padding: 0; transition: opacity var(--dur-fast);
+    }
+    .link-btn:hover { opacity: .75; }
+
+    /* ── Mood Check-in ── */
+    .checkin-moods { display: flex; gap: 10px; margin-bottom: 16px; }
+    .mood-btn {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px;
+      padding: 12px 8px; border-radius: var(--r-lg);
+      border: 1.5px solid var(--n-200); background: var(--n-50);
+      cursor: pointer; transition: all var(--dur-fast); font-size: 1.6rem;
+    }
+    .mood-btn span { font-size: .65rem; font-weight: 700; color: var(--n-500); letter-spacing: .03em; }
+    .mood-btn:hover { border-color: var(--color-primary); background: var(--color-primary-pale); }
+    .mood-btn.selected { border-color: var(--color-primary); background: var(--color-primary-pale); box-shadow: var(--sh-focus); }
+    .mood-btn.selected span { color: var(--color-primary); }
+
+    /* ── Talk Button ── */
+    .talk-btn {
+      width: 100%; padding: 16px; border-radius: var(--r-xl);
+      background: linear-gradient(135deg, var(--color-accent) 0%, #E8960A 100%);
+      border: none; color: var(--n-950); font-weight: 800; font-size: .95rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+      box-shadow: var(--sh-gold); transition: all var(--dur-base) var(--ease-out);
+      letter-spacing: -0.01em;
+    }
+    .talk-btn:hover { transform: translateY(-2px); box-shadow: var(--sh-gold-h); }
+    .talk-btn:active { transform: scale(.98); }
+
+    /* ── Vitals Strip ── */
+    .vitals-strip { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+    .vital-cell {
+      background: var(--n-50); border: 1px solid var(--n-150); border-radius: var(--r-lg);
+      padding: 12px; text-align: center;
+    }
+    .vital-icon { font-size: 1.2rem; margin-bottom: 4px; }
+    .vital-val  { font-family: var(--font-nums); font-size: 1.1rem; font-weight: 900; color: var(--n-900); line-height: 1.2; }
+    .vital-unit { font-size: .62rem; font-weight: 700; color: var(--n-400); text-transform: uppercase; letter-spacing: .06em; margin-top: 2px; }
+    .vital-status { font-size: .62rem; font-weight: 700; margin-top: 3px; }
+    .vital-status.ok   { color: var(--color-success); }
+    .vital-status.warn { color: var(--color-warning); }
+
+    /* ── Quick Actions ── */
+    .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media(min-width:768px)  { .quick-grid { grid-template-columns: repeat(4,1fr); } }
+    @media(min-width:1024px) { .quick-grid { grid-template-columns: repeat(2,1fr); } }
+
+    .action-card {
+      background: var(--n-0); border-radius: var(--r-xl);
+      padding: 16px; border: 1px solid var(--n-150);
+      box-shadow: var(--sh-xs); cursor: pointer;
+      transition: all var(--dur-base) var(--ease-out);
+      display: flex; flex-direction: column; gap: 10px;
+      -webkit-tap-highlight-color: transparent; position: relative; overflow: hidden;
+    }
+    .action-card:hover {
+      transform: translateY(-4px); box-shadow: var(--sh-lg);
+      border-color: rgba(26,122,76,.2);
+    }
+    .action-card:active { transform: scale(.97); }
+    .action-icon {
+      width: 46px; height: 46px; border-radius: var(--r-md);
+      display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+    }
+    .action-card h4 { font-size: .88rem; font-weight: 800; color: var(--n-900); margin: 0; }
+    .action-card p  { font-size: .72rem; color: var(--n-500); margin: 0; line-height: 1.35; }
+
+    /* Icon colours */
+    .ai-green  { background: var(--color-primary-pale); }
+    .ai-gold   { background: var(--color-accent-pale); }
+    .ai-purple { background: var(--color-voice-pale); }
+    .ai-blue   { background: var(--color-info-bg); }
+    .ai-teal   { background: #E0F2FE; }
+    .ai-red    { background: var(--color-danger-bg); }
+
+    /* Emergency card */
+    .action-card.emergency-action {
+      background: linear-gradient(135deg,#FFF5F5,#FEE2E2);
+      border-color: rgba(220,38,38,.2);
+    }
+    .action-card.emergency-action h4 { color: var(--color-danger); }
+    .action-card.emergency-action:hover { box-shadow: 0 8px 24px rgba(220,38,38,.2); }
+
+    /* ── Health Metrics Grid ── */
+    .health-metrics { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
+    .metric-card {
+      background: var(--n-50); border: 1px solid var(--n-150);
+      border-radius: var(--r-lg); padding: 14px;
+      position: relative; overflow: hidden;
+    }
+    .metric-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    }
+    .metric-card.green::before  { background: var(--color-primary); }
+    .metric-card.gold::before   { background: var(--color-accent); }
+    .metric-card.purple::before { background: var(--color-voice); }
+    .metric-card.blue::before   { background: var(--color-info); }
+    .metric-label { font-size: .65rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--n-500); margin-bottom: 6px; }
+    .metric-val   { font-family: var(--font-nums); font-size: 1.6rem; font-weight: 900; color: var(--n-900); line-height: 1; }
+    .metric-sub   { font-size: .68rem; color: var(--n-400); margin-top: 4px; }
+
+    /* ── Family ── */
+    .family-scroll {
+      display: flex; gap: 12px; overflow-x: auto; padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .family-scroll::-webkit-scrollbar { display: none; }
+    .family-card {
+      flex-shrink: 0; width: 96px;
+      background: var(--n-0); border-radius: var(--r-xl);
+      padding: 14px 10px; border: 1px solid var(--n-150);
+      text-align: center; cursor: pointer; transition: all var(--dur-fast);
+    }
+    .family-card:hover { transform: translateY(-2px); border-color: rgba(26,122,76,.2); box-shadow: var(--sh-md); }
+    .family-avatar {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--color-primary-pale); margin: 0 auto 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; border: 2px solid rgba(26,122,76,.15);
+    }
+    .family-name { font-size: .72rem; font-weight: 700; color: var(--n-900); }
+    .family-rel  { font-size: .62rem; color: var(--n-400); margin-top: 1px; }
+    .family-add .family-avatar { background: var(--n-100); border-color: var(--n-300); border-style: dashed; color: var(--n-400); font-size: 1.5rem; }
+    .family-add .family-name { color: var(--n-500); }
+
+    /* ── Health Tip ── */
+    .tip-card {
+      background: linear-gradient(135deg,#FFFBEB,#FEF3C7);
+      border: 1.5px solid rgba(244,163,0,.25); border-radius: var(--r-xl); padding: 18px;
+    }
+    .tip-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .tip-label  { font-size: .68rem; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; color: var(--color-accent-dark); }
+    .tip-text   { font-size: .88rem; color: var(--n-800); line-height: 1.6; }
+
+    /* ── Emergency Strip ── */
+    .emergency-strip {
+      background: linear-gradient(135deg,#FFF5F5,#FEE2E2);
+      border: 1.5px solid rgba(220,38,38,.2); border-radius: var(--r-xl);
+      padding: 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .emergency-label   { font-size: .78rem; font-weight: 700; color: var(--color-danger); margin-bottom: 2px; }
+    .emergency-number  { font-family: var(--font-nums); font-size: 1.6rem; font-weight: 900; color: var(--color-danger); display: block; line-height: 1; }
+    .emergency-sub     { font-size: .65rem; color: var(--n-500); }
+    .emergency-call-btn {
+      background: linear-gradient(135deg,var(--color-danger),#B91C1C);
+      color: #fff; padding: 10px 16px; border-radius: var(--r-full);
+      font-weight: 800; font-size: .82rem; text-decoration: none; white-space: nowrap; flex-shrink: 0;
+      box-shadow: var(--sh-red); transition: all var(--dur-fast);
+    }
+    .emergency-call-btn:hover { transform: scale(1.04); box-shadow: 0 8px 24px rgba(220,38,38,.4); }
+
+    /* ── History ── */
+    .history-list { display: flex; flex-direction: column; gap: 8px; }
+    .history-item {
+      background: var(--n-50); border: 1px solid var(--n-150); border-radius: var(--r-lg);
+      padding: 12px 14px; cursor: pointer;
+      transition: all var(--dur-fast); display: flex; gap: 12px; align-items: center; min-width: 0;
+    }
+    .history-item:hover { background: var(--color-primary-pale); border-color: rgba(26,122,76,.15); transform: translateX(4px); }
+    .sev-dot    { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 2px; }
+    .history-msg  { flex: 1; font-size: .85rem; font-weight: 500; color: var(--n-700); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .history-meta { font-size: .66rem; color: var(--n-400); }
+    .history-score { font-family: var(--font-nums); font-size: .82rem; font-weight: 900; flex-shrink: 0; }
+
+    /* Bottom nav chrome */
+    .bottom-nav { background: rgba(255,255,255,.96); border-top: 1px solid var(--n-200); }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar"></aside>
+  <div class="main-area page-enter">
+
+    <!-- Hero -->
+    <div class="hero-header">
+      <div class="hero-container">
+        <div class="header-row">
+          <div>
+            <div class="greeting-name" id="greetingName">Good morning 👋</div>
+            <div class="greeting-sub" id="greetingDate"></div>
+          </div>
+          <div class="header-actions">
+            <div class="header-icon-btn" onclick="window.location.href='/profile'">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div class="header-icon-btn sos-btn" onclick="window.location.href='/emergency'">🚨 SOS</div>
+          </div>
+        </div>
+
+        <div class="score-hero">
+          <div id="scoreRingWrap"></div>
+          <div class="score-info">
+            <div class="score-eyebrow">Arogya Health Score</div>
+            <div class="score-status" id="scoreStatus">Loading…</div>
+            <div id="streakBadge"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+
+      <!-- ── LEFT COLUMN ── -->
+      <div class="col-left">
+
+        <!-- Mood Check-in -->
+        <div class="db-card">
+          <div class="card-title">🌅 How are you feeling today?</div>
+          <div class="checkin-moods">
+            <button class="mood-btn" onclick="selectMood(this,'great')">😊<span>Great</span></button>
+            <button class="mood-btn" onclick="selectMood(this,'okay')">😐<span>Okay</span></button>
+            <button class="mood-btn" onclick="selectMood(this,'unwell')">😷<span>Unwell</span></button>
+            <button class="mood-btn" onclick="selectMood(this,'pain')">🤕<span>Pain</span></button>
+          </div>
+          <button class="talk-btn" onclick="window.location.href='/chat'">
+            🩺 Talk to Dr. Arogya Now — Free &amp; Instant
+          </button>
+        </div>
+
+        <!-- Vitals -->
+        <div>
+          <div class="section-header">
+            <div class="section-label">Health Vitals</div>
+            <button class="link-btn" onclick="window.location.href='/profile'">Update →</button>
+          </div>
+          <div class="vitals-strip">
+            <div class="vital-cell"><div class="vital-icon">❤️</div><div class="vital-val" id="vBP">—</div><div class="vital-unit">Blood Pressure</div><div class="vital-status ok" id="vBPst"></div></div>
+            <div class="vital-cell"><div class="vital-icon">🩺</div><div class="vital-val" id="vSugar">—</div><div class="vital-unit">Blood Sugar</div><div class="vital-status ok" id="vSugarst"></div></div>
+            <div class="vital-cell"><div class="vital-icon">⚖️</div><div class="vital-val" id="vBMI">—</div><div class="vital-unit">BMI</div><div class="vital-status ok" id="vBMIst"></div></div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div>
+          <div class="section-header"><div class="section-label">Quick Actions</div></div>
+          <div class="quick-grid">
+            <div class="action-card" onclick="window.location.href='/chat'">
+              <div class="action-icon ai-green">🤖</div>
+              <div><h4>AI Consultation</h4><p>Clinical advice 24/7</p></div>
+            </div>
+            <div class="action-card" onclick="window.location.href='/chat?voice=1'">
+              <div class="action-icon ai-purple">🎤</div>
+              <div><h4>Voice Chat</h4><p>Speak in any language</p></div>
+            </div>
+            <div class="action-card" onclick="window.location.href='/drug-checker'">
+              <div class="action-icon ai-gold">💊</div>
+              <div><h4>Drug Checker</h4><p>Safe medication guide</p></div>
+            </div>
+            <div class="action-card" onclick="window.location.href='/reports'">
+              <div class="action-icon ai-blue">📄</div>
+              <div><h4>Lab Reports</h4><p>AI-powered analysis</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Modules -->
+        <div>
+          <div class="section-header">
+            <div class="section-label" style="display:flex;align-items:center;gap:8px">
+              Premium AI Modules <span class="premium-badge">✦ PRO</span>
+            </div>
+            <button class="link-btn" onclick="window.location.href='/nutrition'">Explore →</button>
+          </div>
+          <div class="quick-grid">
+            <div class="action-card" onclick="window.location.href='/nutrition'"
+              style="background:linear-gradient(135deg,#F0FDF4,#DCFCE7);border-color:rgba(22,163,74,.15)">
+              <div class="action-icon ai-green">🥗</div>
+              <div><h4>AI Dietitian</h4><p>Personalized meal plans</p></div>
+            </div>
+            <div class="action-card" onclick="window.location.href='/fitness'"
+              style="background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border-color:rgba(244,163,0,.15)">
+              <div class="action-icon ai-gold">🏃</div>
+              <div><h4>Fitness Coach</h4><p>Adaptive daily workouts</p></div>
+            </div>
+            <div class="action-card" onclick="window.location.href='/mindfulness'"
+              style="background:linear-gradient(135deg,#EEF0FF,#E0E7FF);border-color:rgba(91,79,233,.15)">
+              <div class="action-icon ai-purple">🧘</div>
+              <div><h4>Mind &amp; Peace</h4><p>CBT &amp; stress relief</p></div>
+            </div>
+            <div class="action-card emergency-action" onclick="window.location.href='/emergency'">
+              <div class="action-icon ai-red">🚨</div>
+              <div><h4>Emergency SOS</h4><p>Call 108 · First aid</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- History -->
+        <div id="historySection">
+          <div class="section-header">
+            <div class="section-label">Recent Consultations</div>
+            <button class="link-btn" onclick="window.location.href='/chat'">View All</button>
+          </div>
+          <div class="history-list" id="historyList">
+            <div class="skeleton" style="height:56px"></div>
+            <div class="skeleton" style="height:56px;animation-delay:.1s"></div>
+            <div class="skeleton" style="height:56px;animation-delay:.2s"></div>
+          </div>
+        </div>
+
+      </div><!-- /col-left -->
+
+      <!-- ── RIGHT COLUMN ── -->
+      <div class="col-right">
+
+        <!-- Stats -->
+        <div class="db-card">
+          <div class="card-title">📊 Your Health Stats</div>
+          <div class="health-metrics">
+            <div class="metric-card green">
+              <div class="metric-label">Consultations</div>
+              <div class="metric-val" id="mConsult">—</div>
+              <div class="metric-sub">Total sessions</div>
+            </div>
+            <div class="metric-card gold">
+              <div class="metric-label">Day Streak</div>
+              <div class="metric-val" id="mStreak">—</div>
+              <div class="metric-sub">🔥 Keep going!</div>
+            </div>
+            <div class="metric-card purple">
+              <div class="metric-label">Health Score</div>
+              <div class="metric-val" id="mScore">—</div>
+              <div class="metric-sub">Out of 100</div>
+            </div>
+            <div class="metric-card blue">
+              <div class="metric-label">Lab Reports</div>
+              <div class="metric-val" id="mReports">0</div>
+              <div class="metric-sub">Saved analyses</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Family -->
+        <div id="familySection">
+          <div class="section-header">
+            <div class="section-label">Family Members</div>
+            <button class="link-btn" onclick="window.location.href='/family'">Manage</button>
+          </div>
+          <div class="family-scroll" id="familyScroll">
+            <div class="family-card family-add" onclick="window.location.href='/family'">
+              <div class="family-avatar">＋</div>
+              <div class="family-name">Add Member</div>
+              <div class="family-rel">Family health</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tip -->
+        <div class="tip-card">
+          <div class="tip-header">
+            <span style="font-size:1.2rem">💡</span>
+            <span class="tip-label">AI Health Tip of the Day</span>
+          </div>
+          <div class="tip-text" id="tipText">Loading your personalized health tip…</div>
+        </div>
+
+        <!-- Emergency -->
+        <div class="emergency-strip">
+          <div>
+            <div class="emergency-label">🚨 Medical Emergency?</div>
+            <a href="tel:108" class="emergency-number">📞 108</a>
+            <div class="emergency-sub">Free ambulance · 24/7 · All India</div>
+          </div>
+          <a href="/emergency" class="emergency-call-btn">Full Guide →</a>
+        </div>
+
+      </div><!-- /col-right -->
+    </div><!-- /main-content -->
+
+  </div><!-- /main-area -->
+</div><!-- /app-layout -->
+
+<!-- Mobile Bottom Nav -->
+<nav class="bottom-nav">
+  <button class="nav-item active" onclick="window.location.href='/dashboard'">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home
+  </button>
+  <button class="nav-item" onclick="window.location.href='/chat'">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Chat
+  </button>
+  <button class="nav-item" onclick="window.location.href='/family'">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Family
+  </button>
+  <button class="nav-item" onclick="window.location.href='/profile'">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile
+  </button>
+  <button class="nav-item" onclick="window.location.href='/emergency'" style="color:var(--color-danger)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="var(--color-danger)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>SOS
+  </button>
+</nav>
+
+<script src="/js/app.js"></script>
+<script>
+  window.addEventListener('pageshow', e => { if (e.persisted) window.location.reload(); });
+  if (!Auth.isLoggedIn()) window.location.href = '/login';
+
+  const TIPS = [
+    "🌿 Start your day with warm lemon water — boosts digestion and flushes toxins naturally.",
+    "🧘 Just 10 minutes of deep breathing daily can reduce stress hormones by up to 23%.",
+    "💧 Drink at least 8–10 glasses of water today — especially important in India's heat.",
+    "🌿 A cup of tulsi-adrak tea every evening strengthens immunity and clears congestion.",
+    "🚶 Walk 30 minutes today — the most effective medicine for BP, sugar, and anxiety.",
+    "🍌 A banana daily provides potassium + serotonin — great for heart, muscle, and mood.",
+    "😴 7–8 hours of sleep is when the body repairs cells, balances hormones, and resets immunity.",
+    "🧄 Raw garlic in food is a natural antibiotic and proven cholesterol reducer.",
+    "🌅 10 minutes of morning sunlight gives Vitamin D — prevents bone loss and depression.",
+    "🥦 Include one leafy green per meal — spinach, methi, or broccoli for iron and folate.",
+    "💊 Take medicines at the same time every day — consistency improves efficacy by 40%.",
+    "🧴 Wash hands for 20 seconds with soap — it prevents up to 80% of common infections.",
+  ];
+
+  const REL = { parent:'👴', child:'👶', spouse:'💑', sibling:'👫', other:'👤' };
+
+  async function init() {
+    const user = Auth.getUser(); if (!user) return;
+    const hour = new Date().getHours();
+    const greet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+    document.getElementById('greetingName').textContent = `${greet}, ${user.name?.split(' ')[0] || 'Friend'}! 👋`;
+    const now = new Date();
+    document.getElementById('greetingDate').textContent = now.toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'long' });
+    document.getElementById('tipText').textContent = TIPS[now.getDate() % TIPS.length];
+
+    const streakRes = await API.get('/api/user/streak', true);
+    const streak = streakRes.data?.current_streak || 1;
+
+    document.getElementById('scoreRingWrap').innerHTML = renderScoreRing(80, 100);
+    document.getElementById('scoreStatus').textContent = scoreLabel(80);
+    document.getElementById('streakBadge').innerHTML = `<div class="streak-badge-pill">🔥 ${streak} day streak</div>`;
+    document.getElementById('mStreak').textContent = streak;
+    document.getElementById('mScore').textContent = '80';
+
+    if (user.is_premium)
+      document.getElementById('greetingName').innerHTML = `${greet}, ${user.name?.split(' ')[0] || 'Friend'}! ⭐`;
+
+    // Vitals from profile
+    const pRes = await API.get('/api/user/profile', true);
+    if (pRes.data) {
+      const p = pRes.data;
+      if (p.systolic && p.diastolic) {
+        document.getElementById('vBP').textContent = `${p.systolic}/${p.diastolic}`;
+        document.getElementById('vBPst').textContent = p.systolic < 130 ? '✓ Normal' : '⚠ High';
+        document.getElementById('vBPst').className = 'vital-status ' + (p.systolic < 130 ? 'ok' : 'warn');
+      }
+      if (p.blood_sugar) {
+        document.getElementById('vSugar').textContent = p.blood_sugar;
+        document.getElementById('vSugarst').textContent = p.blood_sugar < 140 ? '✓ Normal' : '⚠ High';
+        document.getElementById('vSugarst').className = 'vital-status ' + (p.blood_sugar < 140 ? 'ok' : 'warn');
+      }
+      if (p.weight_kg && p.height_cm) {
+        const bmi = (p.weight_kg / ((p.height_cm / 100) ** 2)).toFixed(1);
+        document.getElementById('vBMI').textContent = bmi;
+        document.getElementById('vBMIst').textContent = bmi < 25 ? '✓ Normal' : '⚠ Review';
+        document.getElementById('vBMIst').className = 'vital-status ' + (bmi < 25 ? 'ok' : 'warn');
+      }
+    }
+
+    loadHistory();
+    loadFamily();
+  }
+
+  async function loadHistory() {
+    const res = await API.get('/api/user/history?limit=5', true);
+    const list = document.getElementById('historyList');
+    if (res.error || !res.data?.history?.length) {
+      list.innerHTML = `<div style="text-align:center;padding:24px 0;color:var(--n-500)">
+        <p style="font-size:.9rem;margin-bottom:12px">No consultations yet.</p>
+        <button class="btn btn-confirm btn-sm" onclick="window.location.href='/chat'">Start your first chat 💬</button>
+      </div>`;
+      return;
+    }
+    const sev = { mild:'var(--color-success)', moderate:'var(--color-warning)', serious:'var(--color-danger)' };
+    list.innerHTML = res.data.history.map(item => `
+      <div class="history-item" onclick="window.location.href='/chat'">
+        <div class="sev-dot" style="background:${sev[item.severity] || 'var(--n-400)'}"></div>
+        <div style="flex:1;min-width:0">
+          <div class="history-msg">${item.message}</div>
+          <div class="history-meta">${formatTime(item.created_at)} · ${item.severity || 'mild'}</div>
+        </div>
+        ${item.health_score ? `<div class="history-score" style="color:${scoreColor(item.health_score)}">${item.health_score}</div>` : ''}
+      </div>`).join('');
+
+    if (res.data.history[0]?.health_score) {
+      const s = res.data.history[0].health_score;
+      document.getElementById('scoreRingWrap').innerHTML = renderScoreRing(s, 100);
+      document.getElementById('scoreStatus').textContent = scoreLabel(s);
+      document.getElementById('mScore').textContent = s;
+    }
+    document.getElementById('mConsult').textContent = res.data.history.length;
+  }
+
+  async function loadFamily() {
+    const res = await API.get('/api/user/family', true);
+    if (res.error || !res.data?.family_members?.length) return;
+    const scroll = document.getElementById('familyScroll');
+    const add = scroll.innerHTML;
+    scroll.innerHTML = res.data.family_members.map(m => `
+      <div class="family-card" onclick="window.location.href='/chat?family=${m.id}'">
+        <div class="family-avatar">${REL[m.relation] || '👤'}</div>
+        <div class="family-name">${m.name}</div>
+        <div class="family-rel">${m.relation} · ${m.age}y</div>
+      </div>`).join('') + add;
+  }
+
+  function selectMood(btn, mood) {
+    document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    const msgs = {
+      great: 'Feeling great! Do a quick wellness check.',
+      okay: 'Any specific health concern today?',
+      unwell: 'I am sorry to hear that. What symptoms are you having?',
+      pain: 'Tell me about the pain — location and severity?'
+    };
+    if (mood === 'unwell' || mood === 'pain')
+      setTimeout(() => window.location.href = `/chat?msg=${encodeURIComponent(msgs[mood])}`, 500);
+  }
+
+  init();
+</script>
+</body>
+</html>

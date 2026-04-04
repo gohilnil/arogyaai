@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2E8B57">
+  <meta name="description" content="Create your free ArogyaAI account">
+  <!-- BFCACHE OPTOUT -->
+  <meta http-equiv="Cache-Control" content="no-store">
+  <title>Sign Up — ArogyaAI</title>
+  <link rel="stylesheet" href="/css/design-system.css">
+  <style>
+    body {
+      background: var(--n-100);
+      min-height: 100dvh;
+      display: flex; flex-direction: column;
+    }
+
+    .signup-page {
+      flex: 1;
+      display: flex;
+      align-items: stretch;
+    }
+
+    /* Desktop split */
+    .signup-left { display: none; }
+    @media (min-width: 1024px) {
+      .signup-left {
+        display: flex; flex-direction: column; justify-content: center;
+        flex: 1;
+        background: linear-gradient(145deg, #0f4c29, var(--color-primary), #27ae60);
+        background-size: 200% 200%;
+        animation: gradientShift 8s ease infinite;
+        padding: 64px 72px;
+        position: relative; overflow: hidden;
+      }
+      @keyframes gradientShift {
+        0%,100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+      }
+      .signup-left::before {
+        content: '';
+        position: absolute; inset: 0;
+        background: radial-gradient(circle at 70% 30%, rgba(255,255,255,.07) 0%, transparent 60%);
+      }
+      .signup-right {
+        width: 520px; flex-shrink: 0;
+        display: flex; flex-direction: column; justify-content: center;
+        padding: 40px 56px;
+        background: white; overflow-y: auto;
+      }
+    }
+    .signup-right {
+      flex: 1;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: var(--sp-6) var(--sp-5) var(--sp-9);
+      max-width: 520px; margin: 0 auto; width: 100%;
+    }
+
+    /* Left panel */
+    .sl-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; position: relative; z-index: 1; }
+    .sl-brand-icon { width: 46px; height: 46px; background: rgba(255,255,255,.2); border: 2px solid rgba(255,255,255,.3); border-radius: var(--r-lg); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+    .sl-brand-name { font-family: var(--font-nums); font-size: 1.5rem; font-weight: 800; color: white; }
+    .sl-headline { font-size: 2.6rem; font-weight: 800; color: white; line-height: 1.2; margin-bottom: 16px; position: relative; z-index: 1; }
+    .sl-sub { color: rgba(255,255,255,.8); font-size: 1rem; margin-bottom: 40px; position: relative; z-index: 1; }
+    .sl-benefits { display: flex; flex-direction: column; gap: 14px; position: relative; z-index: 1; }
+    .sl-benefit { display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,.92); font-size: 0.95rem; }
+    .sl-benefit-dot { width: 8px; height: 8px; border-radius: 50%; background: #86efac; flex-shrink: 0; }
+
+    /* Mobile logo */
+    .logo-sm { display: flex; align-items: center; gap: 10px; margin-bottom: var(--sp-6); }
+    @media (min-width: 1024px) { .logo-sm { display: none; } }
+    .logo-sm-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)); border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+    .logo-sm-name { font-family: var(--font-nums); font-size: 1.2rem; font-weight: 800; color: var(--n-900); }
+    .logo-sm-name span { color: var(--color-primary); }
+
+    /* Benefits strip (mobile) */
+    .benefits-strip {
+      background: var(--color-primary-pale);
+      border: 1.5px solid var(--color-primary-light);
+      border-radius: var(--r-xl);
+      padding: var(--sp-4) var(--sp-5);
+      margin-bottom: var(--sp-5);
+    }
+    @media (min-width: 1024px) { .benefits-strip { display: none; } }
+    .benefits-strip h4 { font-size: 0.88rem; color: var(--color-primary); margin-bottom: 10px; font-weight: 700; }
+    .benefit-item { display: flex; align-items: center; gap: 8px; font-size: 0.83rem; color: var(--n-700); margin-bottom: 5px; }
+
+    .auth-heading { font-size: 1.8rem; font-weight: 800; color: var(--n-900); margin-bottom: 4px; }
+    .auth-sub { font-size: 0.92rem; color: var(--n-500); margin-bottom: var(--sp-6); }
+
+    /* Form */
+    .auth-form { display: flex; flex-direction: column; gap: var(--sp-4); }
+
+    .input-group { display: flex; flex-direction: column; }
+    .input-label { font-size: 0.85rem; font-weight: 700; color: var(--n-700); margin-bottom: 6px; display: block; }
+    .input-wrap  { position: relative; }
+    .field-icon {
+      position: absolute; left: 15px; top: 50%;
+      transform: translateY(-50%);
+      width: 18px; height: 18px; color: var(--n-400); pointer-events: none;
+    }
+    .input-wrap .input-field { padding-left: 45px; }
+    .input-field {
+      width: 100%; padding: 14px 16px;
+      border: 1.5px solid var(--n-200);
+      border-radius: var(--r-lg);
+      font-size: 1rem; color: var(--n-900);
+      background: var(--n-50);
+      transition: all var(--dur-fast);
+    }
+    .input-field:focus { outline: none; border-color: var(--color-primary); background: white; box-shadow: var(--sh-focus); transform: translateY(-1px); }
+    .input-field.error { border-color: var(--color-danger); }
+    .input-eye {
+      position: absolute; right: 14px; top: 50%;
+      transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      color: var(--n-400); font-size: 1rem; padding: 4px;
+    }
+    .input-error-msg { font-size: 0.78rem; color: var(--color-danger); margin-top: 5px; }
+    .hidden { display: none; }
+
+    /* Password strength */
+    .strength-bar { height: 4px; background: var(--n-200); border-radius: 99px; margin-top: 8px; overflow: hidden; }
+    .strength-fill { height: 100%; border-radius: 99px; transition: width .3s, background .3s; }
+    .strength-label { font-size: 0.72rem; color: var(--n-400); margin-top: 4px; min-height: 14px; }
+
+    .terms-text { font-size: 0.76rem; color: var(--n-400); text-align: center; line-height: 1.5; }
+    .terms-text a { color: var(--color-primary); font-weight: 600; }
+
+    .btn-primary-auth {
+      width: 100%; padding: 16px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+      color: white; border: none; border-radius: var(--r-xl);
+      font-size: 1.02rem; font-weight: 800;
+      cursor: pointer;
+      transition: all var(--dur-base) var(--ease-spring);
+      box-shadow: var(--sh-green);
+      position: relative; overflow: hidden;
+    }
+    .btn-primary-auth::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.15), transparent);
+      opacity: 0; transition: opacity var(--dur-fast);
+    }
+    .btn-primary-auth:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(46,139,87,.38); }
+    .btn-primary-auth:hover::before { opacity: 1; }
+    .btn-primary-auth:active { transform: scale(0.97); }
+
+    .auth-footer { text-align: center; margin-top: var(--sp-5); font-size: 0.9rem; color: var(--n-500); }
+    .auth-link { color: var(--color-primary); font-weight: 700; cursor: pointer; }
+    .auth-link:hover { text-decoration: underline; }
+
+    .trust-row { display: flex; justify-content: center; gap: var(--sp-5); margin-top: var(--sp-6); flex-wrap: wrap; }
+    .trust-item { font-size: 0.73rem; color: var(--n-400); font-weight: 600; display: flex; align-items: center; gap: 4px; }
+  </style>
+</head>
+<body>
+<div class="signup-page">
+
+  <!-- Left panel -->
+  <div class="signup-left">
+    <div class="sl-brand">
+      <div class="sl-brand-icon">🌿</div>
+      <div class="sl-brand-name">ArogyaAI</div>
+    </div>
+    <div class="sl-headline">Join 10,000+<br>Healthy Indians</div>
+    <div class="sl-sub">India's most trusted AI health companion — free forever.</div>
+    <div class="sl-benefits">
+      <div class="sl-benefit"><div class="sl-benefit-dot"></div>AI Doctor Chat in Hindi, Gujarati &amp; English</div>
+      <div class="sl-benefit"><div class="sl-benefit-dot"></div>Emergency 108 alerts for critical symptoms</div>
+      <div class="sl-benefit"><div class="sl-benefit-dot"></div>Free daily Arogya Score tracking</div>
+      <div class="sl-benefit"><div class="sl-benefit-dot"></div>Family health management for 5 members</div>
+      <div class="sl-benefit"><div class="sl-benefit-dot"></div>Voice input — just speak your symptoms</div>
+    </div>
+  </div>
+
+  <!-- Right panel -->
+  <div class="signup-right page-enter">
+
+    <!-- Mobile logo -->
+    <div class="logo-sm">
+      <div class="logo-sm-icon">🌿</div>
+      <div class="logo-sm-name">Arogya<span>AI</span></div>
+    </div>
+
+    <!-- Mobile benefits -->
+    <div class="benefits-strip">
+      <h4>🎉 What you get for free:</h4>
+      <div class="benefit-item">✅ AI doctor chat (Hindi, Gujarati, English)</div>
+      <div class="benefit-item">✅ Emergency detection &amp; 108 alerts</div>
+      <div class="benefit-item">✅ Daily Arogya Score + streak</div>
+      <div class="benefit-item">✅ Voice input — just speak!</div>
+    </div>
+
+    <div class="auth-heading">Create free account 🌿</div>
+    <div class="auth-sub">Your AI health companion awaits</div>
+
+    <form class="auth-form" id="signupForm" novalidate>
+
+      <div class="input-group">
+        <label class="input-label">Full Name</label>
+        <div class="input-wrap">
+          <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+          <input type="text" class="input-field" id="nameInput"
+            placeholder="Rahul Sharma" autocomplete="name" required>
+        </div>
+        <span class="input-error-msg hidden" id="nameError"></span>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Email Address</label>
+        <div class="input-wrap">
+          <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          <input type="email" class="input-field" id="emailInput"
+            placeholder="you@example.com" autocomplete="email" required>
+        </div>
+        <span class="input-error-msg hidden" id="emailError"></span>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Password</label>
+        <div class="input-wrap">
+          <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <input type="password" class="input-field" id="passInput"
+            placeholder="Min. 6 characters" maxlength="50" autocomplete="new-password" required>
+          <button type="button" class="input-eye" id="togglePass">👁️</button>
+        </div>
+        <div class="strength-bar"><div class="strength-fill" id="strengthFill" style="width:0%"></div></div>
+        <div class="strength-label" id="strengthLabel"></div>
+        <span class="input-error-msg hidden" id="passError"></span>
+      </div>
+
+      <div class="terms-text">
+        By signing up, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+        ArogyaAI does not store personal medical data without consent.
+      </div>
+
+      <button type="submit" class="btn-primary-auth" id="signupBtn">
+        🌿 Create Free Account
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      Already have an account?
+      <a class="auth-link" onclick="window.location.href='/login'"> Log in</a>
+    </div>
+
+    <div class="trust-row">
+      <div class="trust-item">🔒 Secure</div>
+      <div class="trust-item">🇮🇳 Made for Bharat</div>
+      <div class="trust-item">✅ 100% Free</div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/app.js"></script>
+<script>
+  // BFCACHE FIX
+  window.addEventListener("pageshow", function(e) { if (e.persisted) window.location.reload(); });
+
+  Auth.redirectIfLoggedIn();
+
+  document.getElementById('togglePass').addEventListener('click', () => {
+    const input = document.getElementById('passInput');
+    const btn   = document.getElementById('togglePass');
+    input.type  = input.type === 'password' ? 'text' : 'password';
+    btn.textContent = input.type === 'password' ? '👁️' : '🙈';
+  });
+
+  document.getElementById('passInput').addEventListener('input', e => {
+    const val = e.target.value;
+    const fill  = document.getElementById('strengthFill');
+    const label = document.getElementById('strengthLabel');
+    let strength = 0;
+    if (val.length >= 6) strength++;
+    if (val.length >= 10) strength++;
+    if (/[A-Z]/.test(val)) strength++;
+    if (/[0-9]/.test(val)) strength++;
+    if (/[^a-zA-Z0-9]/.test(val)) strength++;
+    const levels = [
+      { w:'0%',   color:'', text:'' },
+      { w:'25%',  color:'#ef4444', text:'Weak' },
+      { w:'50%',  color:'#f59e0b', text:'Fair' },
+      { w:'75%',  color:'#84cc16', text:'Good' },
+      { w:'100%', color:'#22c55e', text:'Strong 💪' },
+    ];
+    const lvl = levels[Math.min(strength, 4)];
+    fill.style.width = lvl.w;
+    fill.style.background = lvl.color;
+    label.textContent = lvl.text;
+    label.style.color = lvl.color;
+  });
+
+  document.getElementById('signupForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const name  = document.getElementById('nameInput').value.trim();
+    const email = document.getElementById('emailInput').value.trim();
+    const pass  = document.getElementById('passInput').value;
+
+    ['nameError','emailError','passError'].forEach(id => document.getElementById(id).classList.add('hidden'));
+    ['nameInput','emailInput','passInput'].forEach(id => document.getElementById(id).classList.remove('error'));
+
+    let valid = true;
+    if (!name || name.length < 2) {
+      document.getElementById('nameError').textContent = 'Please enter your name.';
+      document.getElementById('nameError').classList.remove('hidden');
+      document.getElementById('nameInput').classList.add('error');
+      valid = false;
+    }
+    if (!email || !email.includes('@')) {
+      document.getElementById('emailError').textContent = 'Please enter a valid email.';
+      document.getElementById('emailError').classList.remove('hidden');
+      document.getElementById('emailInput').classList.add('error');
+      valid = false;
+    }
+    if (!pass || pass.length < 6) {
+      document.getElementById('passError').textContent = 'Password must be at least 6 characters.';
+      document.getElementById('passError').classList.remove('hidden');
+      document.getElementById('passInput').classList.add('error');
+      valid = false;
+    }
+    if (!valid) return;
+
+    const btn = document.getElementById('signupBtn');
+    setLoading(btn, true);
+
+    try {
+      const data = await API.post('/api/auth/signup', { name, email, password: pass });
+      Auth.saveTokens(data.access_token, data.refresh_token, data.user);
+      Toast.success('Welcome to ArogyaAI! 🌿');
+      setTimeout(() => window.location.href = '/onboarding', 700);
+    } catch (err) {
+      Toast.error(err.message || 'Signup failed. Please try again.');
+    } finally {
+      setLoading(btn, false);
+    }
+  });
+</script>
+</body>
+</html>

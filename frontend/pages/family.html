@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2E8B57">
+  <meta name="description" content="Family Health — ArogyaAI">
+  <!-- BFCACHE OPTOUT -->
+  <meta http-equiv="Cache-Control" content="no-store">
+  <title>Family Health — ArogyaAI</title>
+  <link rel="stylesheet" href="/css/design-system.css">
+  <style>
+    body { background: var(--n-100); }
+    .page-wrap { min-height: 100dvh; display: flex; flex-direction: column; }
+
+    /* ── Top bar ────────────────────────────────────────────── */
+    .top-bar {
+      background: white; border-bottom: 1px solid var(--n-200);
+      padding: 0 var(--sp-5); height: 60px;
+      display: flex; align-items: center; gap: var(--sp-3);
+      position: sticky; top: 0; z-index: var(--z-sticky);
+    }
+    .back-btn {
+      width: 36px; height: 36px; border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--n-700); cursor: pointer; transition: background var(--dur-fast);
+    }
+    .back-btn:hover { background: var(--n-100); }
+    .back-btn svg { width: 20px; height: 20px; stroke-width: 2; }
+    .page-title { font-size: 1.05rem; font-weight: 800; color: var(--n-900); }
+
+    /* ── Content ────────────────────────────────────────────── */
+    .main-content {
+      flex: 1;
+      padding: var(--sp-5) var(--sp-5) calc(80px + var(--sp-5));
+      max-width: 760px; margin: 0 auto; width: 100%;
+    }
+    @media (min-width: 768px) { .main-content { padding: var(--sp-6) var(--sp-7) var(--sp-9); } }
+    @media (min-width: 1024px) { .main-content { max-width: 1000px; } }
+
+    /* ── Hero add-member card ───────────────────────────────── */
+    .add-hero {
+      background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary), #27ae60);
+      border-radius: var(--r-2xl);
+      padding: var(--sp-6) var(--sp-6) var(--sp-7);
+      margin-bottom: var(--sp-5);
+      position: relative; overflow: hidden;
+    }
+    .add-hero::before {
+      content: '';
+      position: absolute; top: -60px; right: -60px;
+      width: 200px; height: 200px;
+      background: rgba(255,255,255,.07);
+      border-radius: 50%;
+    }
+    .add-hero h2 { color: white; font-size: 1.3rem; font-weight: 800; margin-bottom: 6px; position: relative; z-index: 1; }
+    .add-hero p  { color: rgba(255,255,255,.8); font-size: 0.9rem; margin-bottom: var(--sp-4); position: relative; z-index: 1; }
+    .add-hero-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: white; color: var(--color-primary);
+      border: none; border-radius: var(--r-full);
+      padding: 12px 24px; font-size: 0.92rem; font-weight: 800;
+      cursor: pointer; transition: all var(--dur-fast);
+      box-shadow: 0 4px 12px rgba(0,0,0,.15);
+      position: relative; z-index: 1;
+    }
+    .add-hero-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(0,0,0,.2); }
+
+    /* ── Section header ─────────────────────────────────────── */
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: var(--sp-3);
+    }
+    .section-label { font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: var(--n-400); }
+    .member-count {
+      font-size: 0.78rem; font-weight: 700;
+      background: var(--color-primary-pale); color: var(--color-primary);
+      padding: 3px 10px; border-radius: var(--r-full);
+    }
+
+    /* ── Members grid ───────────────────────────────────────── */
+    .members-grid { display: flex; flex-direction: column; gap: var(--sp-3); }
+    @media (min-width: 768px) {
+      .members-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--sp-3); }
+    }
+    @media (min-width: 1024px) {
+      .members-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .member-card {
+      background: white; border-radius: var(--r-xl);
+      padding: var(--sp-5); box-shadow: var(--sh-card);
+      border: 1px solid rgba(0,0,0,.04);
+      display: flex; gap: var(--sp-4); align-items: flex-start;
+      cursor: pointer;
+      transition: all var(--dur-base) var(--ease-out);
+      position: relative;
+    }
+    .member-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--sh-lg);
+      border-color: rgba(46,139,87,.15);
+    }
+
+    .member-avatar {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--color-primary-pale), var(--color-primary-light));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; flex-shrink: 0;
+      border: 2px solid var(--color-primary-light);
+    }
+    .member-info { flex: 1; min-width: 0; }
+    .member-name { font-size: 1rem; font-weight: 800; color: var(--n-900); margin-bottom: 3px; }
+    .member-meta { font-size: 0.78rem; color: var(--n-400); margin-bottom: var(--sp-2); }
+    .member-conditions { display: flex; flex-wrap: wrap; gap: 4px; }
+    .cond-chip {
+      font-size: 0.7rem; font-weight: 700;
+      background: var(--color-warning-bg); color: #92400e;
+      border: 1px solid #fde68a;
+      padding: 2px 8px; border-radius: var(--r-full);
+    }
+    .member-chat-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      margin-top: var(--sp-3);
+      background: var(--color-primary-pale); color: var(--color-primary);
+      border: 1.5px solid var(--color-primary-light);
+      padding: 8px 16px; border-radius: var(--r-full);
+      font-size: 0.8rem; font-weight: 700; cursor: pointer;
+      transition: all var(--dur-fast); white-space: nowrap;
+    }
+    .member-chat-btn:hover { background: var(--color-primary-light); }
+
+    /* ── Empty state ────────────────────────────────────────── */
+    .empty-state {
+      text-align: center; padding: var(--sp-9) var(--sp-6);
+      background: white; border-radius: var(--r-2xl);
+      border: 2px dashed var(--n-200);
+    }
+    .empty-icon { font-size: 3.5rem; margin-bottom: var(--sp-3); }
+    .empty-title { font-size: 1.1rem; font-weight: 800; color: var(--n-900); margin-bottom: 6px; }
+    .empty-sub   { font-size: 0.88rem; color: var(--n-500); margin-bottom: var(--sp-5); line-height: 1.5; }
+
+    /* ── Modal ──────────────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.5);
+      z-index: var(--z-modal);
+      display: flex; align-items: flex-end;
+      backdrop-filter: blur(4px);
+    }
+    @media (min-width: 768px) {
+      .modal-overlay { align-items: center; justify-content: center; }
+    }
+    .modal-sheet {
+      width: 100%; max-width: 520px; margin: 0 auto;
+      background: white;
+      border-radius: var(--r-2xl) var(--r-2xl) 0 0;
+      padding: var(--sp-6) var(--sp-6) calc(var(--sp-6) + env(safe-area-inset-bottom, 0));
+      max-height: 90dvh; overflow-y: auto;
+    }
+    @media (min-width: 768px) {
+      .modal-sheet { border-radius: var(--r-2xl); max-height: 80dvh; }
+    }
+    .modal-handle { width: 40px; height: 4px; background: var(--n-200); border-radius: 99px; margin: 0 auto var(--sp-5); }
+    @media (min-width: 768px) { .modal-handle { display: none; } }
+
+    .modal-title { font-size: 1.2rem; font-weight: 800; color: var(--n-900); margin-bottom: var(--sp-5); }
+    .add-form { display: flex; flex-direction: column; gap: var(--sp-4); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); }
+    .input-group { display: flex; flex-direction: column; }
+    .input-label { font-size: 0.83rem; font-weight: 700; color: var(--n-700); margin-bottom: 5px; }
+    .input-field {
+      width: 100%; padding: 13px 14px;
+      border: 1.5px solid var(--n-200); border-radius: var(--r-lg);
+      font-size: 0.95rem; color: var(--n-900); background: var(--n-50);
+      transition: all var(--dur-fast);
+    }
+    .input-field:focus { outline: none; border-color: var(--color-primary); background: white; box-shadow: var(--sh-focus); }
+    select.input-field { appearance: none; }
+
+    .modal-actions { display: flex; gap: var(--sp-2); }
+    .btn-cancel {
+      flex: 1; padding: 13px; background: var(--n-100); color: var(--n-700);
+      border: none; border-radius: var(--r-xl); font-size: 0.92rem; font-weight: 700; cursor: pointer;
+    }
+    .btn-add {
+      flex: 2; padding: 14px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+      color: white; border: none; border-radius: var(--r-xl);
+      font-size: 0.92rem; font-weight: 800;
+      cursor: pointer; box-shadow: var(--sh-green);
+      transition: all var(--dur-base) var(--ease-spring);
+    }
+    .btn-add:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(46,139,87,.35); }
+
+    .hidden { display: none; }
+
+    /* skeleton */
+    .skeleton {
+      background: linear-gradient(90deg, var(--n-100) 25%, var(--n-200) 50%, var(--n-100) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s ease-in-out infinite;
+      border-radius: var(--r-xl);
+    }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar"></aside>
+  <div class="main-area">
+
+  <!-- Top bar -->
+  <div class="top-bar">
+    <button class="back-btn" onclick="history.back()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="page-title">Family Health</div>
+    <button onclick="showAddModal()" style="margin-left:auto;display:flex;align-items:center;gap:6px;background:var(--color-primary);color:white;border:none;border-radius:var(--r-full);padding:8px 16px;font-size:0.82rem;font-weight:700;cursor:pointer">
+      + Add Member
+    </button>
+  </div>
+
+  <!-- Main content -->
+  <div class="main-content page-enter">
+
+    <!-- Hero card -->
+    <div class="add-hero">
+      <h2>👨‍👩‍👧 Track Family Health Together</h2>
+      <p>Add parents, children, spouse — chat with AI on their behalf in any language</p>
+      <button class="add-hero-btn" onclick="showAddModal()">
+        + Add Family Member
+      </button>
+    </div>
+
+    <!-- Members section -->
+    <div class="section-header">
+      <div class="section-label">Your Family Members</div>
+      <div class="member-count" id="memberCount">0 members</div>
+    </div>
+    <div class="members-grid" id="membersGrid">
+      <div class="skeleton" style="height:120px"></div>
+      <div class="skeleton" style="height:120px"></div>
+    </div>
+
+  </div>
+</div>
+
+
+
+<!-- Add Member Modal -->
+<div class="modal-overlay hidden" id="addModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Add Family Member</div>
+    <form class="add-form" id="addMemberForm">
+      <div class="input-group">
+        <label class="input-label">Full Name *</label>
+        <input type="text" class="input-field" id="memberName" placeholder="e.g. Rajesh Papa" required>
+      </div>
+      <div class="form-row">
+        <div class="input-group">
+          <label class="input-label">Relation *</label>
+          <select class="input-field" id="memberRelation" required>
+            <option value="">Select</option>
+            <option value="parent">Parent</option>
+            <option value="spouse">Spouse</option>
+            <option value="child">Child</option>
+            <option value="sibling">Sibling</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Age *</label>
+          <input type="number" class="input-field" id="memberAge" placeholder="55" min="0" max="120" required>
+        </div>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Gender</label>
+        <select class="input-field" id="memberGender">
+          <option value="">Select</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Known Conditions (optional)</label>
+        <input type="text" class="input-field" id="memberConditions" placeholder="e.g. Diabetes, BP — separate with comma">
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" onclick="hideAddModal()">Cancel</button>
+        <button type="submit" class="btn-add" id="addMemberBtn">+ Add Member</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="/js/app.js"></script>
+<script>
+  // BFCACHE FIX
+  window.addEventListener("pageshow", function(e) { if (e.persisted) window.location.reload(); });
+
+  if (!Auth.isLoggedIn()) window.location.href = '/login';
+
+  const RELATION_EMOJIS = { parent:'👴', child:'👶', spouse:'💑', sibling:'👫', other:'👤' };
+  const RELATION_COLORS  = { parent:'#C084FC', child:'#60A5FA', spouse:'#FB7185', sibling:'#34D399', other:'#94A3B8' };
+
+  async function loadMembers() {
+    const res = await API.get('/api/user/family', true);
+    const grid = document.getElementById('membersGrid');
+    const countEl = document.getElementById('memberCount');
+
+    if (res.error || !res.data?.family_members?.length) {
+      countEl.textContent = '0 members';
+      grid.innerHTML = `
+        <div class="empty-state" style="grid-column:1/-1">
+          <div class="empty-icon">👨‍👩‍👧</div>
+          <div class="empty-title">No family members yet</div>
+          <div class="empty-sub">Add your parents, children, or spouse to track their health and consult the AI on their behalf.</div>
+          <button class="btn-add" style="border-radius:var(--r-full);padding:12px 28px;font-size:0.92rem" onclick="showAddModal()">
+            + Add First Member
+          </button>
+        </div>`;
+      return;
+    }
+
+    const members = res.data.family_members;
+    countEl.textContent = `${members.length} member${members.length > 1 ? 's' : ''}`;
+
+    grid.innerHTML = members.map(m => {
+      const conditions = Array.isArray(m.conditions) ? m.conditions : [];
+      return `
+        <div class="member-card">
+          <div class="member-avatar">${RELATION_EMOJIS[m.relation] || '👤'}</div>
+          <div class="member-info">
+            <div class="member-name">${m.name}</div>
+            <div class="member-meta">${m.relation} · ${m.age} years${m.gender ? ' · ' + m.gender : ''}</div>
+            ${conditions.length ? `
+              <div class="member-conditions">
+                ${conditions.map(c => `<span class="cond-chip">${c}</span>`).join('')}
+              </div>` : ''}
+            <button class="member-chat-btn" onclick="chatForMember('${m.name}','${m.relation}',${m.age})">
+              💬 Chat for ${m.name.split(' ')[0]}
+            </button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function chatForMember(name, relation, age) {
+    const msg = `My ${relation} ${name} (${age} years old) has a health issue. `;
+    window.location.href = `/chat?msg=${encodeURIComponent(msg)}`;
+  }
+
+  function showAddModal() {
+    document.getElementById('addModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function hideAddModal() {
+    document.getElementById('addModal').classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('addModal').addEventListener('click', e => {
+    if (e.target === document.getElementById('addModal')) hideAddModal();
+  });
+
+  document.getElementById('addMemberForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const name      = document.getElementById('memberName').value.trim();
+    const relation  = document.getElementById('memberRelation').value;
+    const age       = parseInt(document.getElementById('memberAge').value);
+    const gender    = document.getElementById('memberGender').value;
+    const condStr   = document.getElementById('memberConditions').value;
+    const conditions = condStr ? condStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+    if (!name || !relation || !age) { Toast.error('Please fill in required fields.'); return; }
+
+    const btn = document.getElementById('addMemberBtn');
+    setLoading(btn, true);
+
+    const { data, error } = await API.post('/api/user/family', { name, relation, age, gender, conditions }, true);
+    setLoading(btn, false);
+
+    if (error) { Toast.error(error); return; }
+
+    Toast.success(`${name} added to your family! 👨‍👩‍👧`);
+    hideAddModal();
+    document.getElementById('addMemberForm').reset();
+    loadMembers();
+  });
+
+  loadMembers();
+</script>
+</body>
+</html>

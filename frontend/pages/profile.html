@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2E8B57">
+  <meta name="description" content="Your profile — ArogyaAI">
+  <!-- BFCACHE OPTOUT -->
+  <meta http-equiv="Cache-Control" content="no-store">
+  <title>Profile — ArogyaAI</title>
+  <link rel="stylesheet" href="/css/design-system.css">
+  <style>
+    body { background: var(--n-100); }
+
+    /* ── profile.html Specific Styles ────────────────────── */
+
+    /* ── Profile hero ───────────────────────────────────────── */
+    .profile-hero {
+      background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 60%, #27ae60 100%);
+      padding: var(--sp-9) var(--sp-6) calc(var(--sp-12) + 4px);
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .profile-hero::after {
+      content: '';
+      position: absolute; bottom: -2px; left: 0; right: 0;
+      height: 48px; background: var(--n-100);
+      border-radius: 48px 48px 0 0;
+    }
+    .hero-orb { position: absolute; border-radius: 50%; pointer-events: none; }
+    .hero-orb-1 { width: 300px; height: 300px; background: rgba(255,255,255,.05); top: -80px; right: -80px; }
+    .hero-orb-2 { width: 180px; height: 180px; background: rgba(0,0,0,.08); bottom: 40px; left: -40px; }
+
+    .avatar-circle {
+      width: 88px; height: 88px;
+      background: rgba(255,255,255,.2);
+      border: 3px solid rgba(255,255,255,.4);
+      border-radius: 50%;
+      margin: 0 auto var(--sp-3);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-nums);
+      font-size: 2.2rem; font-weight: 800; color: white;
+      position: relative; z-index: 1;
+      box-shadow: 0 0 0 4px rgba(255,255,255,.15), 0 0 24px rgba(255,255,255,.1);
+    }
+    .profile-name  { font-family: var(--font-nums); font-size: 1.5rem; font-weight: 800; color: white; position: relative; z-index: 1; }
+    .profile-email { font-size: 0.85rem; color: rgba(255,255,255,.7); margin-top: 4px; position: relative; z-index: 1; }
+    .plan-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.25);
+      padding: 5px 14px; border-radius: var(--r-full);
+      font-size: 0.78rem; font-weight: 700; color: white;
+      margin-top: var(--sp-3); position: relative; z-index: 1;
+    }
+
+    /* ── Main content ───────────────────────────────────────── */
+    .main-content {
+      padding: var(--sp-5) var(--sp-5) calc(80px + var(--sp-5));
+      max-width: 680px; margin: 0 auto;
+      display: flex; flex-direction: column; gap: var(--sp-5);
+    }
+    @media (min-width: 768px) { .main-content { padding: var(--sp-6) var(--sp-7) var(--sp-8); } }
+    @media (min-width: 1024px) {
+      .main-content {
+        max-width: 900px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--sp-5);
+        padding: var(--sp-7) var(--sp-9) var(--sp-9);
+        align-items: start;
+      }
+      .col-full { grid-column: 1 / -1; }
+    }
+
+    /* ── Stats row ──────────────────────────────────────────── */
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-3); }
+    .stat-card {
+      background: white; border-radius: var(--r-xl);
+      padding: var(--sp-4) var(--sp-3);
+      text-align: center; box-shadow: var(--sh-card);
+      border: 1px solid rgba(0,0,0,.04);
+      transition: transform var(--dur-fast);
+    }
+    .stat-card:hover { transform: translateY(-2px); }
+    .stat-num   { font-family: var(--font-nums); font-size: 1.6rem; font-weight: 800; color: var(--color-primary); }
+    .stat-label { font-size: 0.7rem; color: var(--n-400); font-weight: 700; margin-top: 2px; letter-spacing: .04em; text-transform: uppercase; }
+
+    /* ── Section card ───────────────────────────────────────── */
+    .card {
+      background: white; border-radius: var(--r-xl);
+      padding: var(--sp-5); box-shadow: var(--sh-card);
+      border: 1px solid rgba(0,0,0,.04);
+      transition: box-shadow var(--dur-base);
+    }
+    .card:hover { box-shadow: var(--sh-md); }
+    .card-title {
+      font-size: 1rem; font-weight: 800; color: var(--n-900);
+      margin-bottom: var(--sp-4);
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    /* ── Form ───────────────────────────────────────────────── */
+    .profile-form { display: flex; flex-direction: column; gap: var(--sp-4); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3); }
+    .input-group { display: flex; flex-direction: column; }
+    .input-label { font-size: 0.82rem; font-weight: 700; color: var(--n-700); margin-bottom: 5px; }
+    .input-field {
+      width: 100%; padding: 12px 14px;
+      border: 1.5px solid var(--n-200); border-radius: var(--r-lg);
+      font-size: 0.95rem; color: var(--n-900);
+      background: var(--n-50); transition: all var(--dur-fast);
+    }
+    .input-field:focus { outline: none; border-color: var(--color-primary); background: white; box-shadow: var(--sh-focus); }
+    select.input-field { appearance: none; -webkit-appearance: none; }
+
+    /* ── Tag system ─────────────────────────────────────────── */
+    .tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; min-height: 4px; }
+    .tag-item {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--color-primary-pale); color: var(--color-primary);
+      border: 1px solid var(--color-primary-light);
+      padding: 4px 10px; border-radius: var(--r-full);
+      font-size: 0.78rem; font-weight: 700;
+    }
+    .tag-remove { background: none; border: none; cursor: pointer; color: var(--color-primary); font-size: 1rem; padding: 0; line-height: 1; opacity: .7; }
+    .tag-remove:hover { opacity: 1; }
+    .tag-add-row { display: flex; gap: 8px; }
+    .tag-add-input { flex: 1; padding: 10px 14px; border: 1.5px solid var(--n-200); border-radius: var(--r-md); font-size: 0.88rem; background: var(--n-50); }
+    .tag-add-input:focus { outline: none; border-color: var(--color-primary); }
+    .tag-add-btn {
+      padding: 10px 16px; background: var(--color-primary-pale); color: var(--color-primary);
+      border: 1.5px solid var(--color-primary-light); border-radius: var(--r-md);
+      font-size: 0.85rem; font-weight: 800; cursor: pointer; white-space: nowrap;
+    }
+    .tag-add-btn:hover { background: var(--color-primary-light); }
+
+    /* ── Premium card ───────────────────────────────────────── */
+    .premium-card {
+      background: linear-gradient(135deg, #92400e, #d97706, #f59e0b);
+      border-radius: var(--r-xl);
+      padding: var(--sp-5); color: white;
+    }
+    .premium-card h3 { color: white; margin-bottom: 6px; font-size: 1.1rem; }
+    .premium-card p  { color: rgba(255,255,255,.9); font-size: 0.88rem; margin-bottom: var(--sp-4); }
+    .premium-features { display: flex; flex-direction: column; gap: 7px; margin-bottom: var(--sp-5); }
+    .premium-feature { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: rgba(255,255,255,.95); }
+    .pf-tick { width: 18px; height: 18px; background: rgba(255,255,255,.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; flex-shrink: 0; }
+    .upgrade-btn {
+      width: 100%; padding: 14px;
+      background: white; color: #d97706;
+      border: none; border-radius: var(--r-full);
+      font-size: 1rem; font-weight: 800;
+      cursor: pointer; transition: all var(--dur-fast);
+    }
+    .upgrade-btn:hover { background: #fef9f0; }
+
+    /* ── WhatsApp share card ────────────────────────────────── */
+    .share-card {
+      background: linear-gradient(135deg, #064e3b, #065f46);
+      border-radius: var(--r-xl);
+      padding: var(--sp-5); color: white;
+    }
+    .share-card h3 { color: white; font-size: 1rem; margin-bottom: 4px; }
+    .share-card p  { color: rgba(255,255,255,.8); font-size: 0.83rem; margin-bottom: var(--sp-4); }
+    .share-wa-btn {
+      width: 100%; padding: 13px;
+      background: #25D366; color: white; border: none;
+      border-radius: var(--r-full); font-size: 0.95rem; font-weight: 800;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+
+    /* ── Menu items ─────────────────────────────────────────── */
+    .menu-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--sp-4) 0;
+      border-bottom: 1px solid var(--n-100);
+      cursor: pointer;
+    }
+    .menu-item:last-child { border-bottom: none; }
+    .menu-item-left { display: flex; align-items: center; gap: 12px; }
+    .menu-icon {
+      width: 38px; height: 38px;
+      border-radius: var(--r-sm); background: var(--n-100);
+      display: flex; align-items: center; justify-content: center; font-size: 1rem;
+    }
+    .menu-label { font-size: 0.92rem; font-weight: 700; color: var(--n-900); }
+    .menu-sub   { font-size: 0.75rem; color: var(--n-400); }
+    .menu-arrow { color: var(--n-300); }
+    .menu-arrow svg { width: 16px; height: 16px; }
+
+    /* ── Danger zone ────────────────────────────────────────── */
+    .logout-btn {
+      width: 100%; padding: 14px;
+      background: white; color: #dc2626;
+      border: 1.5px solid #fecaca; border-radius: var(--r-xl);
+      font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; transition: all var(--dur-fast);
+    }
+    .logout-btn:hover { background: #fef2f2; }
+
+    .version-text { text-align: center; font-size: 0.74rem; color: var(--n-400); line-height: 1.6; }
+
+    /* ── Save btn ───────────────────────────────────────────── */
+    .btn-save {
+      width: 100%; padding: 15px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+      color: white; border: none; border-radius: var(--r-xl);
+      font-size: 0.95rem; font-weight: 800;
+      cursor: pointer;
+      transition: all var(--dur-base) var(--ease-spring);
+      box-shadow: var(--sh-green);
+      position: relative; overflow: hidden;
+    }
+    .btn-save::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.15), transparent);
+      opacity: 0; transition: opacity var(--dur-fast);
+    }
+    .btn-save:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(46,139,87,.35); }
+    .btn-save:hover::before { opacity: 1; }
+
+    </style>
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- Sidebar (desktop) -->
+  <aside class="sidebar"></aside>
+  <div class="main-area">
+
+  <!-- Main profile area -->
+  <div class="page-enter">
+
+    <!-- Hero -->
+    <div class="profile-hero">
+      <div class="hero-orb hero-orb-1"></div>
+      <div class="hero-orb hero-orb-2"></div>
+      <div class="avatar-circle" id="avatarCircle">👤</div>
+      <div class="profile-name"  id="profileName">Loading...</div>
+      <div class="profile-email" id="profileEmail"></div>
+      <div class="plan-badge" id="planBadge">🌿 Free Plan</div>
+    </div>
+
+    <div class="main-content">
+
+      <!-- Stats (full width) -->
+      <div class="col-full">
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-num" id="statStreak">🔥 --</div>
+            <div class="stat-label">Day Streak</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="statChats">--</div>
+            <div class="stat-label">Total Chats</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="statScore">--</div>
+            <div class="stat-label">Health Score</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Health Profile form -->
+      <div class="card col-full">
+        <div class="card-title">🩺 Health Profile</div>
+        <form class="profile-form" id="healthProfileForm">
+          <div class="form-row">
+            <div class="input-group">
+              <label class="input-label">Age</label>
+              <input type="number" class="input-field" id="age" placeholder="25" min="0" max="120">
+            </div>
+            <div class="input-group">
+              <label class="input-label">Gender</label>
+              <select class="input-field" id="gender">
+                <option value="">Select</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="input-group">
+              <label class="input-label">Height (cm)</label>
+              <input type="number" class="input-field" id="height" placeholder="170" min="50" max="250">
+            </div>
+            <div class="input-group">
+              <label class="input-label">Weight (kg)</label>
+              <input type="number" class="input-field" id="weight" placeholder="65" min="1" max="300">
+            </div>
+          </div>
+          <div class="input-group">
+            <label class="input-label">Blood Group</label>
+            <select class="input-field" id="bloodGroup">
+              <option value="">Select</option>
+              <option>A+</option><option>A-</option>
+              <option>B+</option><option>B-</option>
+              <option>AB+</option><option>AB-</option>
+              <option>O+</option><option>O-</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Known Medical Conditions</label>
+            <div class="tag-list" id="conditionsTags"></div>
+            <div class="tag-add-row">
+              <input class="tag-add-input" id="conditionInput" placeholder="e.g. Diabetes, BP, Thyroid">
+              <button type="button" class="tag-add-btn" onclick="addTag('conditions','conditionInput','conditionsTags')">+ Add</button>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Allergies</label>
+            <div class="tag-list" id="allergiesTags"></div>
+            <div class="tag-add-row">
+              <input class="tag-add-input" id="allergyInput" placeholder="e.g. Penicillin, Peanuts">
+              <button type="button" class="tag-add-btn" onclick="addTag('allergies','allergyInput','allergiesTags')">+ Add</button>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Current Medicines</label>
+            <div class="tag-list" id="medicationsTags"></div>
+            <div class="tag-add-row">
+              <input class="tag-add-input" id="medicationInput" placeholder="e.g. Metformin, Amlodipine">
+              <button type="button" class="tag-add-btn" onclick="addTag('medications','medicationInput','medicationsTags')">+ Add</button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-save" id="saveProfileBtn">💾 Save Health Profile</button>
+        </form>
+      </div>
+
+      <!-- Share card -->
+      <div class="share-card">
+        <h3>📤 Share Your Health Score</h3>
+        <p>Invite friends &amp; family — share your Arogya Score on WhatsApp!</p>
+        <button class="share-wa-btn" onclick="shareHealthCard()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Share on WhatsApp
+        </button>
+      </div>
+
+      <!-- Premium card -->
+      <div class="premium-card" id="premiumCard">
+        <h3>⭐ Upgrade to Premium</h3>
+        <p>Unlock unlimited AI queries and premium features</p>
+        <div class="premium-features">
+          <div class="premium-feature"><div class="pf-tick">✓</div> Unlimited AI questions daily</div>
+          <div class="premium-feature"><div class="pf-tick">✓</div> Voice input (8 Indian languages)</div>
+          <div class="premium-feature"><div class="pf-tick">✓</div> Family tracking (5 members)</div>
+          <div class="premium-feature"><div class="pf-tick">✓</div> Medical report analysis</div>
+          <div class="premium-feature"><div class="pf-tick">✓</div> Priority AI responses</div>
+        </div>
+        <button class="upgrade-btn" onclick="Toast.info('Payment integration coming soon! 🚀')">
+          Upgrade for ₹99/month
+        </button>
+      </div>
+
+      <!-- Settings -->
+      <div class="card">
+        <div class="card-title">⚙️ Settings</div>
+        <div class="menu-item" onclick="window.location.href='/chat'">
+          <div class="menu-item-left">
+            <div class="menu-icon">💬</div>
+            <div>
+              <div class="menu-label">Chat History</div>
+              <div class="menu-sub">View past conversations</div>
+            </div>
+          </div>
+          <div class="menu-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </div>
+        <div class="menu-item" onclick="window.location.href='/family'">
+          <div class="menu-item-left">
+            <div class="menu-icon">👨‍👩‍👧</div>
+            <div>
+              <div class="menu-label">Family Members</div>
+              <div class="menu-sub">Manage family health</div>
+            </div>
+          </div>
+          <div class="menu-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </div>
+        <div class="menu-item" onclick="Toast.info('Language settings — choose from chat screen')">
+          <div class="menu-item-left">
+            <div class="menu-icon">🌐</div>
+            <div>
+              <div class="menu-label">Language</div>
+              <div class="menu-sub" id="currentLangDisplay">English</div>
+            </div>
+          </div>
+          <div class="menu-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </div>
+      </div>
+
+      <!-- Logout -->
+      <div class="col-full">
+        <button class="logout-btn" onclick="Auth.logout()">🚪 Logout from ArogyaAI</button>
+        <div class="version-text" style="margin-top:12px">
+          ArogyaAI v4.0.0 · Made with ❤️ for Bharat<br>
+          ⚠️ Not a substitute for professional medical advice
+        </div>
+      </div>
+
+    </div><!-- /main-content -->
+  </div><!-- /page-enter -->
+  </div><!-- /main-area -->
+</div><!-- /app-layout -->
+
+
+
+<script src="/js/app.js"></script>
+<script>
+  // BFCACHE FIX
+  window.addEventListener("pageshow", function(e) { if (e.persisted) window.location.reload(); });
+
+  if (!Auth.isLoggedIn()) window.location.href = '/login';
+
+  const tagData = { conditions: [], allergies: [], medications: [] };
+
+  function addTag(type, inputId, listId) {
+    const input = document.getElementById(inputId);
+    const val = input.value.trim();
+    if (!val || tagData[type].includes(val)) { input.value = ''; return; }
+    tagData[type].push(val);
+    renderTags(type, listId);
+    input.value = '';
+  }
+  function removeTag(type, listId, val) {
+    tagData[type] = tagData[type].filter(v => v !== val);
+    renderTags(type, listId);
+  }
+  function renderTags(type, listId) {
+    const container = document.getElementById(listId);
+    container.innerHTML = tagData[type].map(tag => `
+      <span class="tag-item">
+        ${tag}
+        <button class="tag-remove" onclick="removeTag('${type}','${listId}','${tag}')">×</button>
+      </span>`).join('');
+  }
+
+  ['conditionInput','allergyInput','medicationInput'].forEach((id, i) => {
+    const types = [
+      ['conditions','conditionInput','conditionsTags'],
+      ['allergies','allergyInput','allergiesTags'],
+      ['medications','medicationInput','medicationsTags']
+    ];
+    document.getElementById(id)?.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); addTag(...types[i]); }
+    });
+  });
+
+  async function init() {
+    const user = Auth.getUser();
+    if (!user) return;
+
+    document.getElementById('profileName').textContent  = user.name || 'ArogyaAI User';
+    document.getElementById('profileEmail').textContent = user.email;
+    document.getElementById('avatarCircle').textContent = user.name?.[0]?.toUpperCase() || '👤';
+    document.getElementById('currentLangDisplay').textContent = Lang.getName(Lang.get());
+
+    if (user.is_premium) {
+      document.getElementById('planBadge').innerHTML = '⭐ Premium';
+      document.getElementById('premiumCard').style.display = 'none';
+    }
+
+    const streakRes = await API.get('/api/user/streak', true);
+    if (streakRes.data) document.getElementById('statStreak').textContent = `🔥 ${streakRes.data.current_streak || 1}`;
+
+    const histRes = await API.get('/api/user/history?limit=50', true);
+    if (histRes.data) {
+      document.getElementById('statChats').textContent = histRes.data.count || 0;
+      if (histRes.data.history?.length > 0 && histRes.data.history[0].health_score) {
+        const score = histRes.data.history[0].health_score;
+        document.getElementById('statScore').textContent = score;
+        document.getElementById('statScore').style.color = scoreColor(score);
+      }
+    }
+
+    const profileRes = await API.get('/api/user/profile/health', true);
+    if (profileRes.data && Object.keys(profileRes.data).length > 0) {
+      const p = profileRes.data;
+      if (p.age)         document.getElementById('age').value        = p.age;
+      if (p.gender)      document.getElementById('gender').value     = p.gender;
+      if (p.height_cm)   document.getElementById('height').value     = p.height_cm;
+      if (p.weight_kg)   document.getElementById('weight').value     = p.weight_kg;
+      if (p.blood_group) document.getElementById('bloodGroup').value = p.blood_group;
+      if (p.conditions?.length)  { tagData.conditions  = p.conditions;  renderTags('conditions','conditionsTags'); }
+      if (p.allergies?.length)   { tagData.allergies   = p.allergies;   renderTags('allergies','allergiesTags'); }
+      if (p.medications?.length) { tagData.medications = p.medications; renderTags('medications','medicationsTags'); }
+    }
+  }
+
+  document.getElementById('healthProfileForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = document.getElementById('saveProfileBtn');
+    setLoading(btn, true);
+    const body = {
+      age:        parseInt(document.getElementById('age').value) || null,
+      gender:     document.getElementById('gender').value || null,
+      height_cm:  parseInt(document.getElementById('height').value) || null,
+      weight_kg:  parseInt(document.getElementById('weight').value) || null,
+      blood_group:document.getElementById('bloodGroup').value || null,
+      conditions: tagData.conditions, allergies: tagData.allergies, medications: tagData.medications,
+      language:   Lang.get(),
+    };
+    const { data, error } = await API.put('/api/user/profile/health', body, true);
+    setLoading(btn, false);
+    if (error) { Toast.error(error); return; }
+    Toast.success('Health profile saved! AI will now personalize advice for you. 🌿');
+  });
+
+  async function shareHealthCard() {
+    const histRes = await API.get('/api/user/history?limit=1', true);
+    const score = histRes.data?.history?.[0]?.health_score || 78;
+    const streakRes = await API.get('/api/user/streak', true);
+    const streak = streakRes.data?.current_streak || 1;
+    const res = await API.get(`/api/health-card/generate?user_id=${Auth.getUser()?.id}&score=${score}&streak=${streak}`);
+    if (res.data?.whatsapp_url) {
+      window.open(res.data.whatsapp_url, '_blank');
+    } else {
+      const msg = `💪 My ArogyaAI Health Score: ${score}/100\n🔥 ${streak} day health streak!\n\nCheck your health free: https://arogyaai-6fud.onrender.com/\n#ArogyaAI #HealthIndia`;
+      shareWhatsApp(msg);
+    }
+  }
+
+  init();
+</script>
+</body>
+</html>

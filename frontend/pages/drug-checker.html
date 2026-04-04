@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1A7A4C">
+  <meta name="description" content="ArogyaAI Drug Interaction Checker — AI-powered medication safety, free & instant.">
+  <meta http-equiv="Cache-Control" content="no-store">
+  <title>Drug Interaction Checker — ArogyaAI</title>
+  <link rel="stylesheet" href="/css/design-system.css">
+  <style>
+    html, body { background: var(--n-50); }
+
+    /* ── Page Header ── */
+    .page-hero {
+      background: linear-gradient(135deg, #0D3D24 0%, #1A7A4C 60%, #2E8B57 100%);
+      padding: 32px 0 56px; position: relative; overflow: hidden;
+    }
+    .page-hero::before {
+      content:''; position:absolute; inset:0;
+      background: radial-gradient(ellipse 60% 80% at 80% 0%, rgba(255,255,255,.07) 0%, transparent 60%);
+    }
+    .page-hero::after {
+      content:''; position:absolute; bottom:-2px; left:0; right:0;
+      height:40px; background:var(--n-50); border-radius:40px 40px 0 0;
+    }
+    .hero-inner { max-width:860px; margin:0 auto; padding:0 24px; position:relative; z-index:1; }
+    .hero-back {
+      display:inline-flex; align-items:center; gap:6px;
+      color:rgba(255,255,255,.7); font-size:.82rem; font-weight:600;
+      margin-bottom:20px; cursor:pointer; transition:color var(--dur-fast);
+    }
+    .hero-back:hover { color:#fff; }
+    .hero-back svg { width:16px; height:16px; }
+    .hero-badge {
+      display:inline-flex; align-items:center; gap:6px;
+      padding:4px 12px; border-radius:var(--r-full);
+      background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.25);
+      color:rgba(255,255,255,.9); font-size:.72rem; font-weight:800;
+      text-transform:uppercase; letter-spacing:.09em; margin-bottom:14px;
+    }
+    .hero-title { font-family:var(--font-display); font-size:clamp(1.7rem,4vw,2.4rem); font-weight:900; color:#fff; margin-bottom:8px; letter-spacing:-.03em; }
+    .hero-sub   { color:rgba(255,255,255,.75); font-size:.92rem; line-height:1.6; max-width:520px; }
+
+    /* ── Main wrap ── */
+    .checker-wrap { max-width:860px; margin:0 auto; padding:24px 24px 80px; }
+
+    /* Input Section */
+    .input-section {
+      background:var(--n-0); border-radius:var(--r-2xl);
+      padding:28px; border:1px solid var(--n-150);
+      box-shadow:var(--sh-card); margin-bottom:20px;
+    }
+    .input-section-title {
+      font-size:.82rem; font-weight:800; color:var(--n-500);
+      text-transform:uppercase; letter-spacing:.09em; margin-bottom:16px;
+    }
+
+    /* Drug chips area */
+    .drug-chips-area {
+      min-height:52px; display:flex; flex-wrap:wrap; gap:8px;
+      padding:12px 16px; border-radius:var(--r-md);
+      border:1.5px solid var(--n-200); background:var(--n-50);
+      cursor:text; margin-bottom:12px; transition:border-color var(--dur-fast);
+    }
+    .drug-chips-area.focused { border-color:var(--color-primary); box-shadow:var(--sh-focus); background:#fff; }
+    .drug-chip {
+      display:flex; align-items:center; gap:6px;
+      padding:5px 12px; border-radius:var(--r-full);
+      background:var(--color-primary-pale); border:1px solid rgba(26,122,76,.2);
+      color:var(--color-primary-dark); font-size:.82rem; font-weight:700;
+    }
+    .drug-chip-remove { cursor:pointer; color:var(--color-primary); opacity:.7; transition:opacity var(--dur-fast); font-size:.8rem; }
+    .drug-chip-remove:hover { opacity:1; }
+
+    /* Autocomplete */
+    .autocomplete-wrap { position:relative; margin-bottom:16px; }
+    .autocomplete-input {
+      width:100%; padding:13px 16px; border-radius:var(--r-md);
+      border:1.5px solid var(--n-200); background:var(--n-0); color:var(--n-900);
+      font-size:.95rem; transition:border-color var(--dur-fast), box-shadow var(--dur-fast);
+    }
+    .autocomplete-input:focus { outline:none; border-color:var(--color-primary); box-shadow:var(--sh-focus); }
+    .autocomplete-input::placeholder { color:var(--n-400); }
+    .autocomplete-dropdown {
+      position:absolute; top:calc(100%+4px); left:0; right:0;
+      background:var(--n-0); border:1px solid var(--n-200); border-radius:var(--r-lg);
+      overflow:hidden; z-index:100; box-shadow:var(--sh-xl); display:none;
+    }
+    .autocomplete-dropdown.show { display:block; }
+    .autocomplete-item {
+      padding:11px 16px; cursor:pointer; transition:background var(--dur-fast);
+      font-size:.9rem; color:var(--n-700); border-bottom:1px solid var(--n-100);
+      display:flex; align-items:center; gap:8px;
+    }
+    .autocomplete-item:hover { background:var(--color-primary-pale); color:var(--color-primary); }
+    .autocomplete-item:last-child { border-bottom:none; }
+    .autocomplete-item::before { content:'💊'; font-size:.8rem; }
+
+    /* Check button */
+    .check-btn {
+      width:100%; padding:16px; border-radius:var(--r-xl);
+      background:linear-gradient(135deg,var(--color-accent),#E8960A);
+      border:none; color:var(--n-950); font-size:1rem; font-weight:800;
+      cursor:pointer; transition:all var(--dur-base); box-shadow:var(--sh-gold);
+      display:flex; align-items:center; justify-content:center; gap:8px;
+    }
+    .check-btn:hover { transform:translateY(-2px); box-shadow:var(--sh-gold-h); }
+    .check-btn:disabled { background:var(--n-200); color:var(--n-400); box-shadow:none; cursor:not-allowed; transform:none; }
+
+    /* Loading */
+    .loading-state {
+      background:var(--n-0); border:1px solid var(--n-150); border-radius:var(--r-2xl);
+      padding:48px; text-align:center; display:none; box-shadow:var(--sh-card);
+    }
+    .loading-state.show { display:block; }
+    .loading-spinner {
+      width:48px; height:48px; border:3px solid var(--n-200);
+      border-top-color:var(--color-primary); border-radius:50%;
+      animation:spin .8s linear infinite; margin:0 auto 16px;
+    }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .loading-label { font-weight:700; color:var(--n-800); margin-bottom:4px; }
+    .loading-sub   { font-size:.85rem; color:var(--n-500); }
+
+    /* Results */
+    .results-section { display:none; }
+    .results-section.show { display:block; }
+
+    .summary-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:20px; }
+    @media(min-width:480px) { .summary-grid { grid-template-columns:repeat(4,1fr); } }
+
+    .summary-card {
+      background:var(--n-0); border:1px solid var(--n-150); border-radius:var(--r-xl);
+      padding:16px; text-align:center; box-shadow:var(--sh-xs);
+      position:relative; overflow:hidden;
+    }
+    .summary-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+    .summary-card.critical::before   { background:#991B1B; }
+    .summary-card.dangerous::before  { background:var(--color-danger); }
+    .summary-card.caution::before    { background:var(--color-warning); }
+    .summary-card.safe-card::before  { background:var(--color-success); }
+
+    .summary-num   { font-family:var(--font-nums); font-size:2.2rem; font-weight:900; }
+    .num-critical  { color:#991B1B; }
+    .num-dangerous { color:var(--color-danger); }
+    .num-caution   { color:var(--color-warning); }
+    .num-safe      { color:var(--color-success); }
+    .summary-label { font-size:.68rem; font-weight:800; color:var(--n-500); text-transform:uppercase; letter-spacing:.07em; margin-top:4px; }
+
+    /* Analysis card */
+    .analysis-card {
+      background:var(--n-0); border:1px solid var(--n-150); border-radius:var(--r-2xl);
+      padding:28px; box-shadow:var(--sh-card); margin-bottom:16px;
+    }
+    .analysis-title {
+      font-family:var(--font-display); font-size:1.1rem; font-weight:800;
+      color:var(--n-900); margin-bottom:16px; display:flex; align-items:center; gap:8px;
+    }
+    .analysis-body { color:var(--n-700); line-height:1.75; font-size:.92rem; }
+    .analysis-body h3     { color:var(--color-primary-dark); font-size:.95rem; font-weight:800; margin:18px 0 6px; }
+    .analysis-body strong { color:var(--n-900); }
+    .analysis-body ul     { padding-left:20px; margin:6px 0; }
+    .analysis-body li     { margin-bottom:5px; }
+    .analysis-body hr     { border:none; border-top:1px solid var(--n-150); margin:14px 0; }
+
+    /* Disclaimer */
+    .disclaimer-box {
+      background:var(--color-warning-bg); border:1px solid rgba(217,119,6,.2);
+      border-radius:var(--r-lg); padding:14px 18px;
+      font-size:.82rem; color:var(--n-700); line-height:1.6;
+    }
+    .disclaimer-box strong { color:var(--color-warning); }
+
+    /* Popular checks */
+    .popular-wrap { margin-top:24px; }
+    .popular-title { font-size:.72rem; font-weight:800; color:var(--n-500); text-transform:uppercase; letter-spacing:.09em; margin-bottom:12px; }
+    .popular-chips { display:flex; flex-wrap:wrap; gap:8px; }
+    .popular-chip {
+      padding:7px 14px; border-radius:var(--r-full);
+      border:1.5px solid var(--n-200); background:var(--n-0);
+      font-size:.8rem; font-weight:600; color:var(--n-600); cursor:pointer;
+      transition:all var(--dur-fast);
+    }
+    .popular-chip:hover { border-color:var(--color-primary); color:var(--color-primary); background:var(--color-primary-pale); }
+
+    .bottom-nav { background:rgba(255,255,255,.96); border-top:1px solid var(--n-200); }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+  <aside class="sidebar"></aside>
+  <div class="main-area" style="overflow-y:auto">
+
+    <!-- Hero -->
+    <div class="page-hero">
+      <div class="hero-inner">
+        <div class="hero-back" onclick="history.back()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          Back to Dashboard
+        </div>
+        <div class="hero-badge">💊 Clinical Safety Tool</div>
+        <h1 class="hero-title">Drug Interaction Checker</h1>
+        <p class="hero-sub">Check your medications for dangerous interactions instantly. Powered by clinical AI pharmacology with an Indian drug database.</p>
+      </div>
+    </div>
+
+    <div class="checker-wrap">
+
+      <!-- Input Section -->
+      <div class="input-section">
+        <div class="input-section-title">Enter your medications (minimum 2 for interaction check)</div>
+        <div class="drug-chips-area" id="drugChipsArea" onclick="document.getElementById('drugInput').focus()">
+          <!-- chips populated by JS -->
+        </div>
+        <div class="autocomplete-wrap">
+          <input class="autocomplete-input" id="drugInput" placeholder="Type medication name, then press Enter or select…" autocomplete="off">
+          <div class="autocomplete-dropdown" id="autocompleteDropdown"></div>
+        </div>
+        <button class="check-btn" id="checkBtn" onclick="checkInteractions()">
+          🔬 Analyse Drug Interactions
+        </button>
+        <div class="popular-wrap">
+          <div class="popular-title">Common combinations to check:</div>
+          <div class="popular-chips">
+            <div class="popular-chip" onclick="addCombo(['Aspirin','Warfarin'])">Aspirin + Warfarin</div>
+            <div class="popular-chip" onclick="addCombo(['Metformin','Alcohol'])">Metformin + Alcohol</div>
+            <div class="popular-chip" onclick="addCombo(['Ibuprofen','Prednisolone'])">Ibuprofen + Prednisolone</div>
+            <div class="popular-chip" onclick="addCombo(['Amlodipine','Simvastatin'])">Amlodipine + Simvastatin</div>
+            <div class="popular-chip" onclick="addCombo(['Sertraline','Tramadol'])">Sertraline + Tramadol</div>
+            <div class="popular-chip" onclick="addCombo(['Clopidogrel','Omeprazole'])">Clopidogrel + Omeprazole</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div class="loading-state" id="loadingState">
+        <div class="loading-spinner"></div>
+        <div class="loading-label">Dr. Arogya is analysing your medications…</div>
+        <div class="loading-sub">Checking drug-drug, drug-food &amp; drug-disease interactions</div>
+      </div>
+
+      <!-- Results -->
+      <div class="results-section" id="resultsSection">
+        <div class="summary-grid" id="resultsSummary"></div>
+        <div class="analysis-card">
+          <div class="analysis-title">📋 Clinical Interaction Report</div>
+          <div class="analysis-body" id="analysisContent"></div>
+        </div>
+        <div class="disclaimer-box">
+          <strong>⚠️ Medical Disclaimer:</strong> This tool is for informational purposes only and does not replace professional medical advice. Always consult your doctor or pharmacist before making any change to your medications. Drug interactions may vary based on individual health conditions.
+        </div>
+        <div style="text-align:center;margin-top:20px">
+          <button class="btn btn-secondary" onclick="resetForm()">← Check New Medications</button>
+          <a href="/chat" class="btn btn-confirm" style="margin-left:10px;text-decoration:none">Ask Dr. Arogya 🩺</a>
+        </div>
+      </div>
+
+    </div><!-- /checker-wrap -->
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <button class="nav-item" onclick="window.location.href='/dashboard'">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home
+  </button>
+  <button class="nav-item" onclick="window.location.href='/chat'">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Chat
+  </button>
+  <button class="nav-item active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>Drugs
+  </button>
+  <button class="nav-item" onclick="window.location.href='/profile'">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile
+  </button>
+  <button class="nav-item" onclick="window.location.href='/emergency'" style="color:var(--color-danger)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="var(--color-danger)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>SOS
+  </button>
+</nav>
+
+<script src="/js/app.js"></script>
+<script>
+let drugs = [];
+const SUGGESTIONS = [
+  'Paracetamol','Aspirin','Ibuprofen','Metformin','Atorvastatin','Amlodipine',
+  'Lisinopril','Metoprolol','Omeprazole','Pantoprazole','Cetirizine','Levothyroxine',
+  'Azithromycin','Warfarin','Clopidogrel','Ramipril','Glimepiride','Prednisolone',
+  'Iron Sulfate','Vitamin D3','Diclofenac','Escitalopram','Sertraline','Gabapentin',
+  'Montelukast','Salbutamol','Tamsulosin','Allopurinol','Hydroxychloroquine',
+  'Simvastatin','Losartan','Telmisartan','Doxycycline','Amoxicillin','Ciprofloxacin',
+  'Tramadol','Codeine','Clonazepam','Alprazolam','Atenolol','Furosemide',
+];
+
+const drugInput = document.getElementById('drugInput');
+const dropdown  = document.getElementById('autocompleteDropdown');
+const chipsArea = document.getElementById('drugChipsArea');
+
+drugInput.addEventListener('focus', ()=>chipsArea.classList.add('focused'));
+drugInput.addEventListener('blur',  ()=>setTimeout(()=>chipsArea.classList.remove('focused'),200));
+drugInput.addEventListener('input', () => {
+  const q = drugInput.value.trim();
+  if(q.length < 2) { dropdown.classList.remove('show'); return; }
+  const matches = SUGGESTIONS.filter(s=>s.toLowerCase().includes(q.toLowerCase())).slice(0,7);
+  dropdown.innerHTML = matches.map(m=>`<div class="autocomplete-item" onclick="addDrug('${m}')">${m}</div>`).join('');
+  dropdown.classList.toggle('show', matches.length > 0);
+});
+drugInput.addEventListener('keydown', e => {
+  if(e.key === 'Enter') { e.preventDefault(); const v = drugInput.value.trim(); if(v) addDrug(v); }
+});
+document.addEventListener('click', e => { if(!e.target.closest('.autocomplete-wrap')) dropdown.classList.remove('show'); });
+
+function addDrug(name) {
+  name = name.trim();
+  if(!name || drugs.map(d=>d.toLowerCase()).includes(name.toLowerCase())) {
+    Toast.warning(`"${name}" is already added.`); return;
+  }
+  if(drugs.length >= 8) { Toast.warning('Maximum 8 medications per check.'); return; }
+  drugs.push(name); renderChips();
+  drugInput.value = ''; dropdown.classList.remove('show'); drugInput.focus();
+}
+function removeDrug(i) { drugs.splice(i,1); renderChips(); }
+function renderChips() {
+  chipsArea.innerHTML = drugs.map((d,i)=>`
+    <div class="drug-chip">${d}<span class="drug-chip-remove" onclick="removeDrug(${i})">✕</span></div>`).join('');
+}
+
+function addCombo(combo) {
+  combo.forEach(d => { if(!drugs.includes(d) && drugs.length < 8) drugs.push(d); });
+  renderChips();
+  checkInteractions();
+}
+function resetForm() {
+  drugs = []; renderChips();
+  document.getElementById('resultsSection').classList.remove('show');
+  document.getElementById('checkBtn').disabled = false;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function checkInteractions() {
+  if(drugs.length < 2) { Toast.warning('Please add at least 2 medications.'); return; }
+  document.getElementById('loadingState').classList.add('show');
+  document.getElementById('resultsSection').classList.remove('show');
+  document.getElementById('checkBtn').disabled = true;
+
+  const loadingMsg = document.querySelector('#loadingState p') || document.querySelector('#loadingState .loading-text');
+  if (loadingMsg) loadingMsg.textContent = 'Analysing interactions with Clinical AI...';
+
+  try {
+    const token = typeof Auth !== 'undefined' ? Auth.getToken() : null;
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    // Use AbortController for 120-second timeout (drug analysis can take 30-40s with fallback models)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 120000);
+
+    // Show "retrying" message after 15 seconds
+    const retryMsgTimer = setTimeout(() => {
+      if (loadingMsg) loadingMsg.textContent = 'AI is running deep pharmacology analysis... (may take up to 40s)';
+    }, 15000);
+
+    const res = await fetch('/api/drugs/check-interactions', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ medications: drugs }),
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+    clearTimeout(retryMsgTimer);
+
+    const data = await res.json();
+    if (!res.ok) {
+      const errMsg = data?.detail?.error || data?.detail || `Server error (${res.status})`;
+      throw new Error(errMsg);
+    }
+    if (data.error) throw new Error(data.error);
+    displayResults(data);
+  } catch(e) {
+    const msg = e.name === 'AbortError'
+      ? 'Analysis timed out. The AI is busy — please try again in 30 seconds.'
+      : (e.message || 'Could not complete analysis. Please try again.');
+    Toast.error(msg);
+    document.getElementById('checkBtn').disabled = false;
+    console.error('[DrugChecker]', e);
+  } finally {
+    document.getElementById('loadingState').classList.remove('show');
+  }
+}
+
+function displayResults(data) {
+  const meta = data.meta || {};
+  document.getElementById('resultsSummary').innerHTML = `
+    <div class="summary-card critical">
+      <div class="summary-num num-critical">${meta.critical||0}</div>
+      <div class="summary-label">Critical</div>
+    </div>
+    <div class="summary-card dangerous">
+      <div class="summary-num num-dangerous">${meta.dangerous||0}</div>
+      <div class="summary-label">Dangerous</div>
+    </div>
+    <div class="summary-card caution">
+      <div class="summary-num num-caution">${meta.caution||0}</div>
+      <div class="summary-label">Caution</div>
+    </div>
+    <div class="summary-card safe-card">
+      <div class="summary-num num-safe">${meta.safe||0}</div>
+      <div class="summary-label">Safe</div>
+    </div>`;
+
+  document.getElementById('analysisContent').innerHTML = renderMarkdown(data.analysis || 'No analysis available.');
+  document.getElementById('resultsSection').classList.add('show');
+  document.getElementById('checkBtn').disabled = false;
+  document.getElementById('resultsSection').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function renderMarkdown(text) {
+  return text
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/^### (.+)$/gm,'<h3>$1</h3>')
+    .replace(/^## (.+)$/gm,'<h3>$1</h3>')
+    .replace(/^[-•] (.+)$/gm,'<li>$1</li>')
+    .replace(/(<li>.*<\/li>[\n]?)+/gs, m=>`<ul>${m}</ul>`)
+    .replace(/\n---\n/g,'<hr>')
+    .replace(/\n/g,'<br>');
+}
+</script>
+</body>
+</html>
