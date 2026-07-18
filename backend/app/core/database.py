@@ -1,7 +1,7 @@
 """
 app/core/database.py — Supabase database service layer
-All DB operations with graceful fallback when Supabase not configured.
-FIX: Supabase proxy errors handled with proper timeout and retry logic.
+All DB operations with graceful fallback when Supabase not configured or unreachable.
+FIX: Automatic runtime fallback to in-memory store in development mode on network/DNS errors.
 """
 import logging
 from datetime import date, datetime
@@ -11,37 +11,66 @@ from app.core.config import settings
 
 logger = logging.getLogger("arogyaai.db")
 
-# In-memory fallback store for local dev (no Supabase needed)
+# In-memory fallback stores for local dev (no Supabase needed or when offline)
 _DEV_USERS: dict = {}
 _DEV_CONVERSATIONS: list = []
+_DEV_HEALTH_PROFILES: dict = {}
+_DEV_FAMILY_MEMBERS: list = []
+_DEV_STREAKS: dict = {}
+_DEV_SUBSCRIPTIONS: list = []
 
 
 class Database:
     """Supabase wrapper — all DB operations live here."""
     _client = None
+    _use_in_memory_fallback = False
+
+    @classmethod
+    def _is_connection_error(cls, e: Exception) -> bool:
+        """Check if exception is due to unreachable host, DNS, or socket issues."""
+        msg = str(e).lower()
+        return any(x in msg for x in [
+            "getaddrinfo failed",
+            "connection",
+            "connecterror",
+            "timeout",
+            "unreachable",
+            "host",
+            "socket",
+            "network",
+        ])
+
+    @classmethod
+    def should_use_supabase(cls) -> bool:
+        """Determine if Supabase client should be used based on config and connectivity."""
+        return settings.has_supabase and not cls._use_in_memory_fallback
 
     @classmethod
     def get(cls):
+        if cls._use_in_memory_fallback:
+            raise RuntimeError("Supabase client is offline. Using in-memory database.")
         if cls._client is None:
             if not settings.has_supabase:
                 raise RuntimeError("Supabase not configured.")
             try:
                 from supabase import create_client
-                # FIX: Add timeout options to prevent proxy hanging
                 cls._client = create_client(
                     settings.SUPABASE_URL,
                     settings.SUPABASE_KEY,
                 )
             except Exception as e:
                 logger.error("[DB] Failed to create Supabase client: %s", e)
+                if not settings.is_production:
+                    logger.warning("[DB] Connection error at initialization. Switching to in-memory fallback.")
+                    cls._use_in_memory_fallback = True
+                    raise RuntimeError("Supabase connection failed.")
                 raise
         return cls._client
 
     # ── Users ────────────────────────────────────────
     @classmethod
     async def get_user_by_email(cls, email: str) -> Optional[dict]:
-        # DEV FALLBACK
-        if not settings.has_supabase:
+        if not cls.should_use_supabase():
             return _DEV_USERS.get(email.lower())
         try:
             db = cls.get()
@@ -49,12 +78,15 @@ class Database:
             return result.data[0] if result.data else None
         except Exception as e:
             logger.warning("[DB] get_user_by_email: %s", e)
+            if not settings.is_production and cls._is_connection_error(e):
+                logger.warning("[DB] Connection failure. Switch to in-memory database.")
+                cls._use_in_memory_fallback = True
+                return await cls.get_user_by_email(email)
             return None
 
     @classmethod
     async def get_user_by_id(cls, user_id: str) -> Optional[dict]:
-        if not settings.has_supabase:
-            # Search dev store by id
+        if not cls.should_use_supabase():
             for u in _DEV_USERS.values():
                 if u.get("id") == user_id:
                     return u
@@ -65,11 +97,15 @@ class Database:
             return result.data[0] if result.data else None
         except Exception as e:
             logger.warning("[DB] get_user_by_id: %s", e)
+            if not settings.is_production and cls._is_connection_error(e):
+                logger.warning("[DB] Connection failure. Switch to in-memory database.")
+                cls._use_in_memory_fallback = True
+                return await cls.get_user_by_id(user_id)
             return None
 
     @classmethod
     async def create_user(cls, email: str, name: str, hashed_password: str) -> Optional[dict]:
-        if not settings.has_supabase:
+        if not cls.should_use_supabase():
             import uuid
             user = {
                 "id": str(uuid.uuid4()),
@@ -94,11 +130,18 @@ class Database:
             return result.data[0] if result.data else None
         except Exception as e:
             logger.warning("[DB] create_user: %s", e)
+            if not settings.is_production and cls._is_connection_error(e):
+                logger.warning("[DB] Connection failure. Switch to in-memory database.")
+                cls._use_in_memory_fallback = True
+                return await cls.create_user(email, name, hashed_password)
             return None
 
     @classmethod
     async def update_user_profile(cls, user_id: str, profile_data: dict) -> bool:
-        if not settings.has_supabase:
+        if not cls.should_use_supabase():
+            for u in _DEV_USERS.values():
+                if u.get("id") == user_id:
+                    u.update(profile_data)
             return True
         try:
             db = cls.get()
@@ -106,6 +149,10 @@ class Database:
             return True
         except Exception as e:
             logger.warning("[DB] update_user_profile: %s", e)
+            if not settings.is_production and cls._is_connection_error(e):
+                logger.warning("[DB] Connection failure. Switch to in-memory database.")
+                cls._use_in_memory_fallback = True
+                return await cls.update_user_profile(user_id, profile_data)
             return False
 
     # ── Conversations ────────────────────────────────
@@ -121,7 +168,7 @@ class Database:
     ) -> None:
         if not user_id:
             return
-        if not settings.has_supabase:
+        if not cls.should_use_supabase():
             import uuid
             _DEV_CONVERSATIONS.append({
                 "id": str(uuid.uuid4()),
@@ -146,10 +193,14 @@ class Database:
             }).execute()
         except Exception as e:
             logger.warning("[DB] save_conversation: %s", e)
+            if not settings.is_production and cls._is_connection_error(e):
+                logger.warning("[DB] Connection failure. Switch to in-memory database.")
+                cls._use_in_memory_fallback = True
+                await cls.save_conversation(user_id, message, reply, severity, health_score, needs_doctor)
 
     @classmethod
     async def get_user_history(cls, user_id: str, limit: int = 15) -> list:
-        if not settings.has_supabase:
+        if not cls.should_use_supabase():
             convs = [c for c in _DEV_CONVERSATIONS if c.get("user_id") == user_id]
             return sorted(convs, key=lambda x: x.get("created_at", ""), reverse=True)[:limit]
         try:
@@ -165,12 +216,16 @@ class Database:
             return result.data or []
         except Exception as e:
             logger.warning("[DB] get_user_history: %s", e)
+            if not settings.is_production and cls._is_connection_error(e):
+                logger.warning("[DB] Connection failure. Switch to in-memory database.")
+                cls._use_in_memory_fallback = True
+                return await cls.get_user_history(user_id, limit)
             return []
 
     # ── Query Usage (Freemium) ───────────────────────
     @classmethod
     async def get_query_count(cls, user_id: str) -> int:
-        if not settings.has_supabase:
+        if not cls.should_use_supabase():
             return 0
         try:
             db = cls.get()
@@ -185,11 +240,15 @@ class Database:
             return result.data[0]["count"] if result.data else 0
         except Exception as e:
             logger.warning("[DB] get_query_count: %s", e)
+            if not settings.is_production and cls._is_connection_error(e):
+                logger.warning("[DB] Connection failure. Switch to in-memory database.")
+                cls._use_in_memory_fallback = True
+                return await cls.get_query_count(user_id)
             return 0
 
     @classmethod
     async def increment_query_count(cls, user_id: str) -> None:
-        if not settings.has_supabase:
+        if not cls.should_use_supabase():
             return
         try:
             db = cls.get()
@@ -213,12 +272,16 @@ class Database:
                 }).execute()
         except Exception as e:
             logger.warning("[DB] increment_query_count: %s", e)
+            if not settings.is_production and cls._is_connection_error(e):
+                logger.warning("[DB] Connection failure. Switch to in-memory database.")
+                cls._use_in_memory_fallback = True
+                await cls.increment_query_count(user_id)
 
     # ── Streaks ──────────────────────────────────────
     @classmethod
     async def get_streak(cls, user_id: str) -> dict:
-        if not settings.has_supabase:
-            return {"current_streak": 1, "longest_streak": 1}
+        if not cls.should_use_supabase():
+            return _DEV_STREAKS.get(user_id, {"current_streak": 1, "longest_streak": 1})
         try:
             db = cls.get()
             result = db.table("streaks").select("*").eq("user_id", user_id).execute()
@@ -227,12 +290,41 @@ class Database:
             return {"current_streak": 0, "longest_streak": 0}
         except Exception as e:
             logger.warning("[DB] get_streak: %s", e)
+            if not settings.is_production and cls._is_connection_error(e):
+                logger.warning("[DB] Connection failure. Switch to in-memory database.")
+                cls._use_in_memory_fallback = True
+                return await cls.get_streak(user_id)
             return {"current_streak": 0, "longest_streak": 0}
 
     @classmethod
     async def update_streak(cls, user_id: str) -> int:
-        if not settings.has_supabase:
-            return 1
+        if not cls.should_use_supabase():
+            today = date.today()
+            if user_id not in _DEV_STREAKS:
+                _DEV_STREAKS[user_id] = {
+                    "user_id": user_id,
+                    "current_streak": 1,
+                    "longest_streak": 1,
+                    "last_active": str(today),
+                }
+                return 1
+            streak = _DEV_STREAKS[user_id]
+            last_active = date.fromisoformat(streak["last_active"])
+            days_diff = (today - last_active).days
+            if days_diff == 0:
+                return streak["current_streak"]
+            elif days_diff == 1:
+                new_streak = streak["current_streak"] + 1
+            else:
+                new_streak = 1
+            longest = max(new_streak, streak["longest_streak"])
+            _DEV_STREAKS[user_id] = {
+                "user_id": user_id,
+                "current_streak": new_streak,
+                "longest_streak": longest,
+                "last_active": str(today),
+            }
+            return new_streak
         try:
             db = cls.get()
             today = date.today()
@@ -267,24 +359,34 @@ class Database:
                 return 1
         except Exception as e:
             logger.warning("[DB] update_streak: %s", e)
+            if not settings.is_production and cls._is_connection_error(e):
+                logger.warning("[DB] Connection failure. Switch to in-memory database.")
+                cls._use_in_memory_fallback = True
+                return await cls.update_streak(user_id)
             return 0
 
     # ── Health Profile ───────────────────────────────
     @classmethod
     async def get_health_profile(cls, user_id: str) -> Optional[dict]:
-        if not settings.has_supabase:
-            return None
+        if not cls.should_use_supabase():
+            return _DEV_HEALTH_PROFILES.get(user_id)
         try:
             db = cls.get()
             result = db.table("health_profiles").select("*").eq("user_id", user_id).execute()
             return result.data[0] if result.data else None
         except Exception as e:
             logger.warning("[DB] get_health_profile: %s", e)
+            if not settings.is_production and cls._is_connection_error(e):
+                logger.warning("[DB] Connection failure. Switch to in-memory database.")
+                cls._use_in_memory_fallback = True
+                return await cls.get_health_profile(user_id)
             return None
 
     @classmethod
     async def save_health_profile(cls, user_id: str, profile: dict) -> bool:
-        if not settings.has_supabase:
+        if not cls.should_use_supabase():
+            profile["user_id"] = user_id
+            _DEV_HEALTH_PROFILES[user_id] = profile
             return True
         try:
             db = cls.get()
@@ -297,13 +399,17 @@ class Database:
             return True
         except Exception as e:
             logger.warning("[DB] save_health_profile: %s", e)
+            if not settings.is_production and cls._is_connection_error(e):
+                logger.warning("[DB] Connection failure. Switch to in-memory database.")
+                cls._use_in_memory_fallback = True
+                return await cls.save_health_profile(user_id, profile)
             return False
 
     # ── Family Members ───────────────────────────────
     @classmethod
     async def get_family_members(cls, user_id: str) -> list:
-        if not settings.has_supabase:
-            return []
+        if not cls.should_use_supabase():
+            return [m for m in _DEV_FAMILY_MEMBERS if m.get("owner_id") == user_id]
         try:
             db = cls.get()
             result = (
@@ -315,14 +421,19 @@ class Database:
             return result.data or []
         except Exception as e:
             logger.warning("[DB] get_family_members: %s", e)
+            if not settings.is_production and cls._is_connection_error(e):
+                logger.warning("[DB] Connection failure. Switch to in-memory database.")
+                cls._use_in_memory_fallback = True
+                return await cls.get_family_members(user_id)
             return []
 
     @classmethod
     async def add_family_member(cls, owner_id: str, member: dict) -> Optional[dict]:
-        if not settings.has_supabase:
+        if not cls.should_use_supabase():
             import uuid
             member["id"] = str(uuid.uuid4())
             member["owner_id"] = owner_id
+            _DEV_FAMILY_MEMBERS.append(member)
             return member
         try:
             db = cls.get()
@@ -331,6 +442,10 @@ class Database:
             return result.data[0] if result.data else None
         except Exception as e:
             logger.warning("[DB] add_family_member: %s", e)
+            if not settings.is_production and cls._is_connection_error(e):
+                logger.warning("[DB] Connection failure. Switch to in-memory database.")
+                cls._use_in_memory_fallback = True
+                return await cls.add_family_member(owner_id, member)
             return None
 
     # ── Billing / Subscriptions ──────────────────────
@@ -344,12 +459,21 @@ class Database:
         amount_inr: int = 0,
         expires_at: str = "",
     ) -> bool:
-        if not settings.has_supabase:
-            # Dev: just mark user as premium in memory
+        if not cls.should_use_supabase():
             for u in _DEV_USERS.values():
                 if u.get("id") == user_id:
                     u["is_premium"] = True
                     u["plan"] = plan
+            _DEV_SUBSCRIPTIONS.append({
+                "user_id": user_id,
+                "plan": plan,
+                "status": "active",
+                "razorpay_order_id": razorpay_order_id,
+                "razorpay_payment_id": razorpay_payment_id,
+                "amount_inr": amount_inr,
+                "expires_at": expires_at,
+                "created_at": datetime.utcnow().isoformat(),
+            })
             return True
         try:
             db = cls.get()
@@ -368,12 +492,17 @@ class Database:
             return True
         except Exception as e:
             logger.error("[DB] upgrade_user_plan: %s", e)
+            if not settings.is_production and cls._is_connection_error(e):
+                logger.warning("[DB] Connection failure. Switch to in-memory database.")
+                cls._use_in_memory_fallback = True
+                return await cls.upgrade_user_plan(user_id, plan, razorpay_order_id, razorpay_payment_id, amount_inr, expires_at)
             return False
 
     @classmethod
     async def get_active_subscription(cls, user_id: str) -> Optional[dict]:
-        if not settings.has_supabase:
-            return None
+        if not cls.should_use_supabase():
+            subs = [s for s in _DEV_SUBSCRIPTIONS if s.get("user_id") == user_id and s.get("status") == "active"]
+            return sorted(subs, key=lambda x: x.get("created_at", ""), reverse=True)[0] if subs else None
         try:
             db = cls.get()
             result = (
@@ -388,11 +517,18 @@ class Database:
             return result.data[0] if result.data else None
         except Exception as e:
             logger.warning("[DB] get_active_subscription: %s", e)
+            if not settings.is_production and cls._is_connection_error(e):
+                logger.warning("[DB] Connection failure. Switch to in-memory database.")
+                cls._use_in_memory_fallback = True
+                return await cls.get_active_subscription(user_id)
             return None
 
     @classmethod
     async def cancel_subscription(cls, user_id: str, reason: str = "") -> bool:
-        if not settings.has_supabase:
+        if not cls.should_use_supabase():
+            for s in _DEV_SUBSCRIPTIONS:
+                if s.get("user_id") == user_id and s.get("status") == "active":
+                    s["status"] = "cancelled"
             return True
         try:
             db = cls.get()
@@ -411,12 +547,16 @@ class Database:
             return True
         except Exception as e:
             logger.warning("[DB] cancel_subscription: %s", e)
+            if not settings.is_production and cls._is_connection_error(e):
+                logger.warning("[DB] Connection failure. Switch to in-memory database.")
+                cls._use_in_memory_fallback = True
+                return await cls.cancel_subscription(user_id, reason)
             return False
 
     # ── Admin Stats ──────────────────────────────────
     @classmethod
     async def get_admin_stats(cls) -> dict:
-        if not settings.has_supabase:
+        if not cls.should_use_supabase():
             return {
                 "total_users": len(_DEV_USERS),
                 "premium_users": sum(1 for u in _DEV_USERS.values() if u.get("is_premium")),
@@ -438,11 +578,15 @@ class Database:
             }
         except Exception as e:
             logger.warning("[DB] get_admin_stats: %s", e)
+            if not settings.is_production and cls._is_connection_error(e):
+                logger.warning("[DB] Connection failure. Switch to in-memory database.")
+                cls._use_in_memory_fallback = True
+                return await cls.get_admin_stats()
             return {}
 
     @classmethod
     async def get_all_users(cls, page: int = 1, limit: int = 50) -> list:
-        if not settings.has_supabase:
+        if not cls.should_use_supabase():
             return list(_DEV_USERS.values())[(page - 1) * limit: page * limit]
         try:
             db = cls.get()
@@ -457,6 +601,10 @@ class Database:
             return result.data or []
         except Exception as e:
             logger.warning("[DB] get_all_users: %s", e)
+            if not settings.is_production and cls._is_connection_error(e):
+                logger.warning("[DB] Connection failure. Switch to in-memory database.")
+                cls._use_in_memory_fallback = True
+                return await cls.get_all_users(page, limit)
             return []
 
     # ── Analytics ────────────────────────────────────
@@ -468,7 +616,7 @@ class Database:
         properties: dict,
         session_id: Optional[str] = None,
     ) -> None:
-        if not settings.has_supabase:
+        if not cls.should_use_supabase():
             return
         try:
             db = cls.get()
@@ -480,10 +628,13 @@ class Database:
             }).execute()
         except Exception as e:
             logger.debug("[DB] track_event (non-fatal): %s", e)
+            if not settings.is_production and cls._is_connection_error(e):
+                logger.warning("[DB] Connection failure. Switch to in-memory database.")
+                cls._use_in_memory_fallback = True
 
     @classmethod
     async def get_funnel_data(cls) -> dict:
-        if not settings.has_supabase:
+        if not cls.should_use_supabase():
             return {"signups": len(_DEV_USERS), "first_chat": len(_DEV_CONVERSATIONS), "upgraded": 0}
         try:
             db = cls.get()
@@ -493,6 +644,10 @@ class Database:
             return {"signups": signups, "first_chat": first_chats, "upgraded": upgrades}
         except Exception as e:
             logger.warning("[DB] get_funnel_data: %s", e)
+            if not settings.is_production and cls._is_connection_error(e):
+                logger.warning("[DB] Connection failure. Switch to in-memory database.")
+                cls._use_in_memory_fallback = True
+                return await cls.get_funnel_data()
             return {}
 
     # ── Data Export (DPDP Act 2023) ──────────────────
