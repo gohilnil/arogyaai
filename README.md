@@ -7,6 +7,7 @@
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?logo=supabase)](https://supabase.com/)
 [![Groq](https://img.shields.io/badge/AI-Groq_70B-F55036)](https://groq.com/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/gohilnil/arogyaai)
 
 ---
 
